@@ -685,6 +685,16 @@ function elegirAlmacen(){
   almacen=null; modoAlmacen='memoria';
 }
 
+/* Los dos equipos arrancan con 15 jugadores; se pueden agregar o quitar
+   desde la solapa "Equipo". */
+const PLANTEL_BASE = 15;
+function completarPlantel(js, cant, crear){
+  if(!Array.isArray(js)) return;
+  while(js.length < cant){
+    const max = js.reduce((a,j)=>Math.max(a,+j.n||0),0);
+    js.push(crear(max+1));
+  }
+}
 function statsVacias(){ const o={}; KEYS.forEach(k=>o[k]=0); return o; }
 function nuevoJugador(n,nombre){ return {n:n, nombre:nombre||'', st:statsVacias()}; }
 function plantelVacio(cant){ const a=[]; for(let i=1;i<=cant;i++) a.push(nuevoJugador(i,'')); return a; }
@@ -700,13 +710,13 @@ function nuevoPartido(plantel, nombreEquipo){
     notas:['','','',''],
     golesPeriodo:{local:[0,0,0,0], rival:[0,0,0,0]},
     local:{jugadores: plantel.map(j=>nuevoJugador(j.n,j.nombre))},
-    rival_j:{jugadores: plantelVacio(15)},
+    rival_j:{jugadores: plantelVacio(PLANTEL_BASE)},
     eventos:[]
   };
 }
 function estadoInicial(){
-  const plantel = plantelVacio(13);
-  return {version:1, equipo:'Mi equipo', plantel:plantel, partido:nuevoPartido(plantel,'Mi equipo'), historial:[]};
+  const plantel = plantelVacio(PLANTEL_BASE);
+  return {version:2, equipo:'Mi equipo', plantel:plantel, partido:nuevoPartido(plantel,'Mi equipo'), historial:[]};
 }
 function guardar(){
   if(!almacen) return;
@@ -1682,8 +1692,17 @@ function iniciar(){
   /* Migraciones defensivas por si el archivo guardado es viejo o incompleto */
   if(!S.partido.notas) S.partido.notas=['','','',''];
   if(!S.partido.golesPeriodo) S.partido.golesPeriodo={local:[0,0,0,0],rival:[0,0,0,0]};
-  if(!S.partido.rival_j) S.partido.rival_j={jugadores:plantelVacio(15)};
+  if(!S.partido.rival_j) S.partido.rival_j={jugadores:plantelVacio(PLANTEL_BASE)};
   if(!Array.isArray(S.historial)) S.historial=[];
+  /* El plantel propio pasa de 13 a 15 jugadores, igual que el rival. Se hace
+     una sola vez: si después se borra alguno a mano, no vuelve a aparecer.
+     Los partidos ya cerrados del historial quedan como estaban. */
+  if(!S.version || S.version < 2){
+    completarPlantel(S.plantel, PLANTEL_BASE, n=>({n:n, nombre:''}));
+    if(S.partido.local) completarPlantel(S.partido.local.jugadores, PLANTEL_BASE, n=>nuevoJugador(n,''));
+    S.version = 2;
+    guardar();
+  }
 
   document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>irA(b.dataset.p));
   document.getElementById('sel-local').onclick=()=>{ equipoActivo='local'; pintarVivo(); };
