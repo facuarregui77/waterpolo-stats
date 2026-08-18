@@ -133,6 +133,10 @@ main{max-width:1180px;margin:0 auto;padding:14px 12px 90px}
 .jug .nom{font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .jug .res{font-size:11.5px;color:var(--gris);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .jug .res b{color:var(--verde)}
+.jug.fuera{opacity:.72;border-left-color:var(--gris);background:#f2f5f9}
+.jug.fuera .dor{background:#e6ecf3;color:var(--gris)}
+.jug.fuera .nom{color:var(--gris);text-decoration:line-through}
+.jug.fuera .res{color:#9b1c31;font-weight:700}
 
 /* ---------- Panel de acciones ---------- */
 .overlay{position:fixed;inset:0;background:rgba(9,29,48,.55);z-index:60;display:none;align-items:flex-end;justify-content:center}
@@ -176,6 +180,12 @@ main{max-width:1180px;margin:0 auto;padding:14px 12px 90px}
 .acc.neu{border-color:#cfe3f3;background:var(--celeste-cl);color:var(--azul-osc)}
 .acc.destacada{grid-column:span 1;min-height:88px}
 .acc.destacada .ico{font-size:26px}
+.acc.bloqueada{opacity:.45;background:#f2f5f9;border-color:transparent;color:var(--gris)}
+.acc.bloqueada .n{color:var(--gris)}
+.aviso-fuera{
+  margin:12px 16px 0;background:var(--rojo-cl);color:#9b1c31;border-radius:12px;
+  padding:10px 12px;font-size:12.5px;font-weight:700;text-align:center;line-height:1.35;
+}
 
 /* ---------- Feed de acciones ---------- */
 .feed{list-style:none;margin:0;padding:0;max-height:230px;overflow-y:auto}
@@ -626,6 +636,17 @@ const ACCIONES = [
 const ACC_POR_ID = {};
 ACCIONES.forEach(a=>ACC_POR_ID[a.id]=a);
 
+/* ---------- Regla de las 3 exclusiones -----------------------------------
+   Con 3 exclusiones cometidas el jugador no puede seguir disputando el
+   partido: su tarjeta queda bloqueada y no admite cargar más acciones.
+   Si fue un error, se corrige con Deshacer o bajando el EXC en la planilla. */
+const MAX_EXC = 3;
+function estaFuera(j){ return !!j && (+j.st.exc||0) >= MAX_EXC; }
+function nombreJug(j){ return j.nombre || ('#'+j.n); }
+function avisoFuera(j){
+  toast('🚫 ' + nombreJug(j) + ' cumplió sus 3 exclusiones: no puede jugar más este partido');
+}
+
 /* ---------- Filas del comparativo (igual que la solapa del Excel) -------- */
 const COMPARATIVO = [
   {t:'Goles totales',            k:'g',   mejor:'alto'},
@@ -742,12 +763,18 @@ function marcador(eq){ return P().golesPeriodo[eq].reduce((a,b)=>a+(+b||0),0); }
 function registrar(eq, idx, accId){
   const a = ACC_POR_ID[accId];
   const j = equipoObj(eq).jugadores[idx];
+  if(estaFuera(j)){ avisoFuera(j); return; }
   for(const k in a.d) j.st[k] = (+j.st[k]||0) + a.d[k];
   if(a.d.g) P().golesPeriodo[eq][P().periodo-1] += a.d.g;
   P().eventos.push({id:uid(), eq:eq, idx:idx, acc:accId, per:P().periodo});
   guardar(); pintarTodo();
+  if(estaFuera(j)){
+    cerrarPanel();
+    toast('🚫 ' + nombreJug(j) + ' queda fuera del partido (3 exclusiones)', 'Deshacer', deshacer);
+    return;
+  }
   const esGol = !!a.d.g;
-  toast((esGol?'⚽ ':'') + a.lbl + ' · ' + (j.nombre || ('#'+j.n)), 'Deshacer', deshacer);
+  toast((esGol?'⚽ ':'') + a.lbl + ' · ' + nombreJug(j), 'Deshacer', deshacer);
 }
 function quitarEvento(evId){
   const i = P().eventos.findIndex(e=>e.id===evId);
@@ -821,12 +848,15 @@ function pintarVivo(){
   const js = equipoObj(equipoActivo).jugadores;
   js.forEach((j,i)=>{
     const b=document.createElement('button');
-    b.className='jug'+(equipoActivo==='rival'?' rival':'');
+    const fuera = estaFuera(j);
+    b.className='jug'+(equipoActivo==='rival'?' rival':'')+(fuera?' fuera':'');
     b.innerHTML =
       '<div class="dor">'+j.n+'</div><div class="info">'+
       '<div class="nom">'+(esc(j.nombre)||'Jugador '+j.n)+'</div>'+
-      '<div class="res"><b>'+j.st.g+' G</b> · '+j.st.lt+' LT · '+j.st.ast+' AST · '+j.st.exc+' EXC</div></div>';
-    b.onclick=()=>abrirPanel(equipoActivo,i);
+      '<div class="res">'+(fuera
+        ? '🚫 FUERA DEL PARTIDO · '+j.st.exc+' EXC'
+        : '<b>'+j.st.g+' G</b> · '+j.st.lt+' LT · '+j.st.ast+' AST · '+j.st.exc+' EXC')+'</div></div>';
+    b.onclick = fuera ? (()=>avisoFuera(j)) : (()=>abrirPanel(equipoActivo,i));
     g.appendChild(b);
   });
 
@@ -845,6 +875,8 @@ function pintarVivo(){
 }
 
 function abrirPanel(eq, idx){
+  const j = equipoObj(eq).jugadores[idx];
+  if(estaFuera(j)){ avisoFuera(j); return; }
   jugadorAbierto = {eq:eq, idx:idx};
   pintarPanel();
   document.getElementById('overlay').classList.add('on');
@@ -858,6 +890,7 @@ function pintarPanel(){
   const {eq,idx} = jugadorAbierto;
   const j = equipoObj(eq).jugadores[idx];
   if(!j){ cerrarPanel(); return; }
+  const fuera = estaFuera(j);
   const h = document.getElementById('hoja');
   h.innerHTML =
     '<div class="hoja-hdr'+(eq==='rival'?' rival':'')+'">'+
@@ -870,7 +903,9 @@ function pintarPanel(){
       '<span>EF <b>'+pct(derivada(j.st,'ef'))+'</b></span><span>AST <b>'+j.st.ast+'</b></span>'+
       '<span>ROB <b>'+j.st.rob+'</b></span><span>PB <b>'+j.st.pb+'</b></span>'+
       '<span>EXC <b>'+j.st.exc+'</b></span><span>EXF <b>'+j.st.exf+'</b></span>'+
-    '</div><div class="acciones" id="acc-grid"></div>'+
+    '</div>'+
+    (fuera ? '<div class="aviso-fuera">🚫 Cumplió sus '+MAX_EXC+' exclusiones — no puede seguir disputando el partido</div>' : '')+
+    '<div class="acciones" id="acc-grid"></div>'+
     '<div style="padding:2px 16px 0"><button class="btn plano" style="width:100%" id="btn-undo-panel">↩︎ Deshacer última acción</button></div>';
   const grid = h.querySelector('#acc-grid');
   ACCIONES.forEach(a=>{
@@ -878,7 +913,8 @@ function pintarPanel(){
     b.className='acc '+a.tipo+(a.id==='gol'?' destacada':'');
     const cuenta = contarAccion(j.st,a);
     b.innerHTML='<span class="ico">'+a.ico+'</span><span>'+a.lbl+'</span>'+(cuenta!==null?'<span class="n">'+cuenta+'</span>':'');
-    b.onclick=()=>{ registrar(eq,idx,a.id); };
+    if(fuera){ b.className += ' bloqueada'; b.disabled = true; }
+    else b.onclick=()=>{ registrar(eq,idx,a.id); };
     grid.appendChild(b);
   });
   h.querySelector('#x-panel').onclick=cerrarPanel;
@@ -904,7 +940,7 @@ function tablaEquipo(eq){
   COLS.forEach(c=>h+='<th>'+c.t+'</th>');
   h += '</tr></thead><tbody>';
   js.forEach((j,idx)=>{
-    h += '<tr><td><b>'+j.n+'</b></td><td class="nom"><input class="txt" data-eq="'+eq+'" data-i="'+idx+'" data-f="nombre" value="'+esc(j.nombre)+'" placeholder="Jugador '+j.n+'"></td>';
+    h += '<tr><td><b>'+j.n+'</b>'+(estaFuera(j)?' 🚫':'')+'</td><td class="nom"><input class="txt" data-eq="'+eq+'" data-i="'+idx+'" data-f="nombre" value="'+esc(j.nombre)+'" placeholder="Jugador '+j.n+'"></td>';
     COLS.forEach(c=>{
       if(c.calc) h += '<td class="calc">'+pct(derivada(j.st,c.calc))+'</td>';
       else h += '<td><input type="number" min="0" inputmode="numeric" data-eq="'+eq+'" data-i="'+idx+'" data-f="'+c.k+'" value="'+(+j.st[c.k]||0)+'"></td>';
