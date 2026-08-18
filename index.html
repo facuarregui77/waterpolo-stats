@@ -8,6 +8,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Waterpolo">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
 <title>Waterpolo Stats</title>
 <style>
 /* ============================================================
@@ -1703,6 +1706,15 @@ function iniciar(){
   }, 700);
 }
 iniciar();
+
+/* Guarda la app en el dispositivo para que abra sin internet.
+   Sólo aplica a la versión publicada en la web; abierta como archivo local
+   ya funciona sin conexión y el registro se descarta en silencio. */
+if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
 </script>
 </body>
 </html>
