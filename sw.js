@@ -3,8 +3,8 @@
    guardado del navegador (cache: 'reload'), así cualquier cambio publicado se ve
    en el mismo momento en que se abre y nunca queda una copia vieja. Si no hay conexión, se abre
    la última versión guardada. Los íconos y el manifest salen de lo guardado. */
-const CACHE = 'waterpolo-stats-v9';
-const ARCHIVOS = ['./', './index.html', './manifest.webmanifest', './icon-180-v4.png', './icon-512-v4.png'];
+const CACHE = 'waterpolo-stats-v10';
+const ARCHIVOS = ['./', './index.html', './manifest-v4.webmanifest', './icon-180-v4.png', './icon-512-v4.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
@@ -25,8 +25,11 @@ self.addEventListener('activate', e => {
 function esLaApp(request) {
   if (request.mode === 'navigate') return true;
   const url = new URL(request.url);
-  return url.origin === self.location.origin &&
-    (url.pathname.endsWith('/') || url.pathname.endsWith('/index.html'));
+  if (url.origin !== self.location.origin) return false;
+  // El manifest va junto con la app: de el sale el icono con el que Android
+  // instala, asi que tampoco puede quedar una copia vieja guardada.
+  return url.pathname.endsWith('/') || url.pathname.endsWith('/index.html') ||
+         url.pathname.endsWith('.webmanifest');
 }
 
 self.addEventListener('fetch', e => {
