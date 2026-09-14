@@ -408,6 +408,17 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
 .crono li.gol.rival .mk{background:var(--rojo-cl);color:var(--rojo)}
 
 /* ---------- Resumen para compartir ---------- */
+.importar{padding:14px 16px}
+.importar textarea{min-height:130px;font-size:13.5px}
+.imp-o{text-align:center;font-size:12px;color:var(--gris);font-weight:700;margin:12px 0 6px;letter-spacing:.3px}
+.imp-tit{font-size:13px;font-weight:800;color:var(--verde);margin:12px 0 6px}
+.imp-lista{max-height:220px;overflow-y:auto;border:1px solid var(--linea);border-radius:11px;background:#fff}
+.imp-fila{padding:7px 11px;border-bottom:1px solid var(--linea);font-size:13.5px}
+.imp-fila:last-child{border-bottom:none}
+.imp-fila b{display:inline-block;min-width:26px;color:var(--azul)}
+.imp-mk{font-size:11px;font-weight:800;border-radius:5px;padding:1px 5px}
+.imp-mk.arq{background:var(--ambar-cl)}
+.imp-mk.cap{background:var(--verde);color:#fff}
 .resumen{padding:14px 16px}
 .resumen textarea{min-height:250px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;background:#fff}
 
@@ -548,6 +559,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <div style="margin-top:12px" id="tabla-plantel"></div>
       <div class="fila-btn" style="margin-top:10px">
         <button class="btn plano" id="btn-add-jug">➕ Agregar jugador</button>
+        <button class="btn plano" id="btn-importar">📥 Importar plantel</button>
       </div>
     </div>
     <div class="card">
@@ -565,6 +577,9 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
         <label class="campo">Cuerpo técnico<input id="p-cuerpo-rival" placeholder="Entrenador, ayudante, preparador físico"></label>
       </div>
       <div style="margin-top:12px" id="tabla-plantel-rival"></div>
+      <div class="fila-btn" style="margin-top:10px">
+        <button class="btn plano" id="btn-importar-rival">📥 Importar plantel del rival</button>
+      </div>
     </div>
     <div class="card">
       <h2>🛟 Copia de seguridad</h2>
@@ -584,7 +599,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
     <div class="card">
       <h2>🚀 En un minuto</h2>
       <div class="pasos">
-        <div class="paso"><span class="np">1</span><div><b>Cargá tu plantel una sola vez</b><br>En <b>⚙️ Equipo</b>: nombre del club, y el número y el nombre de cada jugador. Queda guardado para siempre. En la ficha de cada uno marcás si <b>juega hoy</b>, si es <b>arquero</b> y si es el <b>capitán</b>.</div></div>
+        <div class="paso"><span class="np">1</span><div><b>Cargá tu plantel una sola vez</b><br>En <b>⚙️ Equipo</b>: nombre del club, y el número y el nombre de cada jugador — a mano, o de una con <b>📥 Importar plantel</b> desde un Excel o pegando la lista. Queda guardado para siempre. En la ficha de cada uno marcás si <b>juega hoy</b>, si es <b>arquero</b> y si es el <b>capitán</b>.</div></div>
         <div class="paso"><span class="np">2</span><div><b>Durante el partido, dos toques</b><br>En <b>⚡ En vivo</b>: tocás el jugador, tocás la acción. Listo. El marcador y los porcentajes se calculan solos.</div></div>
         <div class="paso"><span class="np">3</span><div><b>Al final, guardás y seguís</b><br><b>📗 Excel</b> baja el partido con el formato de siempre y <b>📲 Resumen para WhatsApp</b> arma el texto para el grupo. <b>✅ Cerrar partido</b> lo archiva y deja la planilla en cero para el próximo.</div></div>
       </div>
@@ -600,6 +615,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <h3>🎯 Antes del partido</h3>
       <ol>
         <li>Entrá a <b>⚙️ Equipo</b>. Cada jugador tiene su ficha: a la izquierda el <b>número de gorro</b> (tocalo y escribí el que sea) y al lado el nombre. Esto se hace <b>una sola vez</b>: queda guardado para todos los partidos.</li>
+        <li>Si ya tenés la lista en otro lado, no la escribas de nuevo: tocá <b>📥 Importar plantel</b>. Podés elegir un <b>Excel o un CSV</b>, o pegar la lista escrita. Te muestra lo que entendió antes de cargar nada.</li>
         <li>Abajo de cada ficha hay tres botones. <b>Juega hoy</b>: los que dejás apagados no aparecen en la pantalla de carga, así los botones quedan más grandes y no te equivocás de jugador.</li>
         <li><b>Arquero</b>: marcalo en el que ataja, sea cual sea su número. Vienen marcados el 1 y el 15 porque es lo más común, pero si tu arquero lleva el 13 lo marcás a él y al otro lo apagás. Podés tener dos arqueros marcados.</li>
         <li><b>Capitán</b>: uno solo por equipo. En el Excel sale con una <b>(C)</b> al lado del nombre.</li>
@@ -686,6 +702,12 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <p>Andá a <b>📋 Planilla → ⏱️ Goles por período</b> y corregí el número a mano. Ahí mandás vos.</p>
       <h3>Quiero imprimir la planilla para el banco</h3>
       <p>En <b>📈 Comparativo</b> está el botón <b>🖨️ Imprimir / PDF</b>. Sale la planilla completa y el comparativo, sin los botones.</p>
+      <h3>Tengo el plantel en un Excel, o en un papel</h3>
+      <p>En <b>⚙️ Equipo → 📥 Importar plantel</b>. Con el Excel, elegís el archivo y listo. Si está en papel, <b>sacale una foto</b>, mantené el dedo apretado sobre el texto de la foto para copiarlo —el celular lo reconoce solo— y pegalo en el casillero. Entiende <i>"7 Pérez Juan"</i>, <i>"Pérez Juan 7"</i> o sólo los nombres, y les pone los números en orden. Si al lado de alguien dice <i>arquero</i> o <i>(C)</i>, lo marca.</p>
+      <h3>Importé y me faltan jugadores</h3>
+      <p>Para sacarlos del Excel, cada jugador necesita tener el <b>número al lado del nombre</b>: si la planilla sólo tiene nombres sueltos, copiá esa columna y pegala en el casillero de texto, que ahí los numera solos.</p>
+      <h3>Borré al último jugador y era el arquero</h3>
+      <p>No hay que hacer nada: el guante pasa solo al que queda último de la lista, y la app te avisa quién quedó de arquero.</p>
       <h3>No me aparece el botón de PARADA</h3>
       <p>Ese jugador no está marcado como arquero. En <b>⚙️ Equipo</b>, buscá su ficha y tocá el botón <b>Arquero</b>.</p>
       <h3>Los goles recibidos se los carga al arquero equivocado</h3>
@@ -709,6 +731,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
   </section>
 </main>
 
+<input type="file" id="file-plantel" accept=".xlsx,.csv,.txt,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none">
 <div class="overlay" id="overlay"><div class="hoja" id="hoja"></div></div>
 <div id="toast"><span id="toast-txt"></span><button id="toast-btn" style="display:none"></button></div>
 
@@ -842,7 +865,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-09-14-1201';
+const VERSION_APP = '2026-09-14-1220';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -955,6 +978,21 @@ function ponerEnArco(eq, idx){
   guardar(); pintarTodo();
   toast('🧤 '+nombreJug(js[idx])+' va al arco');
 }
+/* El arquero suplente va al final de la lista. Si se borra al último y era el
+   arquero, el guante pasa solo al que queda último, así el equipo nunca se
+   queda sin un segundo arquero por haber sacado un jugador. */
+function acomodarArqueros(eq, eraArquero, eraElUltimo){
+  const js = equipoObj(eq).jugadores;
+  if(!js.length) return null;
+  const ultimo = js[js.length-1];
+  if(ultimo.arq) return null;
+  if((eraArquero && eraElUltimo) || !js.some(j=>j.arq)){
+    ultimo.arq = true;
+    return ultimo;
+  }
+  return null;
+}
+
 /* El 🧤 del plantel: marca o desmarca arqueros, sin límite de cantidad */
 function alternarArquero(eq, idx){
   const js = equipoObj(eq).jugadores;
@@ -1538,6 +1576,309 @@ function hojaTexto(txt){
   document.getElementById('overlay').classList.add('on');
 }
 
+/* ==========================================================================
+   IMPORTAR PLANTEL
+   Entiende tres cosas: un Excel (.xlsx), un CSV, y una lista escrita o pegada
+   a mano — que es como llega la foto de la planilla de papel, porque el propio
+   celular reconoce el texto de la foto y lo deja copiar.
+   El .xlsx se abre con el descompresor que ya trae el navegador, sin librerías.
+   ========================================================================== */
+
+/* Palabras que no son jugadores, para no meter los títulos de la planilla */
+const RUIDO = /^(#|n[°ºo]?|nro|numero|número|nombre|jugador|apellido|plantel|equipo|rival|fecha|lugar|árbitro|arbitro|resultado|total|totales|cuerpo|técnico|tecnico|leyenda|período|periodo|comparativo|estadística|estadistica|guía|guia|vs|local|visitante)$/i;
+
+/* Saca de los bordes todo lo que no sea letra o número: espacios, guiones,
+   comas y también los emojis con los que la planilla adorna los títulos. */
+function limpiarBordes(t){
+  return String(t==null?'':t)
+    .replace(/^[^0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ(]+/,'')
+    .replace(/[^0-9A-Za-zÁÉÍÓÚÜÑáéíóúüñ)]+$/,'')
+    .trim();
+}
+
+/* Una línea de texto → {n, nombre, arq, cap}. Devuelve null si no es un jugador */
+function interpretarLinea(linea){
+  let t = String(linea==null?'':linea).replace(/[\t;|]+/g,' ').replace(/\s{2,}/g,' ').trim();
+  t = t.replace(/^#+\s*/,'');
+  if(!t) return null;
+  let arq = false, cap = false;
+  if(/(^|[\s([-])(arq|arquero|arquera|portero|golero|gk|goalkeeper)([\s)\]-]|$)/i.test(t)){
+    arq = true;
+    t = t.replace(/(arquer[oa]|portero|golero|goalkeeper|\bgk\b|\barq\b)/ig, ' ');
+  }
+  if(/(\(c\)|[\s([-]cap(it[áa]n)?([\s)\]-]|$))/i.test(t)){
+    cap = true;
+    t = t.replace(/\(c\)/ig, ' ').replace(/\bcapit[áa]n\b/ig, ' ').replace(/\bcap\b/ig, ' ');
+  }
+  t = t.replace(/\(\s*\)|\[\s*\]/g,' ').replace(/\s{2,}/g,' ').trim();
+  let n = null, m;
+  if((m = /^(\d{1,2})\s*[.,:)-]?\s+(.*)$/.exec(t))){ n = +m[1]; t = m[2]; }
+  else if((m = /^(\d{1,2})$/.exec(t))){ n = +m[1]; t = ''; }
+  else if((m = /^(.*?)[\s.,:-]+(\d{1,2})$/.exec(t))){ t = m[1]; n = +m[2]; }
+  /* restos de columnas numéricas pegadas al nombre */
+  while(/\s\d+$/.test(t)) t = t.replace(/\s\d+$/,'');
+  t = limpiarBordes(t);
+  if(!t) return null;                       /* un número suelto no es un jugador */
+  if(RUIDO.test(t)) return null;
+  /* encabezados de varias palabras: "# NOMBRE", "N° JUGADOR", "EQUIPO LOCAL" */
+  if(t.split(/\s+/).every(function(p){ return RUIDO.test(p); })) return null;
+  if(t.length > 40) return null;            /* leyendas y textos largos */
+  if(!/[a-záéíóúüñ]{2}/i.test(t)) return null;
+  return {n:n, nombre:t, arq:arq, cap:cap};
+}
+
+/* Texto pegado (una línea por jugador, o todo seguido separado por comas) */
+function parsearTexto(txt){
+  let lineas = String(txt==null?'':txt).split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  if(lineas.length === 1 && lineas[0].indexOf(',') > 0) lineas = lineas[0].split(',');
+  const salida = [];
+  lineas.forEach(l=>{ const j = interpretarLinea(l); if(j) salida.push(j); });
+  return salida;
+}
+
+/* Filas de una planilla (Excel o CSV) → jugadores. Pide número Y nombre, así
+   los encabezados, los totales y las leyendas quedan afuera solos. */
+function esDorsal(c){ return /^\d{1,2}$/.test(c) && +c >= 1; }
+
+function parsearFilas(filas){
+  const salida = [];
+  (filas||[]).forEach(f=>{
+    if(!f) return;
+    const celdas = [];
+    for(let i=0;i<f.length;i++){ const c = limpiarBordes(f[i]); if(c!=='') celdas.push(c); }
+    if(celdas.length < 2) return;
+    for(let i=0;i<celdas.length && i<10;i++){
+      const j = interpretarLinea(celdas[i]);
+      if(!j) continue;                       /* números sueltos y títulos */
+      if(j.n !== null){ salida.push(j); return; }   /* número y nombre en la misma celda */
+      /* El nombre tiene que tener su número al lado: así los ceros de las
+         columnas de estadísticas no se confunden con el dorsal. */
+      if(i>0 && esDorsal(celdas[i-1])) j.n = +celdas[i-1];
+      else if(i+1 < celdas.length && esDorsal(celdas[i+1])) j.n = +celdas[i+1];
+      else return;
+      salida.push(j);
+      return;
+    }
+  });
+  return salida;
+}
+
+function parsearCsv(txt){
+  const filas = String(txt==null?'':txt).split(/\r?\n/).filter(l=>l.trim()!=='')
+    .map(l=>l.split(/[;,\t]/).map(c=>c.replace(/^"/,'').replace(/"$/,'')));
+  const porFilas = parsearFilas(filas);
+  /* Si el CSV no trae columna de números, se lee como lista suelta */
+  return porFilas.length ? porFilas : parsearTexto(txt);
+}
+
+/* ---------- Lector de .xlsx: ZIP + XML, con el descompresor del navegador -- */
+function leerZip(buf){
+  const dv = new DataView(buf), u8 = new Uint8Array(buf);
+  let fin = -1;
+  for(let i = u8.length-22; i >= 0 && i > u8.length-22-65557; i--){
+    if(dv.getUint32(i,true) === 0x06054b50){ fin = i; break; }
+  }
+  if(fin < 0) throw new Error('El archivo no parece un Excel');
+  const cant = dv.getUint16(fin+10,true);
+  let p = dv.getUint32(fin+16,true);
+  const dec = new TextDecoder();
+  const entradas = [];
+  for(let i=0;i<cant;i++){
+    if(dv.getUint32(p,true) !== 0x02014b50) break;
+    const nomLen = dv.getUint16(p+28,true), extLen = dv.getUint16(p+30,true), comLen = dv.getUint16(p+32,true);
+    entradas.push({
+      nombre: dec.decode(u8.subarray(p+46, p+46+nomLen)),
+      metodo: dv.getUint16(p+10,true),
+      comprimido: dv.getUint32(p+20,true),
+      pos: dv.getUint32(p+42,true)
+    });
+    p += 46 + nomLen + extLen + comLen;
+  }
+  return {dv:dv, u8:u8, entradas:entradas};
+}
+function contenidoZip(z, entrada){
+  const off = entrada.pos;
+  if(z.dv.getUint32(off,true) !== 0x04034b50) return Promise.reject(new Error('El Excel está dañado'));
+  const nomLen = z.dv.getUint16(off+26,true), extLen = z.dv.getUint16(off+28,true);
+  const ini = off + 30 + nomLen + extLen;
+  const crudo = z.u8.subarray(ini, ini + entrada.comprimido);
+  if(entrada.metodo === 0) return Promise.resolve(crudo);
+  if(typeof DecompressionStream === 'undefined')
+    return Promise.reject(new Error('Este navegador no puede abrir archivos de Excel. Guardá la planilla como CSV y probá otra vez.'));
+  const flujo = new Blob([crudo]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+  return new Response(flujo).arrayBuffer().then(b => new Uint8Array(b));
+}
+function textoDeNodos(nodos){
+  let t = '';
+  for(let i=0;i<nodos.length;i++) t += nodos[i].textContent;
+  return t;
+}
+function letrasACol(ref){
+  let col = 0;
+  for(let k=0;k<ref.length;k++){
+    const ch = ref.charCodeAt(k);
+    if(ch >= 65 && ch <= 90) col = col*26 + (ch-64); else break;
+  }
+  return col;
+}
+function xlsxAFilas(buf){
+  const z = leerZip(buf);
+  const hojas = z.entradas.filter(e => /^xl\/worksheets\/.*\.xml$/.test(e.nombre))
+                          .sort((a,b) => a.nombre.localeCompare(b.nombre));
+  if(!hojas.length) return Promise.reject(new Error('El Excel no tiene ninguna hoja'));
+  const comp = z.entradas.filter(e => e.nombre === 'xl/sharedStrings.xml')[0];
+  const dec = new TextDecoder();
+  return Promise.all([contenidoZip(z, hojas[0]), comp ? contenidoZip(z, comp) : null]).then(function(partes){
+    const textos = [];
+    if(partes[1]){
+      const dss = new DOMParser().parseFromString(dec.decode(partes[1]), 'application/xml');
+      const sis = dss.getElementsByTagName('si');
+      for(let i=0;i<sis.length;i++) textos.push(textoDeNodos(sis[i].getElementsByTagName('t')));
+    }
+    const doc = new DOMParser().parseFromString(dec.decode(partes[0]), 'application/xml');
+    const rows = doc.getElementsByTagName('row');
+    const filas = [];
+    for(let r=0;r<rows.length;r++){
+      const cs = rows[r].getElementsByTagName('c');
+      const fila = [];
+      for(let i=0;i<cs.length;i++){
+        const c = cs[i];
+        const col = letrasACol(c.getAttribute('r') || '');
+        const tipo = c.getAttribute('t');
+        let v = '';
+        if(tipo === 's'){
+          const vs = c.getElementsByTagName('v');
+          v = textos[vs.length ? +vs[0].textContent : -1] || '';
+        } else if(tipo === 'inlineStr'){
+          v = textoDeNodos(c.getElementsByTagName('t'));
+        } else {
+          const vs = c.getElementsByTagName('v');
+          v = vs.length ? vs[0].textContent : '';
+        }
+        if(col > 0) fila[col-1] = v;
+      }
+      filas.push(fila);
+    }
+    return filas;
+  });
+}
+
+/* Un archivo cualquiera → lista de jugadores */
+function leerArchivoPlantel(f){
+  const nombre = (f.name || '').toLowerCase();
+  if(/\.xlsx$/.test(nombre)) return f.arrayBuffer().then(xlsxAFilas).then(parsearFilas);
+  if(/\.xls$/.test(nombre))
+    return Promise.reject(new Error('Ese Excel es de un formato viejo (.xls). Abrilo y guardalo como .xlsx o como CSV.'));
+  return f.text().then(parsearCsv);
+}
+
+/* Los números que falten se completan con el primero libre, y si el archivo no
+   marcó ningún arquero quedan de arqueros el primero y el último de la lista. */
+function acomodarImportados(lista){
+  const usados = {};
+  lista.forEach(j=>{ if(j.n!=null && !usados[j.n]) usados[j.n] = true; });
+  let libre = 1;
+  lista.forEach(j=>{
+    if(j.n == null){
+      while(usados[libre]) libre++;
+      j.n = libre; usados[libre] = true;
+    }
+  });
+  let capitan = false;
+  lista.forEach(j=>{ if(j.cap && !capitan) capitan = true; else j.cap = false; });
+  if(lista.length && !lista.some(j=>j.arq)){
+    lista[0].arq = true;
+    lista[lista.length-1].arq = true;
+  }
+  return lista;
+}
+
+/* ---------- Pantalla de importar ---------------------------------------- */
+let importEq = 'local';
+let importLista = [];
+
+function abrirImportar(eq){
+  importEq = eq;
+  importLista = [];
+  jugadorAbierto = null;
+  const h = document.getElementById('hoja');
+  h.innerHTML =
+    '<div class="hoja-hdr' + (eq==='rival' ? ' rival' : '') + '">' +
+      '<div><div class="t1">📥 Importar plantel</div>' +
+      '<div class="t2">' + esc(nombreEquipo(eq)).toUpperCase() + '</div></div>' +
+      '<button class="cerrar" id="x-panel">✕</button></div>' +
+    '<div class="importar">' +
+      '<button class="btn pri" style="width:100%" id="imp-archivo">📗 Elegir un Excel o un CSV</button>' +
+      '<p class="hint">Sirve la planilla de siempre, o cualquier lista que tenga el número y el nombre de cada jugador.</p>' +
+      '<div class="imp-o">o pegá la lista acá</div>' +
+      '<textarea id="imp-texto" placeholder="7 Pérez Juan&#10;9 López Martín&#10;1 Gómez Ana (arquera)"></textarea>' +
+      '<p class="hint">📷 <b>¿La tenés en papel?</b> Sacale una foto, mantené el dedo sobre el texto de la foto para copiarlo y pegalo acá.</p>' +
+      '<div id="imp-previo"></div>' +
+      '<button class="btn ok" style="width:100%;margin-top:10px" id="imp-usar">✅ Usar esta lista</button>' +
+    '</div>';
+  h.querySelector('#x-panel').onclick = cerrarPanel;
+  h.querySelector('#imp-archivo').onclick = function(){ document.getElementById('file-plantel').click(); };
+  h.querySelector('#imp-texto').oninput = function(){ verPrevio(parsearTexto(this.value)); };
+  h.querySelector('#imp-usar').onclick = usarImportacion;
+  verPrevio([]);
+  document.getElementById('overlay').classList.add('on');
+}
+
+function verPrevio(lista){
+  importLista = acomodarImportados(lista || []);
+  const cont = document.getElementById('imp-previo');
+  const btn = document.getElementById('imp-usar');
+  if(!cont) return;
+  if(!importLista.length){
+    cont.innerHTML = '<div class="vacio">Todavía no hay nada para importar</div>';
+    btn.disabled = true;
+    return;
+  }
+  btn.disabled = false;
+  let h = '<div class="imp-tit">Entendí ' + importLista.length +
+          (importLista.length===1 ? ' jugador:' : ' jugadores:') + '</div><div class="imp-lista">';
+  importLista.forEach(function(j){
+    h += '<div class="imp-fila"><b>' + j.n + '</b> ' + esc(j.nombre) +
+         (j.arq ? ' <span class="imp-mk arq">🧤</span>' : '') +
+         (j.cap ? ' <span class="imp-mk cap">C</span>' : '') + '</div>';
+  });
+  h += '</div>';
+  cont.innerHTML = h;
+}
+
+function usarImportacion(){
+  if(!importLista.length){ toast('No hay ninguna lista para importar'); return; }
+  const eq = importEq;
+  const hayCargado = P().eventos.some(function(e){ return e.eq === eq; }) ||
+                     KEYS.some(function(k){ return totales(eq)[k] > 0; });
+  if(hayCargado && !confirm('Este partido ya tiene estadísticas cargadas de ' + nombreEquipo(eq) +
+      '.\n\nAl importar el plantel se borran esas cargas. Los partidos del historial no se tocan.\n\n¿Seguir?')) return;
+
+  P().eventos = P().eventos.filter(function(e){ return e.eq !== eq; });
+  equipoObj(eq).jugadores = importLista.map(function(j){
+    return nuevoJugador(j.n, j.nombre, j.arq, true, j.cap);
+  });
+  if(P().arco) P().arco[eq] = null;
+  if(eq === 'local') sincronizarPlantel();
+  guardar(); pintarTodo(); cerrarPanel();
+  toast('✅ Cargados ' + importLista.length + ' jugadores en ' + nombreEquipo(eq));
+}
+
+function elegirArchivoPlantel(f){
+  if(!f) return;
+  leerArchivoPlantel(f).then(function(lista){
+    if(!lista.length){
+      verPrevio([]);
+      toast('No encontré jugadores en ese archivo. Fijate que tenga el número y el nombre de cada uno.');
+      return;
+    }
+    verPrevio(lista);
+    toast('📗 Leí ' + lista.length + ' jugadores de ' + f.name);
+  }).catch(function(err){
+    toast('⚠️ ' + (err && err.message ? err.message : 'No pude leer ese archivo'));
+  });
+}
+
 /* ========================== Render: equipo ============================== */
 function pintarEquipo(){
   const ni=document.getElementById('eq-nombre');
@@ -1612,7 +1953,10 @@ function conectarPlantel(cont,eq){
       const usado = KEYS.some(k=>+j.st[k]>0);
       if(usado && !confirm('Ese jugador ya tiene estadísticas cargadas en este partido. ¿Quitarlo igual?')) return;
       if(P().arco && +P().arco[eq]===+j.n) P().arco[eq]=null;
+      const eraArquero = !!j.arq;
+      const eraElUltimo = (i === equipoObj(eq).jugadores.length-1);
       equipoObj(eq).jugadores.splice(i,1);
+      const heredero = acomodarArqueros(eq, eraArquero, eraElUltimo);
       // Los eventos apuntan a índices: se reindexan los posteriores
       P().eventos = P().eventos.filter(e=>!(e.eq===eq && e.idx===i));
       P().eventos.forEach(e=>{
@@ -1624,6 +1968,7 @@ function conectarPlantel(cont,eq){
       });
       if(eq==='local') sincronizarPlantel();
       guardar(); pintarTodo();
+      if(heredero) toast('🧤 '+nombreJug(heredero)+' pasa a ser el arquero');
     };
   });
 }
@@ -2348,6 +2693,13 @@ function iniciar(){
     const max=js.reduce((a,j)=>Math.max(a,+j.n||0),0);
     js.push(nuevoJugador(max+1,'',false,true,false));
     sincronizarPlantel(); guardar(); pintarTodo();
+  };
+  document.getElementById('btn-importar').onclick=()=>abrirImportar('local');
+  document.getElementById('btn-importar-rival').onclick=()=>abrirImportar('rival');
+  document.getElementById('file-plantel').onchange=e=>{
+    const f=e.target.files[0];
+    e.target.value='';
+    elegirArchivoPlantel(f);
   };
   document.getElementById('btn-backup').onclick=descargarRespaldo;
   document.getElementById('btn-restore').onclick=()=>document.getElementById('file-restore').click();
