@@ -346,6 +346,11 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
 .jug.arq .dor{background:var(--ambar-cl);color:#8a5a0b}
 .acc.arq{border-color:#f3ddb4;background:var(--ambar-cl);color:#8a5a0b}
 .jug .nom .supl{font-weight:600;font-size:10.5px;color:var(--gris);letter-spacing:.2px}
+.cap{
+  display:inline-block;background:var(--verde);color:#fff;border-radius:5px;
+  font-size:10px;font-weight:800;padding:0 5px;letter-spacing:.5px;vertical-align:1px;
+}
+.icobtn.cap-on{background:var(--celeste-cl);border-color:#cfe3f3}
 .en-arco{
   background:var(--ambar-cl);color:#8a5a0b;border:1px solid #f3ddb4;border-radius:11px;
   padding:10px;text-align:center;font-weight:800;font-size:13px;
@@ -556,6 +561,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <ol>
         <li>Entrá a <b>⚙️ Equipo</b> y cargá el nombre del equipo y el plantel con sus dorsales. Esto se hace <b>una sola vez</b>: queda guardado para todos los partidos.</li>
         <li>En la misma tabla, marcá con <b>✅</b> quiénes juegan hoy. Los que dejás en <b>⚪</b> no aparecen en la pantalla de carga, así los botones quedan más grandes y no te equivocás de jugador.</li>
+        <li>Marcá al <b>capitán</b> con el 🎖️ de su fila. Es uno solo por equipo y queda guardado para todos los partidos; en el Excel sale con una <b>(C)</b> al lado del nombre.</li>
         <li>Los <b>dorsales 1 y 15 ya vienen marcados como arqueros</b> 🧤, que es como se numeran siempre. Juega el 1; si entra el 15, tocalo y usá <b>🧤 Poner en el arco</b>. Si tu equipo usa otros números, marcalos con el 🧤 de la tabla.</li>
         <li>Completá el rival, la fecha, el lugar y el árbitro.</li>
         <li>Si querés seguir también a los jugadores del rival por nombre, cargalos en <b>🚨 Plantel rival</b>. Si no, no hace falta: ya vienen numerados del 1 al 15.</li>
@@ -617,6 +623,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
         <div><b>SUP-G</b> Goles en superioridad</div>
         <div><b>SUP%</b> Eficacia en superioridad</div>
         <div><b>MIN</b> Minutos jugados</div>
+        <div><b>C</b> Capitán del equipo</div>
         <div><b>PAR</b> Paradas del arquero</div>
         <div><b>GR</b> Goles recibidos</div>
         <div><b>PAR%</b> Eficacia del arquero = PAR ÷ (PAR + GR)</div>
@@ -772,10 +779,20 @@ function statsVacias(){ const o={}; KEYS.forEach(k=>o[k]=0); return o; }
 const DORSALES_ARQUERO = [1,15];
 function esDorsalArquero(n){ return DORSALES_ARQUERO.indexOf(+n)>=0; }
 
-function nuevoJugador(n,nombre,arq,conv){
+function nuevoJugador(n,nombre,arq,conv,cap){
   return {n:n, nombre:nombre||'', arq: arq===undefined ? esDorsalArquero(n) : !!arq,
-          conv:conv!==false, st:statsVacias()};
+          conv:conv!==false, cap:!!cap, st:statsVacias()};
 }
+/* Capitán: uno solo por equipo. Volver a tocarlo lo deja sin capitán. */
+function ponerCapitan(eq, idx){
+  const js = equipoObj(eq).jugadores;
+  const prende = !js[idx].cap;
+  js.forEach((j,i)=>{ j.cap = prende && i===idx; });
+  if(eq==='local') sincronizarPlantel();
+  guardar(); pintarTodo();
+  toast(prende ? '🎖️ '+nombreJug(js[idx])+' es el capitán' : 'El equipo queda sin capitán');
+}
+function capitanDe(eq){ return equipoObj(eq).jugadores.find(j=>j.cap) || null; }
 /* Está en la lista de hoy (los partidos viejos no tienen el dato: cuentan todos) */
 function esConv(j){ return !!j && j.conv!==false; }
 /* Puede jugar: está en la lista y no cumplió sus 3 exclusiones */
@@ -826,7 +843,7 @@ function nuevoPartido(plantel, nombreEquipo, cuerpo){
     arco:{local:null, rival:null},
     notas:['','','',''],
     golesPeriodo:{local:[0,0,0,0], rival:[0,0,0,0]},
-    local:{jugadores: plantel.map(j=>nuevoJugador(j.n,j.nombre,j.arq,j.conv))},
+    local:{jugadores: plantel.map(j=>nuevoJugador(j.n,j.nombre,j.arq,j.conv,j.cap))},
     rival_j:{jugadores: plantelVacio(PLANTEL_BASE)},
     eventos:[]
   };
@@ -1051,7 +1068,8 @@ function pintarVivo(){
     b.className='jug'+(equipoActivo==='rival'?' rival':'')+(fuera?' fuera':'')+(enArco?' arq':'');
     b.innerHTML =
       '<div class="dor">'+j.n+'</div><div class="info">'+
-      '<div class="nom">'+(j.arq?(enArco?'🧤 ':'🧤 <span class="supl">supl.</span> '):'')+(esc(j.nombre)||'Jugador '+j.n)+'</div>'+
+      '<div class="nom">'+(j.arq?(enArco?'🧤 ':'🧤 <span class="supl">supl.</span> '):'')+
+        (esc(j.nombre)||'Jugador '+j.n)+(j.cap?' <span class="cap">C</span>':'')+'</div>'+
       '<div class="res">'+(fuera
         ? '🚫 FUERA DEL PARTIDO · '+j.st.exc+' EXC'
         : (j.arq
@@ -1103,7 +1121,7 @@ function pintarPanel(){
   h.innerHTML =
     '<div class="hoja-hdr'+(eq==='rival'?' rival':'')+'">'+
       '<div class="dor">'+j.n+'</div>'+
-      '<div><div class="t1">'+(esc(j.nombre)||'Jugador '+j.n)+'</div>'+
+      '<div><div class="t1">'+(esc(j.nombre)||'Jugador '+j.n)+(j.cap?' <span class="cap">C</span>':'')+'</div>'+
       '<div class="t2">'+esc(nombreEquipo(eq)).toUpperCase()+' · PERÍODO '+P().periodo+'</div></div>'+
       '<button class="cerrar" id="x-panel">✕</button></div>'+
     '<div class="mini">'+
@@ -1159,7 +1177,7 @@ function tablaEquipo(eq){
   COLS.forEach(c=>h+='<th>'+c.t+'</th>');
   h += '</tr></thead><tbody>';
   js.forEach((j,idx)=>{
-    h += '<tr><td><b>'+j.n+'</b>'+(estaFuera(j)?' 🚫':'')+'</td><td class="nom"><input class="txt" data-eq="'+eq+'" data-i="'+idx+'" data-f="nombre" value="'+esc(j.nombre)+'" placeholder="Jugador '+j.n+'"></td>';
+    h += '<tr><td><b>'+j.n+'</b>'+(j.arq?' 🧤':'')+(j.cap?' 🎖️':'')+(estaFuera(j)?' 🚫':'')+'</td><td class="nom"><input class="txt" data-eq="'+eq+'" data-i="'+idx+'" data-f="nombre" value="'+esc(j.nombre)+'" placeholder="Jugador '+j.n+'"></td>';
     COLS.forEach(c=>{
       if(c.calc) h += '<td class="calc">'+pct(derivada(j.st,c.calc))+'</td>';
       else h += '<td><input type="number" min="0" inputmode="numeric" data-eq="'+eq+'" data-i="'+idx+'" data-f="'+c.k+'" value="'+(+j.st[c.k]||0)+'"></td>';
@@ -1365,13 +1383,15 @@ function pintarEquipo(){
 function tablaPlantel(eq){
   const js=equipoObj(eq).jugadores;
   let h='<table'+(eq==='rival'?' class="rival"':'')+'><thead><tr><th style="width:70px">#</th><th class="nom">NOMBRE</th>'+
-        '<th style="width:52px">HOY</th><th style="width:52px">ARCO</th><th style="width:56px"></th></tr></thead><tbody>';
+        '<th style="width:52px">HOY</th><th style="width:52px">ARCO</th><th style="width:52px">CAP</th>'+
+        '<th style="width:56px"></th></tr></thead><tbody>';
   js.forEach((j,i)=>{
     const conv = esConv(j);
     h+='<tr><td><input type="number" min="0" data-p="'+eq+'" data-i="'+i+'" data-f="n" value="'+j.n+'"></td>'+
        '<td class="nom"><input class="txt" data-p="'+eq+'" data-i="'+i+'" data-f="nombre" value="'+esc(j.nombre)+'" placeholder="Nombre y apellido"></td>'+
        '<td><button class="icobtn '+(conv?'on':'off')+'" data-conv="'+eq+'" data-i="'+i+'" title="Juega hoy">'+(conv?'✅':'⚪')+'</button></td>'+
        '<td><button class="icobtn '+(j.arq?'arq-on':'off')+'" data-arq="'+eq+'" data-i="'+i+'" title="Arquero">🧤</button></td>'+
+       '<td><button class="icobtn '+(j.cap?'cap-on':'off')+'" data-cap="'+eq+'" data-i="'+i+'" title="Capitán">🎖️</button></td>'+
        '<td><button class="icobtn" data-del="'+eq+'" data-i="'+i+'" title="Quitar">🗑️</button></td></tr>';
   });
   h+='</tbody></table>';
@@ -1406,6 +1426,9 @@ function conectarPlantel(cont,eq){
   cont.querySelectorAll('button[data-arq]').forEach(b=>{
     b.onclick=()=>alternarArquero(eq, +b.dataset.i);
   });
+  cont.querySelectorAll('button[data-cap]').forEach(b=>{
+    b.onclick=()=>ponerCapitan(eq, +b.dataset.i);
+  });
   cont.querySelectorAll('button[data-del]').forEach(b=>{
     b.onclick=()=>{
       const i=+b.dataset.i;
@@ -1430,7 +1453,7 @@ function conectarPlantel(cont,eq){
 }
 /* El plantel del partido es la fuente; se copia a la plantilla permanente */
 function sincronizarPlantel(){
-  S.plantel = P().local.jugadores.map(j=>({n:j.n, nombre:j.nombre, arq:!!j.arq, conv:esConv(j)}));
+  S.plantel = P().local.jugadores.map(j=>({n:j.n, nombre:j.nombre, arq:!!j.arq, conv:esConv(j), cap:!!j.cap}));
 }
 
 /* ========================== Render: historial =========================== */
@@ -1713,7 +1736,7 @@ function csvPartido(m){
     const js = (eq==='local'? m.local : m.rival_j).jugadores;
     const t = totalesDe(js);
     f.push([]); f.push([nombre.toUpperCase()]); f.push(cab);
-    js.forEach(j=>f.push([j.n, j.nombre||''].concat(
+    js.forEach(j=>f.push([j.n, (j.nombre||'') + (j.cap?' (C)':'')].concat(
       COLS.map(c=> c.calc ? pct(derivada(j.st,c.calc)) : (+j.st[c.k]||0)))));
     f.push(['','TOTALES'].concat(COLS.map(c=> c.calc ? pct(derivada(t,c.calc)) : t[c.k])));
   });
@@ -1828,7 +1851,7 @@ function hojaEquipo(m, eq, esLocal){
   for(let i=0;i<filasJug;i++){
     const r = 5+i, j = js[i];
     g.set('A'+r, j? j.n : i+1, ESTILO.NUM);
-    g.set('B'+r, j? (j.nombre||'') : '', ESTILO.INPUT);
+    g.set('B'+r, j? ((j.nombre||'') + (j.cap?' (C)':'')) : '', ESTILO.INPUT);
     COLS.forEach((c,ci)=>{
       const L = colLetra(3+ci);
       if(c.calc) g.set(L+r, null, ESTILO.PCT, FORMULA_CALC[c.calc](LE.k, r));
@@ -1960,6 +1983,7 @@ function hojaGuia(){
     ['SUP-G = Goles en superioridad', null],
     ['SUP%  = Eficacia en superioridad = SUP-G ÷ SUP-J', null],
     ['MIN   = Minutos jugados', null],
+    ['(C)   = Capitán del equipo', null],
     ['PAR   = Paradas del arquero', null],
     ['GR    = Goles recibidos por el arquero', null],
     ['PAR%  = Eficacia del arquero = PAR ÷ (PAR + GR)', null],
