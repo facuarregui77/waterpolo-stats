@@ -3,8 +3,8 @@
    guardado del navegador (cache: 'reload'), así cualquier cambio publicado se ve
    en el mismo momento en que se abre y nunca queda una copia vieja. Si no hay conexión, se abre
    la última versión guardada. Los íconos y el manifest salen de lo guardado. */
-const CACHE = 'waterpolo-stats-v6';
-const ARCHIVOS = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png'];
+const CACHE = 'waterpolo-stats-v7';
+const ARCHIVOS = ['./', './index.html', './manifest.webmanifest', './icon-180-v2.png', './icon-512-v2.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
