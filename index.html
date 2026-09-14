@@ -610,6 +610,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <ol start="4">
         <li>Arriba, elegí el <b>período</b> que se está jugando (1° 2° 3° 4°). Todo lo que cargues queda asignado a ese período.</li>
         <li>Si querés saber <b>en qué minuto</b> pasó cada cosa, tocá el <b>▶️</b> del reloj cuando arranca el período y el <b>⏸️</b> cuando para el juego. Cada período tiene su propio reloj y se pone en cero solo al cambiar. Es opcional: si no lo tocás, todo funciona igual.</li>
+        <li>El reloj <b>se frena solo a los 8 minutos</b> y te ofrece pasar al período siguiente. También <b>se frena solo cuando pedís un tiempo muerto</b>, que es cuando se para el juego.</li>
         <li>Al arquero tocalo como a cualquier jugador: su panel tiene el botón grande <b>🧤 PARADA</b>. Los <b>goles recibidos</b> se le cargan solos al que está en el arco cada vez que anotás un gol del rival.</li>
         <li>¿Tenés dos arqueros? Ataja el primero de la lista. Cuando entra el otro, tocalo y usá <b>🧤 Poner en el arco</b>: desde ahí los goles recibidos van a su cuenta. En la pantalla de carga, el que está afuera aparece como <b>🧤 supl.</b></li>
         <li>Tocá el jugador y después la acción. El panel <b>queda abierto</b>: si el mismo jugador hace varias cosas seguidas, seguí tocando sin cerrarlo.</li>
@@ -642,6 +643,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
         <li><b>Penal GOL</b> suma lanzamiento, gol, penal ejecutado y penal convertido.</li>
         <li><b>Penal errado</b> suma lanzamiento y penal ejecutado.</li>
         <li><b>Asistencia, Robo, Pérdida, Exc. forzada y Exc. cometida</b> suman solo lo suyo.</li>
+        <li><b>🟥 ROJA sin cambio</b> y <b>🟧 Expulsión c/cambio</b> sacan al jugador del partido: su tarjeta queda bloqueada, igual que con las 3 exclusiones. Si era el arquero, entra solo el otro que tengas marcado.</li>
         <li><b>🧤 PARADA</b> suma 1 parada al arquero. Sólo aparece en el panel del que está en el arco.</li>
         <li><b>⏸️ Tiempo muerto</b> no suma nada a ningún jugador: sólo queda anotado con su período y su minuto, y descuenta uno de los 2 del equipo.</li>
         <li><b>Gol recibido (GR)</b> no tiene botón: cada gol que le cargás al rival se le suma solo al arquero que está en el arco en ese momento.</li>
@@ -659,6 +661,8 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
         <div><b>PEN%</b> Eficacia penal</div>
         <div><b>EXC</b> Exclusión cometida (20 seg)</div>
         <div><b>EXF</b> Exclusión forzada al rival</div>
+        <div><b>ROJ</b> Roja, sin cambio</div>
+        <div><b>EXP</b> Expulsión con cambio</div>
         <div><b>ROB</b> Robo / intercepción</div>
         <div><b>PB</b> Pérdida de balón</div>
         <div><b>SUP-J</b> Superioridades jugadas (6v5)</div>
@@ -689,7 +693,9 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <h3>El arquero tiene goles recibidos de menos</h3>
       <p>Se cargan solos cuando anotás los goles del rival. Si ese día no seguiste al rival jugador por jugador, escribí el número a mano en la columna <b>GR</b> de <b>📋 Planilla</b>.</p>
       <h3>Me olvidé de frenar el reloj</h3>
-      <p>Frenalo con <b>⏸️</b> y tocá <b>↺</b> para poner en cero el reloj de ese período. Los minutos que ya quedaron anotados en cada acción no se tocan.</p>
+      <p>Frenalo con <b>⏸️</b> y tocá <b>↺</b> para poner en cero el reloj de ese período. Los minutos que ya quedaron anotados en cada acción no se tocan. Cuando el período llega a 8:00 el reloj muestra 🏁 y no arranca más: pasá al siguiente período, que tiene el suyo en cero.</p>
+      <h3>Marqué mal una roja</h3>
+      <p>Con <b>↩︎ Deshacer</b>, o con la <b>✕</b> de esa acción en <b>🕒 Últimas acciones</b>. El jugador vuelve a quedar habilitado al instante.</p>
       <h3>Faltan jugadores, o me sobran</h3>
       <p>En <b>⚙️ Equipo</b>: <b>➕ Agregar jugador</b> suma uno al final, y el 🗑️ de cada ficha lo quita. Podés tener los que necesites, con los números que quieras.</p>
       <h3>Cambio de teléfono, o quiero tener todo también en la compu</h3>
@@ -725,6 +731,8 @@ const COLS = [
   {k:'pen', t:'PEN%',  g:'🥅 PENALES',      calc:'pen'},
   {k:'exc', t:'EXC',   g:'🛡️ DEFENSA'},
   {k:'exf', t:'EXF',   g:'🛡️ DEFENSA'},
+  {k:'roj', t:'ROJ',   g:'🛡️ DEFENSA'},
+  {k:'exp', t:'EXP',   g:'🛡️ DEFENSA'},
   {k:'rob', t:'ROB',   g:'💥 EXTRAS'},
   {k:'pb',  t:'PB',    g:'💥 EXTRAS'},
   {k:'supj',t:'SUP-J', g:'⚡ SUPERIORIDAD'},
@@ -751,6 +759,8 @@ const ACCIONES = [
   {id:'pb',    lbl:'Pérdida',       ico:'💧', tipo:'neg', d:{pb:1}},
   {id:'exf',   lbl:'Exc. forzada',  ico:'➕', tipo:'pos', d:{exf:1}},
   {id:'exc',   lbl:'Exc. cometida', ico:'➖', tipo:'neg', d:{exc:1}},
+  {id:'roja',  lbl:'ROJA sin cambio', ico:'🟥', tipo:'neg', d:{roj:1}},
+  {id:'expc',  lbl:'Expulsión c/cambio', ico:'🟧', tipo:'neg', d:{exp:1}},
   /* Sólo aparece en el panel del jugador marcado como arquero */
   {id:'par',   lbl:'PARADA',        ico:'🧤', tipo:'arq', d:{par:1}, soloArq:true},
   /* Del equipo, no de un jugador: no suma estadísticas y se pide desde afuera */
@@ -779,13 +789,27 @@ function pedirTiempo(eq){
   const ev = {id:uid(), eq:eq, idx:-1, acc:'tm', per:P().periodo};
   if(cronAndando()) ev.t = cronSeg();
   P().eventos.push(ev);
+  const andaba = cronOk().corriendo;
+  cronPausar();                    /* con el tiempo muerto se para el juego */
   guardar(); pintarTodo();
-  toast('⏸️ Tiempo muerto de '+nombreEquipo(eq)+' ('+(usados+1)+' de '+MAX_TM+')', 'Deshacer', deshacer);
+  toast('⏸️ Tiempo muerto de '+nombreEquipo(eq)+' ('+(usados+1)+' de '+MAX_TM+')'+
+        (andaba?' · reloj frenado':''), 'Deshacer', deshacer);
 }
-function estaFuera(j){ return !!j && (+j.st.exc||0) >= MAX_EXC; }
+/* Queda fuera del partido por tres motivos: las 3 exclusiones de siempre, una
+   roja (se va sin que entre nadie) o una expulsión con cambio. */
+function estaFuera(j){
+  if(!j) return false;
+  return (+j.st.exc||0) >= MAX_EXC || (+j.st.roj||0) > 0 || (+j.st.exp||0) > 0;
+}
+function motivoFuera(j){
+  if(!j) return '';
+  if((+j.st.roj||0) > 0) return 'roja, sin cambio';
+  if((+j.st.exp||0) > 0) return 'expulsado con cambio';
+  return 'cumplió sus '+MAX_EXC+' exclusiones';
+}
 function nombreJug(j){ return j.nombre || ('#'+j.n); }
 function avisoFuera(j){
-  toast('🚫 ' + nombreJug(j) + ' cumplió sus 3 exclusiones: no puede jugar más este partido');
+  toast('🚫 ' + nombreJug(j) + ' no juega más este partido: ' + motivoFuera(j));
 }
 
 /* ---------- Filas del comparativo (igual que la solapa del Excel) -------- */
@@ -802,6 +826,8 @@ const COMPARATIVO = [
   {t:'Eficacia en superioridad', k:'sup', mejor:'alto', pct:true},
   {t:'Exclusiones cometidas',    k:'exc', mejor:'bajo'},
   {t:'Exclusiones forzadas',     k:'exf', mejor:'alto'},
+  {t:'Rojas (sin cambio)',       k:'roj', mejor:'bajo'},
+  {t:'Expulsiones con cambio',   k:'exp', mejor:'bajo'},
   {t:'Robos / intercepciones',   k:'rob', mejor:'alto'},
   {t:'Pérdidas de balón',        k:'pb',  mejor:'bajo'},
   {t:'Paradas del arquero',      k:'par', mejor:'alto'},
@@ -816,7 +842,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-09-14-1140';
+const VERSION_APP = '2026-09-14-1201';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -1018,23 +1044,43 @@ function marcador(eq){ return P().golesPeriodo[eq].reduce((a,b)=>a+(+b||0),0); }
 /* ========================== Reloj del período ============================
    Cuenta el tiempo jugado de cada período. Es opcional: si nunca se toca,
    todo funciona igual que antes y las acciones quedan sin minuto. */
+const DURACION_PERIODO = 8*60;     /* un período de waterpolo: 8 minutos */
 function cronOk(){ if(!P().cron) P().cron={per:[0,0,0,0], corriendo:false, desde:null}; return P().cron; }
 function cronSeg(){
   const c=cronOk();
   let s=+c.per[P().periodo-1]||0;
   if(c.corriendo && c.desde) s += Math.floor((Date.now()-c.desde)/1000);
-  return s;
+  return Math.min(s, DURACION_PERIODO);   /* nunca pasa de 8:00 */
 }
 function cronPausar(){
   const c=cronOk();
-  if(c.corriendo && c.desde) c.per[P().periodo-1] = (+c.per[P().periodo-1]||0) + Math.floor((Date.now()-c.desde)/1000);
+  if(c.corriendo && c.desde){
+    const total = (+c.per[P().periodo-1]||0) + Math.floor((Date.now()-c.desde)/1000);
+    c.per[P().periodo-1] = Math.min(total, DURACION_PERIODO);
+  }
   c.corriendo=false; c.desde=null;
 }
+function cronCompleto(){ return cronSeg() >= DURACION_PERIODO; }
 function cronTocar(){
   const c=cronOk();
-  if(c.corriendo) cronPausar();
+  if(c.corriendo){ cronPausar(); }
+  else if(cronCompleto()){
+    toast('⏱️ El '+P().periodo+'° período ya llegó a los 8 minutos. Pasá al siguiente o tocá ↺');
+    return;
+  }
   else { c.corriendo=true; c.desde=Date.now(); }
   guardar(); pintarHeader();
+}
+/* Los 8 minutos frenan el reloj sin que nadie lo toque */
+function finDePeriodo(){
+  const c=cronOk();
+  c.per[P().periodo-1] = DURACION_PERIODO;
+  c.corriendo=false; c.desde=null;
+  guardar(); pintarTodo();
+  const p = P().periodo;
+  if(p < 4) toast('⏱️ Terminó el '+p+'° período', 'Pasar al '+(p+1)+'°',
+                  ()=>{ P().periodo=p+1; guardar(); pintarTodo(); });
+  else      toast('⏱️ Terminó el 4° período');
 }
 function cronCero(){
   const c=cronOk();
@@ -1071,7 +1117,7 @@ function registrar(eq, idx, accId){
   guardar(); pintarTodo();
   if(estaFuera(j)){
     cerrarPanel();
-    toast('🚫 ' + nombreJug(j) + ' queda fuera del partido (3 exclusiones)', 'Deshacer', deshacer);
+    toast('🚫 ' + nombreJug(j) + ' queda fuera del partido — ' + motivoFuera(j), 'Deshacer', deshacer);
     return;
   }
   const esGol = !!a.d.g;
@@ -1136,8 +1182,9 @@ function pintarHeader(){
   const c=cronOk();
   const r=document.createElement('button');
   r.className='per reloj'+(c.corriendo?' andando':'');
-  r.title = c.corriendo ? 'Frenar el reloj' : 'Arrancar el reloj del período';
-  r.innerHTML = (c.corriendo?'⏸️':'▶️')+' <b id="reloj-txt">'+mmss(cronSeg())+'</b>';
+  const listo = cronCompleto();
+  r.title = c.corriendo ? 'Frenar el reloj' : (listo?'Este período llegó a los 8 minutos':'Arrancar el reloj del período');
+  r.innerHTML = (listo?'🏁':(c.corriendo?'⏸️':'▶️'))+' <b id="reloj-txt">'+mmss(cronSeg())+'</b>';
   r.onclick=cronTocar;
   cont.appendChild(r);
   if(!c.corriendo && cronSeg()>0){
@@ -1195,7 +1242,7 @@ function pintarVivo(){
       '<div class="nom">'+(j.arq?(enArco?'🧤 ':'🧤 <span class="supl">supl.</span> '):'')+
         (esc(j.nombre)||'Jugador '+j.n)+(j.cap?' <span class="cap">C</span>':'')+'</div>'+
       '<div class="res">'+(fuera
-        ? '🚫 FUERA DEL PARTIDO · '+j.st.exc+' EXC'
+        ? '🚫 FUERA · '+esc(motivoFuera(j))
         : (j.arq
             ? '<b>'+(+j.st.par||0)+' PAR</b> · '+(+j.st.gr||0)+' GR · '+pct(derivada(j.st,'par'))
             : '<b>'+j.st.g+' G</b> · '+j.st.lt+' LT · '+j.st.ast+' AST · '+j.st.exc+' EXC'))+'</div></div>';
@@ -1257,7 +1304,7 @@ function pintarPanel(){
       '<span>ROB <b>'+j.st.rob+'</b></span><span>PB <b>'+j.st.pb+'</b></span>'+
       '<span>EXC <b>'+j.st.exc+'</b></span><span>EXF <b>'+j.st.exf+'</b></span>'+
     '</div>'+
-    (fuera ? '<div class="aviso-fuera">🚫 Cumplió sus '+MAX_EXC+' exclusiones — no puede seguir disputando el partido</div>' : '')+
+    (fuera ? '<div class="aviso-fuera">🚫 '+esc(motivoFuera(j)).toUpperCase()+' — no puede seguir disputando el partido</div>' : '')+
     '<div style="padding:12px 16px 0">'+
       (enArco ? '<div class="en-arco">🧤 Está en el arco</div>'
               : '<button class="btn plano" style="width:100%" id="btn-arq">🧤 Poner en el arco</button>')+
@@ -1284,7 +1331,7 @@ function pintarPanel(){
 }
 /* Muestra el contador más representativo de cada botón */
 function contarAccion(st,a){
-  const orden=['par','pg','pe','cga','supg','supj','ast','rob','pb','exf','exc','g','lt'];
+  const orden=['par','pg','pe','cga','supg','supj','ast','rob','pb','exf','exc','roj','exp','g','lt'];
   for(const k of orden){ if(a.d[k]!==undefined) return st[k]; }
   return null;
 }
@@ -1926,9 +1973,10 @@ function csvTemporada(){
 
 /* ---------- Hoja de un equipo con el formato de la planilla original ----- */
 const LEYENDA = '📋 LEYENDA: LT=Lanzamientos Totales | G=Goles | EF%=Eficacia | CGA=Contragol Anotado | AST=Asistencia | '+
-  'PEN-E=Penal Ejecutado | PEN-G=Penal Gol | EXC=Exclusión Cometida | EXF=Exclusión Forzada | ROB=Robo | PB=Pérdida | '+
+  'PEN-E=Penal Ejecutado | PEN-G=Penal Gol | EXC=Exclusión Cometida | EXF=Exclusión Forzada | '+
+  'ROJ=Roja sin cambio | EXP=Expulsión con cambio | ROB=Robo | PB=Pérdida | '+
   'SUP-J=Superioridad Jugada | SUP-G=Superioridad Gol | MIN=Minutos | PAR=Paradas del arquero | GR=Goles recibidos | PAR%=Eficacia del arquero';
-const ANCHOS_PLANILLA = [5,24,7,7,8,7,7,8,8,8,7,7,7,7,8,8,8,7,7,7,8];
+const ANCHOS_PLANILLA = [5,24,7,7,8,7,7,8,8,8,7,7,7,7,7,7,8,8,8,7,7,7,8];
 
 /* Letra de columna de cada estadística según dónde empieza la tabla.
    Se calcula de COLS, así agregar una columna no rompe ninguna fórmula. */
@@ -2112,6 +2160,8 @@ function hojaGuia(){
     ['PEN%  = Eficacia penal = PEN-G ÷ PEN-E', null],
     ['EXC   = Exclusión cometida (20 seg fuera)', null],
     ['EXF   = Exclusión forzada al rival', null],
+    ['ROJ   = Roja: se va y no entra nadie en su lugar', null],
+    ['EXP   = Expulsión con cambio: se va y entra un compañero', null],
     ['ROB   = Robo / intercepción', null],
     ['PB    = Pérdida de balón', null],
     ['SUP-J = Superioridades jugadas (6v5)', null],
@@ -2241,7 +2291,7 @@ function iniciar(){
   if(S.partido.cron.corriendo && S.partido.cron.desde){
     const corrido = Math.floor((Date.now()-S.partido.cron.desde)/1000);
     const i = (S.partido.periodo||1)-1;
-    S.partido.cron.per[i] = (+S.partido.cron.per[i]||0) + Math.min(Math.max(corrido,0), 1200);
+    S.partido.cron.per[i] = Math.min((+S.partido.cron.per[i]||0) + Math.min(Math.max(corrido,0), 1200), 8*60);
   }
   S.partido.cron.corriendo=false; S.partido.cron.desde=null;
   if(!S.partido.golesPeriodo) S.partido.golesPeriodo={local:[0,0,0,0],rival:[0,0,0,0]};
@@ -2334,6 +2384,7 @@ function iniciar(){
   /* El reloj se refresca solo, sin repintar toda la pantalla */
   setInterval(function(){
     if(!S.partido.cron || !S.partido.cron.corriendo) return;
+    if(cronCompleto()){ finDePeriodo(); return; }
     const el=document.getElementById('reloj-txt');
     if(el) el.textContent = mmss(cronSeg());
   }, 1000);
