@@ -357,6 +357,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
   padding:10px 12px;font-size:12.5px;margin-bottom:12px;line-height:1.5;
 }
 .aviso.grave{background:var(--rojo-cl);border-color:#f3c3cb;color:#8d1b2e}
+.aviso.nueva{background:var(--verde-cl);border-color:#bfe6d6;color:#0b6b4a}
 .btn-aviso{
   display:inline-block;margin-left:4px;background:#fff;border:1px solid currentColor;
   border-radius:8px;padding:4px 10px;font-size:12px;font-weight:800;color:inherit;
@@ -453,6 +454,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
 </nav>
 
 <main>
+  <div id="aviso-version" class="aviso nueva" style="display:none"></div>
   <div id="aviso-almacen" class="aviso" style="display:none"></div>
 
   <!-- ============ EN VIVO ============ -->
@@ -692,6 +694,8 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <p>En <b>⚙️ Equipo</b>: <b>➕ Agregar jugador</b> suma uno al final, y el 🗑️ de cada ficha lo quita. Podés tener los que necesites, con los números que quieras.</p>
       <h3>Cambio de teléfono, o quiero tener todo también en la compu</h3>
       <p>En <b>⚙️ Equipo → ⬇️ Descargar respaldo</b> baja un archivo con todos tus partidos y tu plantel. En el otro dispositivo, <b>⬆️ Restaurar respaldo</b> y lo elegís. Todo se guarda solo en el dispositivo, así que el respaldo es la forma de mudarlo.</p>
+      <h3>Apareció un cartel verde de versión nueva</h3>
+      <p>Quiere decir que se publicó una mejora. Tocá <b>🔄 Actualizar ahora</b> y listo: tus partidos, tu plantel y el partido que estés cargando quedan intactos, porque están guardados en el dispositivo.</p>
       <h3>Apareció un aviso de color arriba de todo</h3>
       <p>Significa que este navegador está limitando el guardado. Podés cargar el partido igual, pero antes de cerrar tocá el botón <b>⬇️ Guardar respaldo ahora</b> que trae el propio aviso. Si no aparece ningún aviso, está todo bien.</p>
     </div>
@@ -803,6 +807,49 @@ const COMPARATIVO = [
   {t:'Paradas del arquero',      k:'par', mejor:'alto'},
   {t:'Eficacia del arquero',     k:'par', mejor:'alto', pct:true}
 ];
+
+/* ==========================================================================
+   AVISO DE VERSIÓN NUEVA
+   El navegador guarda la app para abrirla rápido y sin internet, así que una
+   pestaña abierta puede quedarse con la versión vieja. Cada tanto se le
+   pregunta al servidor si hay algo nuevo y, si lo hay, aparece un cartel con
+   el botón para actualizar. Con el archivo abierto desde la computadora no
+   corre nada de esto.
+   ========================================================================== */
+const VERSION_APP = '2026-09-14-1140';
+let ultimoControl = 0;
+
+function controlarVersion(forzado){
+  if(location.protocol.indexOf('http')!==0) return;
+  const ahora = Date.now();
+  if(!forzado && ahora - ultimoControl < 600000) return;   /* como mucho, cada 10 min */
+  ultimoControl = ahora;
+  fetch(location.pathname + '?v=' + ahora, {cache:'no-store'})
+    .then(r=>r.ok ? r.text() : null)
+    .then(txt=>{
+      if(!txt) return;
+      const m = /VERSION_APP = '([^']+)'/.exec(txt);
+      if(m && m[1] !== VERSION_APP) mostrarAvisoVersion();
+    })
+    .catch(()=>{});
+}
+let avisoVersionPuesto = false;
+function mostrarAvisoVersion(){
+  const el = document.getElementById('aviso-version');
+  if(!el || avisoVersionPuesto) return;
+  avisoVersionPuesto = true;
+  el.style.display='block';
+  el.innerHTML = '✨ <b>Hay una versión nueva de la app.</b> Tus partidos y tu plantel no se tocan.'
+    + ' <button class="btn-aviso" id="btn-actualizar">🔄 Actualizar ahora</button>';
+  document.getElementById('btn-actualizar').onclick = function(){
+    if('serviceWorker' in navigator && navigator.serviceWorker.controller){
+      /* se tira lo guardado para que baje la versión nueva sí o sí */
+      if(window.caches && caches.keys) caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k))))
+        .then(()=>location.reload()).catch(()=>location.reload());
+      else location.reload();
+    } else location.reload();
+  };
+}
 
 /* ========================== Estado y persistencia ======================== */
 const LS_KEY = 'waterpolo-stats-v1';
@@ -2276,6 +2323,12 @@ function iniciar(){
   document.addEventListener('keydown', e=>{
     if(e.key==='Escape') cerrarPanel();
     if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='z'){ e.preventDefault(); deshacer(); }
+  });
+
+  /* Se controla si hay versión nueva al abrir y cada vez que se vuelve a la app */
+  setTimeout(()=>controlarVersion(true), 3000);
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden) controlarVersion(false);
   });
 
   /* El reloj se refresca solo, sin repintar toda la pantalla */

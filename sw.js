@@ -1,8 +1,9 @@
 /* Waterpolo Stats — guarda la app en el dispositivo para que abra sin internet.
-   Estrategia: la app (index.html) se pide primero a internet, así cualquier cambio
-   publicado se ve en el mismo momento en que se abre. Si no hay conexión, se abre
+   Estrategia: la app (index.html) se pide primero a internet y salteando el
+   guardado del navegador (cache: 'reload'), así cualquier cambio publicado se ve
+   en el mismo momento en que se abre y nunca queda una copia vieja. Si no hay conexión, se abre
    la última versión guardada. Los íconos y el manifest salen de lo guardado. */
-const CACHE = 'waterpolo-stats-v2';
+const CACHE = 'waterpolo-stats-v3';
 const ARCHIVOS = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -34,7 +35,7 @@ self.addEventListener('fetch', e => {
   // La app: primero internet (siempre la última versión), y si falla, lo guardado.
   if (esLaApp(e.request)) {
     e.respondWith(
-      fetch(e.request).then(r => {
+      fetch(e.request.url, { cache: 'reload', credentials: 'same-origin' }).then(r => {
         if (r && r.status === 200 && r.type === 'basic') {
           const copia = r.clone();
           caches.open(CACHE).then(c => c.put('./index.html', copia));
