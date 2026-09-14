@@ -115,6 +115,20 @@ main{max-width:1180px;margin:0 auto;padding:14px 12px 90px}
 .sel-eq button.on-local{background:var(--azul);color:#fff}
 .sel-eq button.on-rival{background:var(--rojo);color:#fff}
 
+/* ---------- Tiempo muerto ---------- */
+.tm{
+  display:flex;align-items:center;gap:9px;width:100%;margin-bottom:10px;padding:10px 12px;
+  background:var(--card);border-radius:12px;box-shadow:var(--sombra);
+  border-left:5px solid var(--ambar);font-weight:700;font-size:13.5px;text-align:left;
+}
+.tm .ico{font-size:18px;line-height:1}
+.tm .marcas{margin-left:auto;display:flex;gap:4px;align-items:center}
+.tm .pt{width:13px;height:13px;border-radius:50%;background:#e2e9f1}
+.tm .pt.usado{background:var(--ambar)}
+.tm .cuenta{font-size:11.5px;color:var(--gris);font-weight:700}
+.tm:active{transform:scale(.98)}
+.tm.sin{border-left-color:var(--gris);background:#f2f5f9;color:var(--gris)}
+
 /* ---------- Grilla de jugadores ---------- */
 .jugadores{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:9px}
 .jug{
@@ -449,6 +463,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
     </div>
     <div class="card">
       <h2>👥 Tocá un jugador para cargar <span class="sub" id="vivo-sub"></span></h2>
+      <div id="tm-fila"></div>
       <div class="jugadores" id="grilla"></div>
       <p class="hint">Un toque en el jugador, un toque en la acción. El marcador, los % y los totales se calculan solos.</p>
     </div>
@@ -598,6 +613,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
         <li>Tocá el jugador y después la acción. El panel <b>queda abierto</b>: si el mismo jugador hace varias cosas seguidas, seguí tocando sin cerrarlo.</li>
         <li>¿Te equivocaste? <b>↩︎ Deshacer</b> arriba a la derecha borra lo último. Si el error fue hace varias jugadas, tocá la <b>✕</b> de esa acción en la lista de <b>🕒 Últimas acciones</b>.</li>
         <li>Con el botón <b>🚨 Rival</b> cargás las estadísticas del equipo contrario igual de rápido. El chip de color en la lista te dice de qué equipo fue cada acción: 🏊 el tuyo, 🚨 el rival.</li>
+        <li>Cuando pedís <b>tiempo muerto</b>, tocá el botón naranja que está arriba de los jugadores. La app lleva la cuenta: son <b>2 por partido</b> y cuando los usaste el botón se apaga. Con el equipo rival seleccionado anotás los de ellos.</li>
         <li>Escribí las <b>notas tácticas</b> del período mientras están frescas. Cada período tiene su propia nota y todas viajan al Excel.</li>
       </ol>
       <h3>📊 Después del partido</h3>
@@ -625,6 +641,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
         <li><b>Penal errado</b> suma lanzamiento y penal ejecutado.</li>
         <li><b>Asistencia, Robo, Pérdida, Exc. forzada y Exc. cometida</b> suman solo lo suyo.</li>
         <li><b>🧤 PARADA</b> suma 1 parada al arquero. Sólo aparece en el panel del que está en el arco.</li>
+        <li><b>⏸️ Tiempo muerto</b> no suma nada a ningún jugador: sólo queda anotado con su período y su minuto, y descuenta uno de los 2 del equipo.</li>
         <li><b>Gol recibido (GR)</b> no tiene botón: cada gol que le cargás al rival se le suma solo al arquero que está en el arco en ese momento.</li>
       </ul>
       <p class="hint">Los penales cuentan como lanzamiento, igual que en la planilla de siempre: <b>LT = todos los tiros al arco</b>. Por eso la eficacia nunca puede pasar del 100%.</p>
@@ -657,6 +674,8 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <h2>🔧 Si algo no funciona</h2>
       <h3>Cargué una acción al jugador equivocado</h3>
       <p>Buscala en <b>🕒 Últimas acciones</b> y tocá la <b>✕</b>. Se descuenta de sus estadísticas y del marcador. Después cargala en el jugador correcto.</p>
+      <h3>Anoté un tiempo muerto que no era</h3>
+      <p>Buscalo en <b>🕒 Últimas acciones</b> y tocá la <b>✕</b>, igual que cualquier otra carga. Te queda libre otra vez.</p>
       <h3>El marcador no coincide con el de la mesa</h3>
       <p>Andá a <b>📋 Planilla → ⏱️ Goles por período</b> y corregí el número a mano. Ahí mandás vos.</p>
       <h3>Quiero imprimir la planilla para el banco</h3>
@@ -729,7 +748,9 @@ const ACCIONES = [
   {id:'exf',   lbl:'Exc. forzada',  ico:'➕', tipo:'pos', d:{exf:1}},
   {id:'exc',   lbl:'Exc. cometida', ico:'➖', tipo:'neg', d:{exc:1}},
   /* Sólo aparece en el panel del jugador marcado como arquero */
-  {id:'par',   lbl:'PARADA',        ico:'🧤', tipo:'arq', d:{par:1}, soloArq:true}
+  {id:'par',   lbl:'PARADA',        ico:'🧤', tipo:'arq', d:{par:1}, soloArq:true},
+  /* Del equipo, no de un jugador: no suma estadísticas y se pide desde afuera */
+  {id:'tm',    lbl:'Tiempo muerto', ico:'⏸️', tipo:'neu', d:{}, equipo:true}
 ];
 const ACC_POR_ID = {};
 ACCIONES.forEach(a=>ACC_POR_ID[a.id]=a);
@@ -739,6 +760,24 @@ ACCIONES.forEach(a=>ACC_POR_ID[a.id]=a);
    partido: su tarjeta queda bloqueada y no admite cargar más acciones.
    Si fue un error, se corrige con Deshacer o bajando el EXC en la planilla. */
 const MAX_EXC = 3;
+
+/* Cada equipo puede pedir 2 tiempos muertos por partido */
+const MAX_TM = 2;
+function tiemposUsados(eq){
+  return P().eventos.filter(e=>e.acc==='tm' && e.eq===eq).length;
+}
+function pedirTiempo(eq){
+  const usados = tiemposUsados(eq);
+  if(usados >= MAX_TM){
+    toast('⏸️ '+nombreEquipo(eq)+' ya usó sus '+MAX_TM+' tiempos muertos');
+    return;
+  }
+  const ev = {id:uid(), eq:eq, idx:-1, acc:'tm', per:P().periodo};
+  if(cronAndando()) ev.t = cronSeg();
+  P().eventos.push(ev);
+  guardar(); pintarTodo();
+  toast('⏸️ Tiempo muerto de '+nombreEquipo(eq)+' ('+(usados+1)+' de '+MAX_TM+')', 'Deshacer', deshacer);
+}
 function estaFuera(j){ return !!j && (+j.st.exc||0) >= MAX_EXC; }
 function nombreJug(j){ return j.nombre || ('#'+j.n); }
 function avisoFuera(j){
@@ -1078,6 +1117,21 @@ function pintarVivo(){
   const ta=document.getElementById('notas');
   if(document.activeElement!==ta) ta.value = P().notas[P().periodo-1]||'';
 
+  /* Tiempos muertos del equipo que está seleccionado */
+  const usados = tiemposUsados(equipoActivo);
+  const quedan = MAX_TM - usados;
+  const tm = document.getElementById('tm-fila');
+  tm.innerHTML='';
+  const btm = document.createElement('button');
+  btm.className = 'tm'+(quedan<=0?' sin':'');
+  btm.innerHTML = '<span class="ico">⏸️</span>'+
+    '<span>'+(quedan>0 ? 'Pedí tiempo muerto de '+esc(nombreEquipo(equipoActivo))
+                       : esc(nombreEquipo(equipoActivo))+' ya usó los dos')+'</span>'+
+    '<span class="marcas"><span class="cuenta">'+usados+'/'+MAX_TM+'</span>'+
+      [0,1].map(i=>'<span class="pt'+(i<usados?' usado':'')+'"></span>').join('')+'</span>';
+  btm.onclick=()=>pedirTiempo(equipoActivo);
+  tm.appendChild(btm);
+
   const g=document.getElementById('grilla'); g.innerHTML='';
   const js = equipoObj(equipoActivo).jugadores;
   const idxArco = indiceArquero(equipoActivo);
@@ -1113,8 +1167,9 @@ function pintarVivo(){
   evs.forEach(ev=>{
     const a=ACC_POR_ID[ev.acc], j=equipoObj(ev.eq).jugadores[ev.idx];
     const li=document.createElement('li');
+    const quien = a.equipo ? esc(nombreEquipo(ev.eq)) : (esc(j?j.nombre:'')||('#'+(j?j.n:'?')));
     li.innerHTML='<span class="tag'+(ev.eq==='rival'?' rival':'')+'">'+ev.per+'° '+(ev.eq==='rival'?'🚨':'🏊')+'</span>'+
-      '<span class="txt">'+a.ico+' <b>'+esc(a.lbl)+'</b> — '+(esc(j?j.nombre:'')||('#'+(j?j.n:'?')))+
+      '<span class="txt">'+a.ico+' <b>'+esc(a.lbl)+'</b> — '+quien+
       (ev.t!=null?' <i>'+mmss(ev.t)+'</i>':'')+'</span>';
     const x=document.createElement('button'); x.className='quitar'; x.textContent='✕';
     x.onclick=()=>quitarEvento(ev.id);
@@ -1164,7 +1219,7 @@ function pintarPanel(){
     '<div style="padding:2px 16px 0"><button class="btn plano" style="width:100%" id="btn-undo-panel">↩︎ Deshacer última acción</button></div>';
   const grid = h.querySelector('#acc-grid');
   /* El botón de PARADA sólo existe para el que está en el arco, y va primero */
-  const lista = ACCIONES.filter(a=>!a.soloArq || j.arq);
+  const lista = ACCIONES.filter(a=>!a.equipo && (!a.soloArq || j.arq));
   if(j.arq) lista.unshift(lista.splice(lista.findIndex(a=>a.id==='par'),1)[0]);
   lista.forEach(a=>{
     const b=document.createElement('button');
@@ -1265,7 +1320,8 @@ function pintarComparativo(){
   r.className='resultado '+cls;
   r.innerHTML = txt + '<small>'+esc(nombreEquipo('local'))+' vs '+esc(nombreEquipo('rival'))+
     (P().fecha?' · '+fechaCorta(P().fecha):'')+
-    ' · Parciales '+P().golesPeriodo.local.map((v,i)=>v+'-'+P().golesPeriodo.rival[i]).join(' / ')+'</small>';
+    ' · Parciales '+P().golesPeriodo.local.map((v,i)=>v+'-'+P().golesPeriodo.rival[i]).join(' / ')+
+    ' · Tiempos muertos '+tiemposUsados('local')+'-'+tiemposUsados('rival')+'</small>';
 
   const c=document.getElementById('comp'); c.innerHTML='';
   COMPARATIVO.forEach(f=>{
@@ -1313,7 +1369,7 @@ function pintarCrono(){
     h+='<li class="'+(gol?'gol ':'')+(ev.eq==='rival'?'rival':'')+'">'+
        '<span class="min">'+ev.per+'° '+(ev.t!=null?mmss(ev.t):'')+'</span>'+
        '<span class="txt">'+(ev.eq==='rival'?'🚨':'🏊')+' '+a.ico+' '+esc(a.lbl)+' — '+
-         (esc(j?j.nombre:'')||('#'+(j?j.n:'?')))+'</span>'+
+         (a.equipo ? esc(nombreEquipo(ev.eq)) : (esc(j?j.nombre:'')||('#'+(j?j.n:'?'))))+'</span>'+
        (gol?'<span class="mk">'+mk.local+'-'+mk.rival+'</span>':'')+'</li>';
   });
   ul.innerHTML=h;
@@ -1789,7 +1845,8 @@ function csvPartido(m){
       const j=(ev.eq==='local'? m.local : m.rival_j).jugadores[ev.idx];
       if(a.d.g) mk[ev.eq]+=a.d.g;
       f.push([ev.per+'°', ev.t!=null?mmss(ev.t):'', ev.eq==='local'?nl:nr,
-              j?j.n:'', j?(j.nombre||('Jugador '+j.n)):'', a.lbl, a.d.g?(mk.local+' - '+mk.rival):'']);
+              (a.equipo||!j)?'':j.n, a.equipo?'(todo el equipo)':(j?(j.nombre||('Jugador '+j.n)):''),
+              a.lbl, a.d.g?(mk.local+' - '+mk.rival):'']);
     });
   }
   return {nombre:'Waterpolo '+limpiarNombre(nl)+' vs '+limpiarNombre(nr)+' '+(m.fecha||'')+'.csv', texto:csvArmar(f)};
@@ -1919,7 +1976,7 @@ function hojaEquipo(m, eq, esLocal){
 }
 
 function hojaComparativo(m, refL, refR, filaTotL, filaTotR){
-  const g = new Rejilla(COMPARATIVO.length+9,4);
+  const g = new Rejilla(COMPARATIVO.length+10,4);
   g.set('A1','📊 ANÁLISIS COMPARATIVO — '+(m.equipo||'Local')+' vs '+(m.rival||'Rival'), ESTILO.TITULO); g.merge('A1:D1');
   g.set('A2','ESTADÍSTICA',ESTILO.HEAD); g.set('B2',(m.equipo||'LOCAL'),ESTILO.HEAD);
   g.set('C2',(m.rival||'RIVAL'),ESTILO.HEADR); g.set('D2','VENTAJA',ESTILO.HEAD);
@@ -1945,7 +2002,12 @@ function hojaComparativo(m, refL, refR, filaTotL, filaTotR){
   g.set('C'+(rS+1),'Goles '+(m.rival||'Rival'),ESTILO.BOLDL);  g.set('D'+(rS+1),gr,ESTILO.TOT);
   g.set('A'+(rS+2),'Parciales por período',ESTILO.BOLDL);
   g.set('B'+(rS+2), m.golesPeriodo.local.map((v,i)=>v+'-'+m.golesPeriodo.rival[i]).join('  /  '), ESTILO.TXT); g.merge('B'+(rS+2)+':D'+(rS+2));
-  g.set('A'+(rS+3), gl>gr?'🏆 ¡VICTORIA!':(gr>gl?'🚨 Derrota':'🤝 Empate'), ESTILO.TITULO); g.merge('A'+(rS+3)+':D'+(rS+3));
+  const tmDe = eq => (m.eventos||[]).filter(e=>e.acc==='tm' && e.eq===eq).length;
+  g.set('A'+(rS+3),'Tiempos muertos pedidos',ESTILO.BOLDL);
+  g.set('B'+(rS+3), tmDe('local'), ESTILO.NUM);
+  g.set('C'+(rS+3),'', ESTILO.TXT);
+  g.set('D'+(rS+3), tmDe('rival'), ESTILO.NUM);
+  g.set('A'+(rS+4), gl>gr?'🏆 ¡VICTORIA!':(gr>gl?'🚨 Derrota':'🤝 Empate'), ESTILO.TITULO); g.merge('A'+(rS+4)+':D'+(rS+4));
   return g;
 }
 
@@ -1966,7 +2028,7 @@ function hojaCrono(m){
     g.set('B'+r, ev.t!=null ? mmss(ev.t) : '', ESTILO.NUM);
     g.set('C'+r, ev.eq==='local' ? (m.equipo||'Local') : (m.rival||'Rival'), ESTILO.TXT);
     g.set('D'+r, j? j.n : '', ESTILO.NUM);
-    g.set('E'+r, j? (j.nombre||('Jugador '+j.n)) : '', ESTILO.TXT);
+    g.set('E'+r, a.equipo ? '(todo el equipo)' : (j? (j.nombre||('Jugador '+j.n)) : ''), ESTILO.TXT);
     g.set('F'+r, a.lbl, ESTILO.TXT);
     g.set('G'+r, a.d.g ? (mk.local+' - '+mk.rival) : '', ESTILO.NUM);
   });
