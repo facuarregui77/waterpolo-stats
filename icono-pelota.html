@@ -2,14 +2,15 @@
 <!-- ==========================================================================
      DIBUJO DEL ICONO DE LA APP
      Una Mikasa de waterpolo: amarilla, con los gajos azul y rosa asomando a los
-     costados, la marca en negro sobre el panel del medio y las olitas del agua.
-     De acá salen icon-512-v3.png e icon-180-v3.png. Para rehacerlos, abrir este
+     costados, la marca en negro con la estrellita sobre la i, y las olitas.
+     De acá salen icon-512-v4.png e icon-180-v4.png. Para rehacerlos, abrir este
      archivo en Chrome y sacarle una captura del tamaño que corresponda, o con:
-       chrome --headless --hide-scrollbars --window-size=512,512
-              --screenshot=icon-512-v3.png icono-pelota.html
-     Para el de 180 se cambia width/height del <svg> a 180 y se engordan las
-     costuras, la espuma y la marca, para que se sigan viendo cuando queda chico.
-     Si se cambia el dibujo hay que cambiarles el NOMBRE a los .png (v4, v5...):
+       chrome --headless --hide-scrollbars --virtual-time-budget=3000
+              --window-size=512,512 --screenshot=icon-512-v4.png icono-pelota.html
+     (hace falta el virtual-time-budget: la estrellita la coloca un script que
+     mide dónde cae la I). Para el de 180 se cambian width/height del <svg> y se
+     engordan costuras, espuma y marca.
+     Si se cambia el dibujo hay que cambiarles el NOMBRE a los .png (v5, v6...):
      el navegador y el telefono guardan el icono por nombre y no lo sueltan.
      ========================================================================== -->
 <html><head><meta charset="utf-8"><style>
@@ -83,11 +84,12 @@ svg{display:block}
 
 
   <!-- la marca de la pelota, como en la de verdad -->
-  <text font-family="'Arial Black','Arial Bold',Arial,sans-serif" font-weight="900"
+  <text id="marca" font-family="'Arial Black','Arial Bold',Arial,sans-serif" font-weight="900"
         font-size="54" letter-spacing="1" fill="#15171c" opacity="0.88"
         text-anchor="middle" style="paint-order:stroke">
     <textPath href="#linea-marca" startOffset="50%">MIKASA</textPath>
   </text>
+  <polygon id="estrella" fill="#15171c" opacity="0.88" points=""/>
 
   <!-- olitas por delante -->
   <path d="M0,424 C 58,398 112,442 172,424 C 232,406 282,446 342,428 C 402,410 456,444 512,424 L512,512 L0,512 Z"
@@ -101,4 +103,23 @@ svg{display:block}
   <path d="M58,392 C 76,384 92,398 110,390" fill="none" stroke="#cfeeff" stroke-width="7" stroke-linecap="round" opacity="0.5"/>
   <path d="M404,398 C 422,390 438,404 456,396" fill="none" stroke="#cfeeff" stroke-width="7" stroke-linecap="round" opacity="0.5"/>
 </svg>
+<script>
+/* El puntito de la i es una estrellita, como en la pelota. Se calcula dónde
+   cae la I en el texto curvo y se dibuja justo encima. */
+(function(){
+  var t = document.getElementById('marca');
+  var e = t.getExtentOfChar(1);                    /* la I de MIKASA */
+  var tam = parseFloat(getComputedStyle(t).fontSize);
+  var cx = e.x + e.width/2;
+  var cy = e.y - tam*0.21;
+  var R  = tam*0.27, r = R*0.42, p = [];
+  for(var i=0;i<10;i++){
+    var rad = (i%2 ? r : R);
+    var ang = -Math.PI/2 + i*Math.PI/5;
+    p.push((cx + rad*Math.cos(ang)).toFixed(2) + ',' + (cy + rad*Math.sin(ang)).toFixed(2));
+  }
+  document.getElementById('estrella').setAttribute('points', p.join(' '));
+})();
+</script>
+
 </body></html>
