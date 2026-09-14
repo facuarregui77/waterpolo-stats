@@ -2,13 +2,15 @@
 <!-- ==========================================================================
      DIBUJO DEL ICONO DE LA APP
      Una Mikasa de waterpolo: amarilla, con los gajos azul y rosa asomando a los
-     costados, el granulado de la superficie y las olitas del agua.
-     De acá salen icon-512.png e icon-180.png. Para rehacerlos, abrir este
+     costados, la marca en negro sobre el panel del medio y las olitas del agua.
+     De acá salen icon-512-v3.png e icon-180-v3.png. Para rehacerlos, abrir este
      archivo en Chrome y sacarle una captura del tamaño que corresponda, o con:
        chrome --headless --hide-scrollbars --window-size=512,512
-              --screenshot=icon-512.png icono-pelota.html
+              --screenshot=icon-512-v3.png icono-pelota.html
      Para el de 180 se cambia width/height del <svg> a 180 y se engordan las
-     costuras y la espuma, para que se sigan viendo cuando queda chiquito.
+     costuras, la espuma y la marca, para que se sigan viendo cuando queda chico.
+     Si se cambia el dibujo hay que cambiarles el NOMBRE a los .png (v4, v5...):
+     el navegador y el telefono guardan el icono por nombre y no lo sueltan.
      ========================================================================== -->
 <html><head><meta charset="utf-8"><style>
 html,body{margin:0;padding:0;background:transparent}
@@ -39,6 +41,7 @@ svg{display:block}
       <stop offset="0.72" stop-color="#000000" stop-opacity="0"/>
       <stop offset="1" stop-color="#5a3800" stop-opacity="0.30"/>
     </radialGradient>
+    <path id="linea-marca" d="M 136,238 Q 256,272 376,238" fill="none"/>
     <clipPath id="bola"><circle cx="256" cy="243" r="175"/></clipPath>
     <clipPath id="arriba"><path d="M0,0 H512 V196 C 400,246 112,246 0,196 Z"/></clipPath>
     <clipPath id="abajo"><path d="M0,196 C 112,246 400,246 512,196 V512 H0 Z"/></clipPath>
@@ -77,6 +80,14 @@ svg{display:block}
   <circle cx="256" cy="243" r="175" fill="url(#volumen)"/>
   <circle cx="256" cy="243" r="175" fill="url(#brillo)"/>
   <circle cx="256" cy="243" r="175" fill="none" stroke="#a06f04" stroke-width="5" opacity="0.45"/>
+
+
+  <!-- la marca de la pelota, como en la de verdad -->
+  <text font-family="'Arial Black','Arial Bold',Arial,sans-serif" font-weight="900"
+        font-size="54" letter-spacing="1" fill="#15171c" opacity="0.88"
+        text-anchor="middle" style="paint-order:stroke">
+    <textPath href="#linea-marca" startOffset="50%">MIKASA</textPath>
+  </text>
 
   <!-- olitas por delante -->
   <path d="M0,424 C 58,398 112,442 172,424 C 232,406 282,446 342,428 C 402,410 456,444 512,424 L512,512 L0,512 Z"
