@@ -335,6 +335,34 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
 #toast button{color:#7fd4ff;font-weight:800;font-size:13px;white-space:nowrap}
 .badge{background:var(--verde);color:#fff;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:800}
 
+/* ---------- Reloj del período ---------- */
+.per.reloj{display:inline-flex;align-items:center;gap:5px;font-variant-numeric:tabular-nums}
+.per.reloj.andando{background:#fff;color:var(--azul-osc)}
+.per.reloj b{font-size:13px;font-weight:800;letter-spacing:.5px}
+.per.mini{padding:6px 9px}
+
+/* ---------- Arquero ---------- */
+.jug.arq{border-left-color:var(--ambar)}
+.jug.arq .dor{background:var(--ambar-cl);color:#8a5a0b}
+.acc.arq{border-color:#f3ddb4;background:var(--ambar-cl);color:#8a5a0b}
+.icobtn.on{background:var(--verde-cl);border-color:#bfe6d6}
+.icobtn.arq-on{background:var(--ambar-cl);border-color:#f3ddb4}
+.icobtn.off{opacity:.4}
+
+/* ---------- Cronología ---------- */
+.crono{list-style:none;margin:0;padding:0;max-height:420px;overflow-y:auto}
+.crono li{display:flex;align-items:center;gap:9px;padding:6px 2px;border-bottom:1px solid var(--linea);font-size:13px}
+.crono li:last-child{border-bottom:none}
+.crono .min{font-variant-numeric:tabular-nums;font-weight:800;font-size:11.5px;color:var(--gris);flex:0 0 64px}
+.crono .txt{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crono .mk{font-weight:800;font-variant-numeric:tabular-nums;font-size:11.5px;flex:0 0 auto;background:#eef3f8;color:var(--gris);border-radius:6px;padding:1px 7px}
+.crono li.gol .mk{background:var(--celeste-cl);color:var(--azul)}
+.crono li.gol.rival .mk{background:var(--rojo-cl);color:var(--rojo)}
+
+/* ---------- Resumen para compartir ---------- */
+.resumen{padding:14px 16px}
+.resumen textarea{min-height:250px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;background:#fff}
+
 /* ---------- Impresión ---------- */
 @media print{
   header,nav,.no-print,#toast,.overlay{display:none!important}
@@ -428,10 +456,15 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <h2>📈 Análisis comparativo</h2>
       <div class="comp" id="comp"></div>
     </div>
+    <div class="card" id="card-crono" style="display:none">
+      <h2>🕒 Cronología del partido <span class="sub" id="crono-sub"></span></h2>
+      <ul class="crono" id="crono"></ul>
+    </div>
     <div class="card no-print">
       <h2>💾 Guardar y seguir</h2>
       <div class="fila-btn">
         <button class="btn pri" id="btn-excel2">📗 Guardar partido en Excel</button>
+        <button class="btn plano" id="btn-compartir">📲 Resumen para WhatsApp</button>
         <button class="btn plano" onclick="window.print()">🖨️ Imprimir / PDF</button>
         <button class="btn ok" id="btn-cerrar">✅ Cerrar partido y empezar otro</button>
       </div>
@@ -501,9 +534,9 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
     <div class="card">
       <h2>🚀 En un minuto</h2>
       <div class="pasos">
-        <div class="paso"><span class="np">1</span><div><b>Cargá tu plantel una sola vez</b><br>En <b>⚙️ Equipo</b>: nombre del club, y el nombre y dorsal de cada jugador. Queda guardado para siempre.</div></div>
+        <div class="paso"><span class="np">1</span><div><b>Cargá tu plantel una sola vez</b><br>En <b>⚙️ Equipo</b>: nombre del club, y el nombre y dorsal de cada jugador. Queda guardado para siempre. Ahí mismo marcás con <b>✅</b> quién juega hoy y con <b>🧤</b> quién va al arco.</div></div>
         <div class="paso"><span class="np">2</span><div><b>Durante el partido, dos toques</b><br>En <b>⚡ En vivo</b>: tocás el jugador, tocás la acción. Listo. El marcador y los porcentajes se calculan solos.</div></div>
-        <div class="paso"><span class="np">3</span><div><b>Al final, guardás y seguís</b><br><b>📗 Excel</b> baja el partido con el formato de siempre. <b>✅ Cerrar partido</b> lo archiva y deja la planilla en cero para el próximo.</div></div>
+        <div class="paso"><span class="np">3</span><div><b>Al final, guardás y seguís</b><br><b>📗 Excel</b> baja el partido con el formato de siempre y <b>📲 Resumen para WhatsApp</b> arma el texto para el grupo. <b>✅ Cerrar partido</b> lo archiva y deja la planilla en cero para el próximo.</div></div>
       </div>
       <p class="hint">Eso es todo lo que hace falta saber. El resto de esta guía es para consultar cuando surja la duda.</p>
       <div class="alerta ok">
@@ -517,12 +550,16 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <h3>🎯 Antes del partido</h3>
       <ol>
         <li>Entrá a <b>⚙️ Equipo</b> y cargá el nombre del equipo y el plantel con sus dorsales. Esto se hace <b>una sola vez</b>: queda guardado para todos los partidos.</li>
+        <li>En la misma tabla, marcá con <b>✅</b> quiénes juegan hoy. Los que dejás en <b>⚪</b> no aparecen en la pantalla de carga, así los botones quedan más grandes y no te equivocás de jugador.</li>
+        <li>Marcá con <b>🧤</b> al arquero que arranca en el arco. Puede haber uno solo por equipo: si después entra el suplente, tocalo a él y el 🧤 se pasa solo.</li>
         <li>Completá el rival, la fecha, el lugar y el árbitro.</li>
         <li>Si querés seguir también a los jugadores del rival por nombre, cargalos en <b>🚨 Plantel rival</b>. Si no, no hace falta: ya vienen numerados del 1 al 15.</li>
       </ol>
       <h3>⏱️ Durante el partido</h3>
       <ol start="4">
         <li>Arriba, elegí el <b>período</b> que se está jugando (1° 2° 3° 4°). Todo lo que cargues queda asignado a ese período.</li>
+        <li>Si querés saber <b>en qué minuto</b> pasó cada cosa, tocá el <b>▶️</b> del reloj cuando arranca el período y el <b>⏸️</b> cuando para el juego. Cada período tiene su propio reloj y se pone en cero solo al cambiar. Es opcional: si no lo tocás, todo funciona igual.</li>
+        <li>Al arquero tocalo como a cualquier jugador: su panel tiene el botón grande <b>🧤 PARADA</b>. Los <b>goles recibidos</b> se le cargan solos cada vez que anotás un gol del rival.</li>
         <li>Tocá el jugador y después la acción. El panel <b>queda abierto</b>: si el mismo jugador hace varias cosas seguidas, seguí tocando sin cerrarlo.</li>
         <li>¿Te equivocaste? <b>↩︎ Deshacer</b> arriba a la derecha borra lo último. Si el error fue hace varias jugadas, tocá la <b>✕</b> de esa acción en la lista de <b>🕒 Últimas acciones</b>.</li>
         <li>Con el botón <b>🚨 Rival</b> cargás las estadísticas del equipo contrario igual de rápido. El chip de color en la lista te dice de qué equipo fue cada acción: 🏊 el tuyo, 🚨 el rival.</li>
@@ -530,7 +567,8 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       </ol>
       <h3>📊 Después del partido</h3>
       <ol start="9">
-        <li>Mirá <b>📈 Comparativo</b>: quién ganó cada rubro, las barras enfrentadas y el resultado con los parciales.</li>
+        <li>Mirá <b>📈 Comparativo</b>: quién ganó cada rubro, las barras enfrentadas y el resultado con los parciales. Más abajo está la <b>🕒 Cronología</b>: todo el partido en orden, con el marcador jugada por jugada.</li>
+        <li>Tocá <b>📲 Resumen para WhatsApp</b> y mandá el resultado, los goleadores y las paradas al grupo del club. Sale escrito, listo para pegar.</li>
         <li>Si llevás el control de los <b>MINUTOS</b>, cargalos en <b>📋 Planilla</b>. Ahí también podés corregir a mano cualquier número.</li>
         <li>Tocá <b>📗 Excel</b> para bajar el partido con el mismo formato de siempre.</li>
         <li>Tocá <b>✅ Cerrar partido</b>: se archiva en <b>🗂️ Historial</b> y la planilla queda limpia, con tu plantel ya cargado para el próximo.</li>
@@ -551,6 +589,8 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
         <li><b>Penal GOL</b> suma lanzamiento, gol, penal ejecutado y penal convertido.</li>
         <li><b>Penal errado</b> suma lanzamiento y penal ejecutado.</li>
         <li><b>Asistencia, Robo, Pérdida, Exc. forzada y Exc. cometida</b> suman solo lo suyo.</li>
+        <li><b>🧤 PARADA</b> suma 1 parada al arquero. Sólo aparece en el panel del que está en el arco.</li>
+        <li><b>Gol recibido (GR)</b> no tiene botón: cada gol que le cargás al rival se le suma solo al arquero que está en el arco en ese momento.</li>
       </ul>
       <p class="hint">Los penales cuentan como lanzamiento, igual que en la planilla de siempre: <b>LT = todos los tiros al arco</b>. Por eso la eficacia nunca puede pasar del 100%.</p>
       <h3>🔑 Leyenda completa</h3>
@@ -571,6 +611,9 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
         <div><b>SUP-G</b> Goles en superioridad</div>
         <div><b>SUP%</b> Eficacia en superioridad</div>
         <div><b>MIN</b> Minutos jugados</div>
+        <div><b>PAR</b> Paradas del arquero</div>
+        <div><b>GR</b> Goles recibidos</div>
+        <div><b>PAR%</b> Eficacia del arquero = PAR ÷ (PAR + GR)</div>
       </div>
     </div>
 
@@ -582,6 +625,12 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <p>Andá a <b>📋 Planilla → ⏱️ Goles por período</b> y corregí el número a mano. Ahí mandás vos.</p>
       <h3>Quiero imprimir la planilla para el banco</h3>
       <p>En <b>📈 Comparativo</b> está el botón <b>🖨️ Imprimir / PDF</b>. Sale la planilla completa y el comparativo, sin los botones.</p>
+      <h3>No me aparece el botón de PARADA</h3>
+      <p>Es porque nadie está marcado en el arco. Tocá al arquero y usá <b>🧤 Poner en el arco</b>, o marcá el 🧤 en <b>⚙️ Equipo</b>. Sólo uno por equipo puede estar en el arco.</p>
+      <h3>El arquero tiene goles recibidos de menos</h3>
+      <p>Se cargan solos cuando anotás los goles del rival. Si ese día no seguiste al rival jugador por jugador, escribí el número a mano en la columna <b>GR</b> de <b>📋 Planilla</b>.</p>
+      <h3>Me olvidé de frenar el reloj</h3>
+      <p>Frenalo con <b>⏸️</b> y tocá <b>↺</b> para poner en cero el reloj de ese período. Los minutos que ya quedaron anotados en cada acción no se tocan.</p>
       <h3>Faltan jugadores, o me sobran</h3>
       <p>En <b>⚙️ Equipo</b>: <b>➕ Agregar jugador</b> suma uno al final, y el 🗑️ de cada fila lo quita. Podés tener los que necesites.</p>
       <h3>Cambio de teléfono, o quiero tener todo también en la compu</h3>
@@ -620,7 +669,10 @@ const COLS = [
   {k:'supj',t:'SUP-J', g:'⚡ SUPERIORIDAD'},
   {k:'supg',t:'SUP-G', g:'⚡ SUPERIORIDAD'},
   {k:'sup', t:'SUP%',  g:'⚡ SUPERIORIDAD', calc:'sup'},
-  {k:'min', t:'MIN',   g:'⏱️ TIEMPO'}
+  {k:'min', t:'MIN',   g:'⏱️ TIEMPO'},
+  {k:'par', t:'PAR',   g:'🧤 ARCO'},
+  {k:'gr',  t:'GR',    g:'🧤 ARCO'},
+  {k:'parp',t:'PAR%',  g:'🧤 ARCO',        calc:'par'}
 ];
 const KEYS = COLS.filter(c=>!c.calc).map(c=>c.k);
 
@@ -637,7 +689,9 @@ const ACCIONES = [
   {id:'rob',   lbl:'Robo',          ico:'🛡️', tipo:'pos', d:{rob:1}},
   {id:'pb',    lbl:'Pérdida',       ico:'💧', tipo:'neg', d:{pb:1}},
   {id:'exf',   lbl:'Exc. forzada',  ico:'➕', tipo:'pos', d:{exf:1}},
-  {id:'exc',   lbl:'Exc. cometida', ico:'➖', tipo:'neg', d:{exc:1}}
+  {id:'exc',   lbl:'Exc. cometida', ico:'➖', tipo:'neg', d:{exc:1}},
+  /* Sólo aparece en el panel del jugador marcado como arquero */
+  {id:'par',   lbl:'PARADA',        ico:'🧤', tipo:'arq', d:{par:1}, soloArq:true}
 ];
 const ACC_POR_ID = {};
 ACCIONES.forEach(a=>ACC_POR_ID[a.id]=a);
@@ -668,7 +722,9 @@ const COMPARATIVO = [
   {t:'Exclusiones cometidas',    k:'exc', mejor:'bajo'},
   {t:'Exclusiones forzadas',     k:'exf', mejor:'alto'},
   {t:'Robos / intercepciones',   k:'rob', mejor:'alto'},
-  {t:'Pérdidas de balón',        k:'pb',  mejor:'bajo'}
+  {t:'Pérdidas de balón',        k:'pb',  mejor:'bajo'},
+  {t:'Paradas del arquero',      k:'par', mejor:'alto'},
+  {t:'Eficacia del arquero',     k:'par', mejor:'alto', pct:true}
 ];
 
 /* ========================== Estado y persistencia ======================== */
@@ -702,7 +758,25 @@ function completarPlantel(js, cant, crear){
   }
 }
 function statsVacias(){ const o={}; KEYS.forEach(k=>o[k]=0); return o; }
-function nuevoJugador(n,nombre){ return {n:n, nombre:nombre||'', st:statsVacias()}; }
+function nuevoJugador(n,nombre,arq,conv){
+  return {n:n, nombre:nombre||'', arq:!!arq, conv:conv!==false, st:statsVacias()};
+}
+/* Está en la lista de hoy (los partidos viejos no tienen el dato: cuentan todos) */
+function esConv(j){ return !!j && j.conv!==false; }
+/* Índice del arquero que está en el arco, o -1 */
+function indiceArquero(eq){
+  return equipoObj(eq).jugadores.findIndex(j=>j.arq && esConv(j));
+}
+/* Sólo uno por equipo puede estar en el arco */
+function ponerArquero(eq, idx){
+  const js = equipoObj(eq).jugadores;
+  const prende = !js[idx].arq;
+  js.forEach((j,i)=>{ j.arq = prende && i===idx; });
+  if(eq==='local') sincronizarPlantel();
+  guardar(); pintarTodo();
+  toast(prende ? '🧤 '+nombreJug(js[idx])+' queda en el arco'
+               : '🧤 '+nombreJug(js[idx])+' ya no está en el arco');
+}
 function plantelVacio(cant){ const a=[]; for(let i=1;i<=cant;i++) a.push(nuevoJugador(i,'')); return a; }
 function hoyISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
@@ -714,9 +788,10 @@ function nuevoPartido(plantel, nombreEquipo, cuerpo){
     cuerpo: cuerpo || '',
     rival:'', cuerpoRival:'', fecha: hoyISO(), lugar:'', arbitro:'',
     periodo:1,
+    cron:{per:[0,0,0,0], corriendo:false, desde:null},
     notas:['','','',''],
     golesPeriodo:{local:[0,0,0,0], rival:[0,0,0,0]},
-    local:{jugadores: plantel.map(j=>nuevoJugador(j.n,j.nombre))},
+    local:{jugadores: plantel.map(j=>nuevoJugador(j.n,j.nombre,j.arq,j.conv))},
     rival_j:{jugadores: plantelVacio(PLANTEL_BASE)},
     eventos:[]
   };
@@ -772,10 +847,45 @@ function derivada(st, cual){
   if(cual==='ef')  return st.lt>0 ? st.g/st.lt   : 0;
   if(cual==='pen') return st.pe>0 ? st.pg/st.pe  : 0;
   if(cual==='sup') return st.supj>0? st.supg/st.supj : 0;
+  /* Eficacia del arquero = paradas ÷ (paradas + goles recibidos) */
+  if(cual==='par'){ const tiros=(+st.par||0)+(+st.gr||0); return tiros>0 ? st.par/tiros : 0; }
   return 0;
 }
 function pct(x){ return (x*100).toFixed(0)+'%'; }
 function marcador(eq){ return P().golesPeriodo[eq].reduce((a,b)=>a+(+b||0),0); }
+
+/* ========================== Reloj del período ============================
+   Cuenta el tiempo jugado de cada período. Es opcional: si nunca se toca,
+   todo funciona igual que antes y las acciones quedan sin minuto. */
+function cronOk(){ if(!P().cron) P().cron={per:[0,0,0,0], corriendo:false, desde:null}; return P().cron; }
+function cronSeg(){
+  const c=cronOk();
+  let s=+c.per[P().periodo-1]||0;
+  if(c.corriendo && c.desde) s += Math.floor((Date.now()-c.desde)/1000);
+  return s;
+}
+function cronPausar(){
+  const c=cronOk();
+  if(c.corriendo && c.desde) c.per[P().periodo-1] = (+c.per[P().periodo-1]||0) + Math.floor((Date.now()-c.desde)/1000);
+  c.corriendo=false; c.desde=null;
+}
+function cronTocar(){
+  const c=cronOk();
+  if(c.corriendo) cronPausar();
+  else { c.corriendo=true; c.desde=Date.now(); }
+  guardar(); pintarHeader();
+}
+function cronCero(){
+  const c=cronOk();
+  c.corriendo=false; c.desde=null; c.per[P().periodo-1]=0;
+  guardar(); pintarHeader();
+}
+/* ¿El reloj está en uso en este período? */
+function cronAndando(){ const c=cronOk(); return c.corriendo || cronSeg()>0; }
+function mmss(s){
+  s=Math.max(0,Math.floor(+s||0));
+  return Math.floor(s/60)+"'"+String(s%60).padStart(2,'0');
+}
 
 /* ========================== Eventos en vivo ============================== */
 function registrar(eq, idx, accId){
@@ -784,7 +894,19 @@ function registrar(eq, idx, accId){
   if(estaFuera(j)){ avisoFuera(j); return; }
   for(const k in a.d) j.st[k] = (+j.st[k]||0) + a.d[k];
   if(a.d.g) P().golesPeriodo[eq][P().periodo-1] += a.d.g;
-  P().eventos.push({id:uid(), eq:eq, idx:idx, acc:accId, per:P().periodo});
+  const ev = {id:uid(), eq:eq, idx:idx, acc:accId, per:P().periodo};
+  if(cronAndando()) ev.t = cronSeg();
+  /* Un gol del rival es un gol recibido por el arquero que está en el arco */
+  if(a.d.g){
+    const otro = eq==='local' ? 'rival' : 'local';
+    const k = indiceArquero(otro);
+    if(k>=0){
+      const arq = equipoObj(otro).jugadores[k];
+      arq.st.gr = (+arq.st.gr||0) + a.d.g;
+      ev.gr = {eq:otro, idx:k, n:a.d.g};
+    }
+  }
+  P().eventos.push(ev);
   guardar(); pintarTodo();
   if(estaFuera(j)){
     cerrarPanel();
@@ -802,6 +924,10 @@ function quitarEvento(evId){
   const j = equipoObj(ev.eq).jugadores[ev.idx];
   if(j){ for(const k in a.d) j.st[k] = Math.max(0,(+j.st[k]||0) - a.d[k]); }
   if(a.d.g) P().golesPeriodo[ev.eq][ev.per-1] = Math.max(0, P().golesPeriodo[ev.eq][ev.per-1]-a.d.g);
+  if(ev.gr){
+    const arq = equipoObj(ev.gr.eq).jugadores[ev.gr.idx];
+    if(arq) arq.st.gr = Math.max(0,(+arq.st.gr||0) - ev.gr.n);
+  }
   P().eventos.splice(i,1);
   guardar(); pintarTodo();
 }
@@ -840,9 +966,25 @@ function pintarHeader(){
     const b=document.createElement('button');
     b.className='per'+(P().periodo===i+1?' on':'');
     b.innerHTML = et+' <b>'+P().golesPeriodo.local[i]+'-'+P().golesPeriodo.rival[i]+'</b>';
-    b.onclick=()=>{ P().periodo=i+1; guardar(); pintarTodo(); };
+    /* Al cambiar de período el reloj se frena: cada período tiene el suyo */
+    b.onclick=()=>{ cronPausar(); P().periodo=i+1; guardar(); pintarTodo(); };
     cont.appendChild(b);
   });
+
+  /* Reloj: un toque arranca, otro frena. Cada período lleva su propio tiempo */
+  const c=cronOk();
+  const r=document.createElement('button');
+  r.className='per reloj'+(c.corriendo?' andando':'');
+  r.title = c.corriendo ? 'Frenar el reloj' : 'Arrancar el reloj del período';
+  r.innerHTML = (c.corriendo?'⏸️':'▶️')+' <b id="reloj-txt">'+mmss(cronSeg())+'</b>';
+  r.onclick=cronTocar;
+  cont.appendChild(r);
+  if(!c.corriendo && cronSeg()>0){
+    const z=document.createElement('button');
+    z.className='per mini'; z.textContent='↺'; z.title='Poner el reloj de este período en cero';
+    z.onclick=cronCero;
+    cont.appendChild(z);
+  }
 }
 function fechaCorta(iso){
   if(!iso) return '';
@@ -857,26 +999,35 @@ function pintarVivo(){
   const bl=document.getElementById('sel-local'), br=document.getElementById('sel-rival');
   bl.className = equipoActivo==='local'?'on-local':'';
   br.className = equipoActivo==='rival'?'on-rival':'';
-  document.getElementById('vivo-sub').textContent = 'Período '+P().periodo+' · '+nombreEquipo(equipoActivo);
   document.getElementById('nota-per').textContent = 'Período '+P().periodo;
   const ta=document.getElementById('notas');
   if(document.activeElement!==ta) ta.value = P().notas[P().periodo-1]||'';
 
   const g=document.getElementById('grilla'); g.innerHTML='';
   const js = equipoObj(equipoActivo).jugadores;
+  let enLista = 0;
   js.forEach((j,i)=>{
+    if(!esConv(j)) return;          /* los que hoy no juegan no ocupan lugar */
+    enLista++;
     const b=document.createElement('button');
     const fuera = estaFuera(j);
-    b.className='jug'+(equipoActivo==='rival'?' rival':'')+(fuera?' fuera':'');
+    b.className='jug'+(equipoActivo==='rival'?' rival':'')+(fuera?' fuera':'')+(j.arq?' arq':'');
     b.innerHTML =
       '<div class="dor">'+j.n+'</div><div class="info">'+
-      '<div class="nom">'+(esc(j.nombre)||'Jugador '+j.n)+'</div>'+
+      '<div class="nom">'+(j.arq?'🧤 ':'')+(esc(j.nombre)||'Jugador '+j.n)+'</div>'+
       '<div class="res">'+(fuera
         ? '🚫 FUERA DEL PARTIDO · '+j.st.exc+' EXC'
-        : '<b>'+j.st.g+' G</b> · '+j.st.lt+' LT · '+j.st.ast+' AST · '+j.st.exc+' EXC')+'</div></div>';
+        : (j.arq
+            ? '<b>'+(+j.st.par||0)+' PAR</b> · '+(+j.st.gr||0)+' GR · '+pct(derivada(j.st,'par'))
+            : '<b>'+j.st.g+' G</b> · '+j.st.lt+' LT · '+j.st.ast+' AST · '+j.st.exc+' EXC'))+'</div></div>';
     b.onclick = fuera ? (()=>avisoFuera(j)) : (()=>abrirPanel(equipoActivo,i));
     g.appendChild(b);
   });
+  if(!enLista){
+    g.innerHTML='<div class="vacio">Nadie está marcado para jugar hoy.<br>Marcá la lista en <b>⚙️ Equipo</b> con el botón ✅ de cada jugador.</div>';
+  }
+  document.getElementById('vivo-sub').textContent =
+    'Período '+P().periodo+' · '+nombreEquipo(equipoActivo)+' · '+enLista+' en lista';
 
   const f=document.getElementById('feed'); f.innerHTML='';
   const evs = P().eventos.slice(-12).reverse();
@@ -885,7 +1036,8 @@ function pintarVivo(){
     const a=ACC_POR_ID[ev.acc], j=equipoObj(ev.eq).jugadores[ev.idx];
     const li=document.createElement('li');
     li.innerHTML='<span class="tag'+(ev.eq==='rival'?' rival':'')+'">'+ev.per+'° '+(ev.eq==='rival'?'🚨':'🏊')+'</span>'+
-      '<span class="txt">'+a.ico+' <b>'+esc(a.lbl)+'</b> — '+(esc(j?j.nombre:'')||('#'+(j?j.n:'?')))+'</span>';
+      '<span class="txt">'+a.ico+' <b>'+esc(a.lbl)+'</b> — '+(esc(j?j.nombre:'')||('#'+(j?j.n:'?')))+
+      (ev.t!=null?' <i>'+mmss(ev.t)+'</i>':'')+'</span>';
     const x=document.createElement('button'); x.className='quitar'; x.textContent='✕';
     x.onclick=()=>quitarEvento(ev.id);
     li.appendChild(x); f.appendChild(li);
@@ -917,18 +1069,25 @@ function pintarPanel(){
       '<div class="t2">'+esc(nombreEquipo(eq)).toUpperCase()+' · PERÍODO '+P().periodo+'</div></div>'+
       '<button class="cerrar" id="x-panel">✕</button></div>'+
     '<div class="mini">'+
+      (j.arq ? '<span>PAR <b>'+(+j.st.par||0)+'</b></span><span>GR <b>'+(+j.st.gr||0)+'</b></span>'+
+               '<span>ATAJ <b>'+pct(derivada(j.st,'par'))+'</b></span>' : '')+
       '<span>G <b>'+j.st.g+'</b></span><span>LT <b>'+j.st.lt+'</b></span>'+
       '<span>EF <b>'+pct(derivada(j.st,'ef'))+'</b></span><span>AST <b>'+j.st.ast+'</b></span>'+
       '<span>ROB <b>'+j.st.rob+'</b></span><span>PB <b>'+j.st.pb+'</b></span>'+
       '<span>EXC <b>'+j.st.exc+'</b></span><span>EXF <b>'+j.st.exf+'</b></span>'+
     '</div>'+
     (fuera ? '<div class="aviso-fuera">🚫 Cumplió sus '+MAX_EXC+' exclusiones — no puede seguir disputando el partido</div>' : '')+
+    '<div style="padding:12px 16px 0"><button class="btn plano" style="width:100%" id="btn-arq">'+
+      (j.arq ? '🧤 Está en el arco — tocá para sacarlo' : '🧤 Poner en el arco')+'</button></div>'+
     '<div class="acciones" id="acc-grid"></div>'+
     '<div style="padding:2px 16px 0"><button class="btn plano" style="width:100%" id="btn-undo-panel">↩︎ Deshacer última acción</button></div>';
   const grid = h.querySelector('#acc-grid');
-  ACCIONES.forEach(a=>{
+  /* El botón de PARADA sólo existe para el que está en el arco, y va primero */
+  const lista = ACCIONES.filter(a=>!a.soloArq || j.arq);
+  if(j.arq) lista.unshift(lista.splice(lista.findIndex(a=>a.id==='par'),1)[0]);
+  lista.forEach(a=>{
     const b=document.createElement('button');
-    b.className='acc '+a.tipo+(a.id==='gol'?' destacada':'');
+    b.className='acc '+a.tipo+((a.id==='gol'||a.id==='par')?' destacada':'');
     const cuenta = contarAccion(j.st,a);
     b.innerHTML='<span class="ico">'+a.ico+'</span><span>'+a.lbl+'</span>'+(cuenta!==null?'<span class="n">'+cuenta+'</span>':'');
     if(fuera){ b.className += ' bloqueada'; b.disabled = true; }
@@ -937,10 +1096,11 @@ function pintarPanel(){
   });
   h.querySelector('#x-panel').onclick=cerrarPanel;
   h.querySelector('#btn-undo-panel').onclick=deshacer;
+  h.querySelector('#btn-arq').onclick=()=>ponerArquero(eq,idx);
 }
 /* Muestra el contador más representativo de cada botón */
 function contarAccion(st,a){
-  const orden=['pg','pe','cga','supg','supj','ast','rob','pb','exf','exc','g','lt'];
+  const orden=['par','pg','pe','cga','supg','supj','ast','rob','pb','exf','exc','g','lt'];
   for(const k of orden){ if(a.d[k]!==undefined) return st[k]; }
   return null;
 }
@@ -1051,6 +1211,101 @@ function pintarComparativo(){
   });
 }
 
+/* ========================== Render: cronología ==========================
+   La historia del partido en orden: qué pasó, en qué período y —si se usó el
+   reloj— en qué minuto. En los goles se muestra cómo iba el marcador. */
+function pintarCrono(){
+  const evs = P().eventos;
+  const card = document.getElementById('card-crono');
+  const ul = document.getElementById('crono');
+  if(!evs.length){ card.style.display='none'; ul.innerHTML=''; return; }
+  card.style.display='';
+  document.getElementById('crono-sub').textContent = evs.length + (evs.length===1?' acción':' acciones');
+  const mk={local:0, rival:0};
+  let h='';
+  evs.forEach(ev=>{
+    const a=ACC_POR_ID[ev.acc]; if(!a) return;
+    const j=equipoObj(ev.eq).jugadores[ev.idx];
+    const gol=!!a.d.g;
+    if(gol){ mk[ev.eq]+=a.d.g; }
+    h+='<li class="'+(gol?'gol ':'')+(ev.eq==='rival'?'rival':'')+'">'+
+       '<span class="min">'+ev.per+'° '+(ev.t!=null?mmss(ev.t):'')+'</span>'+
+       '<span class="txt">'+(ev.eq==='rival'?'🚨':'🏊')+' '+a.ico+' '+esc(a.lbl)+' — '+
+         (esc(j?j.nombre:'')||('#'+(j?j.n:'?')))+'</span>'+
+       (gol?'<span class="mk">'+mk.local+'-'+mk.rival+'</span>':'')+'</li>';
+  });
+  ul.innerHTML=h;
+}
+
+/* ========================== Resumen para compartir =====================
+   Texto listo para pegar en WhatsApp: resultado, parciales, goleadores,
+   arquero y los números gruesos del equipo. */
+function textoResumen(m){
+  m = m || P();
+  const nl = m.equipo||'Mi equipo', nr = m.rival||'Rival';
+  const gl = golesDe(m,'local'), gc = golesDe(m,'rival');
+  const js = m.local.jugadores;
+  const t  = totalesDe(js);
+  const L = [];
+  L.push((gl>gc?'🏆 ':(gc>gl?'':'🤝 '))+nl+'  '+gl+' - '+gc+'  '+nr);
+  const cab = [fechaCorta(m.fecha), m.lugar].filter(Boolean).join(' · ');
+  if(cab) L.push('📅 '+cab);
+  L.push('⏱️ Parciales: '+m.golesPeriodo.local.map((v,i)=>v+'-'+m.golesPeriodo.rival[i]).join(' / '));
+  const lista = (clave)=> js.filter(j=>(+j.st[clave]||0)>0)
+                            .sort((a,b)=>b.st[clave]-a.st[clave])
+                            .map(j=>nombreJug(j)+' '+j.st[clave]).join(', ');
+  const gols = lista('g'), asis = lista('ast');
+  if(gols){ L.push(''); L.push('⚽ Goles: '+gols); }
+  if(asis) L.push('🎯 Asistencias: '+asis);
+  js.forEach(j=>{
+    if((+j.st.par||0)>0 || (+j.st.gr||0)>0)
+      L.push('🧤 '+nombreJug(j)+': '+(+j.st.par||0)+' paradas, '+(+j.st.gr||0)+' recibidos ('+pct(derivada(j.st,'par'))+')');
+  });
+  L.push('');
+  let fila = '📊 Eficacia '+t.g+'/'+t.lt+' ('+pct(derivada(t,'ef'))+')';
+  if(t.supj) fila += ' · Superioridad '+t.supg+'/'+t.supj+' ('+pct(derivada(t,'sup'))+')';
+  if(t.pe)   fila += ' · Penales '+t.pg+'/'+t.pe;
+  L.push(fila);
+  L.push('🛡️ Robos '+t.rob+' · Pérdidas '+t.pb+' · Exclusiones '+t.exc+' (forzadas al rival '+t.exf+')');
+  const notas = m.notas.map((n,i)=>n?((i+1)+'°: '+n):'').filter(Boolean);
+  if(notas.length){ L.push(''); L.push('📝 '+notas.join(' | ')); }
+  return L.join('\n');
+}
+function compartirResumen(){
+  const txt = textoResumen();
+  if(navigator.share){
+    navigator.share({text:txt}).catch(()=>hojaTexto(txt));
+    return;
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt)
+      .then(()=>toast('📋 Resumen copiado — pegalo en WhatsApp'))
+      .catch(()=>hojaTexto(txt));
+    return;
+  }
+  hojaTexto(txt);
+}
+/* Última red: si el celular no deja compartir ni copiar, se muestra el texto */
+function hojaTexto(txt){
+  jugadorAbierto = null;
+  const h = document.getElementById('hoja');
+  h.innerHTML =
+    '<div class="hoja-hdr"><div><div class="t1">📲 Resumen del partido</div>'+
+    '<div class="t2">COPIALO Y PEGALO DONDE QUIERAS</div></div>'+
+    '<button class="cerrar" id="x-panel">✕</button></div>'+
+    '<div class="resumen"><textarea id="txt-res" readonly></textarea>'+
+    '<button class="btn pri" style="width:100%;margin-top:10px" id="btn-copiar">📋 Copiar</button></div>';
+  const ta = h.querySelector('#txt-res');
+  ta.value = txt;
+  h.querySelector('#x-panel').onclick = cerrarPanel;
+  h.querySelector('#btn-copiar').onclick = ()=>{
+    ta.select(); ta.setSelectionRange(0, 999999);
+    try{ document.execCommand('copy'); toast('📋 Resumen copiado'); }
+    catch(e){ toast('Mantené el dedo apretado sobre el texto para copiarlo'); }
+  };
+  document.getElementById('overlay').classList.add('on');
+}
+
 /* ========================== Render: equipo ============================== */
 function pintarEquipo(){
   const ni=document.getElementById('eq-nombre');
@@ -1068,10 +1323,14 @@ function pintarEquipo(){
 }
 function tablaPlantel(eq){
   const js=equipoObj(eq).jugadores;
-  let h='<table'+(eq==='rival'?' class="rival"':'')+'><thead><tr><th style="width:70px">#</th><th class="nom">NOMBRE</th><th style="width:56px"></th></tr></thead><tbody>';
+  let h='<table'+(eq==='rival'?' class="rival"':'')+'><thead><tr><th style="width:70px">#</th><th class="nom">NOMBRE</th>'+
+        '<th style="width:52px">HOY</th><th style="width:52px">ARCO</th><th style="width:56px"></th></tr></thead><tbody>';
   js.forEach((j,i)=>{
+    const conv = esConv(j);
     h+='<tr><td><input type="number" min="0" data-p="'+eq+'" data-i="'+i+'" data-f="n" value="'+j.n+'"></td>'+
        '<td class="nom"><input class="txt" data-p="'+eq+'" data-i="'+i+'" data-f="nombre" value="'+esc(j.nombre)+'" placeholder="Nombre y apellido"></td>'+
+       '<td><button class="icobtn '+(conv?'on':'off')+'" data-conv="'+eq+'" data-i="'+i+'" title="Juega hoy">'+(conv?'✅':'⚪')+'</button></td>'+
+       '<td><button class="icobtn '+(j.arq?'arq-on':'off')+'" data-arq="'+eq+'" data-i="'+i+'" title="Arquero">🧤</button></td>'+
        '<td><button class="icobtn" data-del="'+eq+'" data-i="'+i+'" title="Quitar">🗑️</button></td></tr>';
   });
   h+='</tbody></table>';
@@ -1088,6 +1347,17 @@ function conectarPlantel(cont,eq){
     };
     inp.onblur=()=>pintarTodo();
   });
+  cont.querySelectorAll('button[data-conv]').forEach(b=>{
+    b.onclick=()=>{
+      const j=equipoObj(eq).jugadores[+b.dataset.i];
+      j.conv = !esConv(j);
+      if(eq==='local') sincronizarPlantel();
+      guardar(); pintarTodo();
+    };
+  });
+  cont.querySelectorAll('button[data-arq]').forEach(b=>{
+    b.onclick=()=>ponerArquero(eq, +b.dataset.i);
+  });
   cont.querySelectorAll('button[data-del]').forEach(b=>{
     b.onclick=()=>{
       const i=+b.dataset.i;
@@ -1097,7 +1367,13 @@ function conectarPlantel(cont,eq){
       equipoObj(eq).jugadores.splice(i,1);
       // Los eventos apuntan a índices: se reindexan los posteriores
       P().eventos = P().eventos.filter(e=>!(e.eq===eq && e.idx===i));
-      P().eventos.forEach(e=>{ if(e.eq===eq && e.idx>i) e.idx--; });
+      P().eventos.forEach(e=>{
+        if(e.eq===eq && e.idx>i) e.idx--;
+        if(e.gr && e.gr.eq===eq){
+          if(e.gr.idx===i) delete e.gr;
+          else if(e.gr.idx>i) e.gr.idx--;
+        }
+      });
       if(eq==='local') sincronizarPlantel();
       guardar(); pintarTodo();
     };
@@ -1105,7 +1381,7 @@ function conectarPlantel(cont,eq){
 }
 /* El plantel del partido es la fuente; se copia a la plantilla permanente */
 function sincronizarPlantel(){
-  S.plantel = P().local.jugadores.map(j=>({n:j.n, nombre:j.nombre}));
+  S.plantel = P().local.jugadores.map(j=>({n:j.n, nombre:j.nombre, arq:!!j.arq, conv:esConv(j)}));
 }
 
 /* ========================== Render: historial =========================== */
@@ -1172,7 +1448,7 @@ function tablaTemporada(){
 /* ========================== Pintar todo ================================= */
 let panelAbiertoAntes=false;
 function pintarTodo(){
-  pintarHeader(); pintarVivo(); pintarPlanilla(); pintarComparativo(); pintarEquipo(); pintarHistorial();
+  pintarHeader(); pintarVivo(); pintarPlanilla(); pintarComparativo(); pintarCrono(); pintarEquipo(); pintarHistorial();
   if(jugadorAbierto) pintarPanel();
   mostrarAvisoAlmacen();
 }
@@ -1406,6 +1682,18 @@ function csvPartido(m){
   f.push([]); f.push(['GOLES Y NOTAS POR PERÍODO']);
   f.push(['PERÍODO', nl, nr, 'NOTAS TÁCTICAS']);
   for(let i=0;i<4;i++) f.push([(i+1)+'° Período', m.golesPeriodo.local[i], m.golesPeriodo.rival[i], m.notas[i]||'']);
+  if((m.eventos||[]).length){
+    f.push([]); f.push(['CRONOLOGÍA']);
+    f.push(['PERÍODO','MINUTO','EQUIPO','#','JUGADOR','ACCIÓN','MARCADOR']);
+    const mk={local:0, rival:0};
+    m.eventos.forEach(ev=>{
+      const a=ACC_POR_ID[ev.acc]; if(!a) return;
+      const j=(ev.eq==='local'? m.local : m.rival_j).jugadores[ev.idx];
+      if(a.d.g) mk[ev.eq]+=a.d.g;
+      f.push([ev.per+'°', ev.t!=null?mmss(ev.t):'', ev.eq==='local'?nl:nr,
+              j?j.n:'', j?(j.nombre||('Jugador '+j.n)):'', a.lbl, a.d.g?(mk.local+' - '+mk.rival):'']);
+    });
+  }
   return {nombre:'Waterpolo '+limpiarNombre(nl)+' vs '+limpiarNombre(nr)+' '+(m.fecha||'')+'.csv', texto:csvArmar(f)};
 }
 function csvTemporada(){
@@ -1437,19 +1725,35 @@ function csvTemporada(){
 /* ---------- Hoja de un equipo con el formato de la planilla original ----- */
 const LEYENDA = '📋 LEYENDA: LT=Lanzamientos Totales | G=Goles | EF%=Eficacia | CGA=Contragol Anotado | AST=Asistencia | '+
   'PEN-E=Penal Ejecutado | PEN-G=Penal Gol | EXC=Exclusión Cometida | EXF=Exclusión Forzada | ROB=Robo | PB=Pérdida | '+
-  'SUP-J=Superioridad Jugada | SUP-G=Superioridad Gol | MIN=Minutos';
-const ANCHOS_PLANILLA = [5,24,7,7,8,7,7,8,8,8,7,7,7,7,8,8,8,7];
+  'SUP-J=Superioridad Jugada | SUP-G=Superioridad Gol | MIN=Minutos | PAR=Paradas del arquero | GR=Goles recibidos | PAR%=Eficacia del arquero';
+const ANCHOS_PLANILLA = [5,24,7,7,8,7,7,8,8,8,7,7,7,7,8,8,8,7,7,7,8];
+
+/* Letra de columna de cada estadística según dónde empieza la tabla.
+   Se calcula de COLS, así agregar una columna no rompe ninguna fórmula. */
+function letrasDe(off){
+  const k={}, c={};
+  COLS.forEach((col,i)=>{ const L=colLetra(off+i); if(col.calc) c[col.calc]=L; else k[col.k]=L; });
+  return {k:k, c:c};
+}
+const FORMULA_CALC = {
+  ef:  (k,r)=>'IFERROR('+k.g+r+'/'+k.lt+r+',0)',
+  pen: (k,r)=>'IFERROR('+k.pg+r+'/'+k.pe+r+',0)',
+  sup: (k,r)=>'IFERROR('+k.supg+r+'/'+k.supj+r+',0)',
+  par: (k,r)=>'IFERROR('+k.par+r+'/('+k.par+r+'+'+k.gr+r+'),0)'
+};
 
 function hojaEquipo(m, eq, esLocal){
   const js = (eq==='local'? m.local : m.rival_j).jugadores;
   const filasJug = Math.max(js.length, 15);
-  const g = new Rejilla(filasJug+18, 18);
+  const ULT = colLetra(2+COLS.length);       /* última columna de la planilla */
+  const LE = letrasDe(3);
+  const g = new Rejilla(filasJug+18, 2+COLS.length);
   const H = esLocal ? ESTILO.HEAD : ESTILO.HEADR;
   const gl = m.golesPeriodo.local.reduce((a,b)=>a+(+b||0),0);
   const gr = m.golesPeriodo.rival.reduce((a,b)=>a+(+b||0),0);
 
   g.set('A1', (esLocal?'🏊 ':'🚨 ') + (esLocal? (m.equipo||'Mi equipo') : (m.rival||'Rival')) + ' — Planilla de partido', ESTILO.TITULO);
-  g.merge('A1:R1');
+  g.merge('A1:'+ULT+'1');
   g.set('B2', esLocal?(m.equipo||''):(m.rival||''), ESTILO.BOLDL);
   g.set('D2','vs',ESTILO.BOLDL);
   g.set('E2','RIVAL:',ESTILO.BOLDL);   g.set('F2', esLocal?(m.rival||''):(m.equipo||''), ESTILO.DEF);
@@ -1460,9 +1764,15 @@ function hojaEquipo(m, eq, esLocal){
   g.set('P2','CUERPO TÉCNICO:',ESTILO.BOLDL);
   g.set('Q2', (esLocal ? m.cuerpo : m.cuerpoRival)||'', ESTILO.DEF); g.merge('Q2:R2');
 
-  const grupos = [['C3','⚽ ATAQUE','C3:E3'],['F3','🎯 PASES','F3:G3'],['H3','🥅 PENALES','H3:J3'],
-                  ['K3','🛡️ DEFENSA','K3:L3'],['M3','💥 EXTRAS','M3:N3'],['O3','⚡ SUPERIORIDAD','O3:Q3'],['R3','⏱️','R3:R3']];
-  grupos.forEach(([ref,txt,mg])=>{ g.set(ref,txt,H); if(mg.split(':')[0]!==mg.split(':')[1]) g.merge(mg); });
+  /* Los encabezados de grupo salen del propio COLS */
+  let gi=0;
+  while(gi<COLS.length){
+    let gj=gi; while(gj+1<COLS.length && COLS[gj+1].g===COLS[gi].g) gj++;
+    const ini=colLetra(3+gi)+'3', fin=colLetra(3+gj)+'3';
+    g.set(ini, COLS[gi].g, H);
+    if(ini!==fin) g.merge(ini+':'+fin);
+    gi=gj+1;
+  }
   g.set('A4','#',H); g.set('B4','NOMBRE',H);
   COLS.forEach((c,i)=>g.set(colLetra(3+i)+'4', c.t, H));
 
@@ -1472,36 +1782,24 @@ function hojaEquipo(m, eq, esLocal){
     g.set('B'+r, j? (j.nombre||'') : '', ESTILO.INPUT);
     COLS.forEach((c,ci)=>{
       const L = colLetra(3+ci);
-      if(c.calc){
-        const f = c.calc==='ef' ? 'IFERROR(D'+r+'/C'+r+',0)'    /* G ÷ LT */
-                : c.calc==='pen'? 'IFERROR(I'+r+'/H'+r+',0)'    /* PEN-G ÷ PEN-E */
-                :                 'IFERROR(P'+r+'/O'+r+',0)';   /* SUP-G ÷ SUP-J */
-        g.set(L+r, null, ESTILO.PCT, f);
-      } else {
-        g.set(L+r, j? (+j.st[c.k]||0) : 0, ESTILO.NUM);
-      }
+      if(c.calc) g.set(L+r, null, ESTILO.PCT, FORMULA_CALC[c.calc](LE.k, r));
+      else       g.set(L+r, j? (+j.st[c.k]||0) : 0, ESTILO.NUM);
     });
   }
   const rT = 5+filasJug+1;
   g.set('A'+rT, esLocal?'📊 TOTALES EQUIPO':'📊 TOTALES RIVAL', ESTILO.TOT); g.merge('A'+rT+':B'+rT);
   COLS.forEach((c,ci)=>{
     const L=colLetra(3+ci);
-    if(c.calc){
-      const f = c.calc==='ef' ? 'IFERROR(D'+rT+'/C'+rT+',0)'
-              : c.calc==='pen'? 'IFERROR(I'+rT+'/H'+rT+',0)'
-              :                 'IFERROR(P'+rT+'/O'+rT+',0)';
-      g.set(L+rT, null, ESTILO.TOTPCT, f);
-    } else {
-      g.set(L+rT, null, ESTILO.TOT, 'SUM('+L+'5:'+L+(4+filasJug)+')');
-    }
+    if(c.calc) g.set(L+rT, null, ESTILO.TOTPCT, FORMULA_CALC[c.calc](LE.k, rT));
+    else       g.set(L+rT, null, ESTILO.TOT, 'SUM('+L+'5:'+L+(4+filasJug)+')');
   });
   const rL = rT+2;
-  g.set('A'+rL, LEYENDA, ESTILO.SMALL); g.merge('A'+rL+':R'+rL);
+  g.set('A'+rL, LEYENDA, ESTILO.SMALL); g.merge('A'+rL+':'+ULT+rL);
 
   /* Seguimiento por período (solo en la hoja del equipo local, como el original) */
   if(esLocal){
     const b = rL+1;
-    g.set('A'+b, '⏱️ SEGUIMIENTO POR PERÍODO', ESTILO.SUBT); g.merge('A'+b+':R'+b);
+    g.set('A'+b, '⏱️ SEGUIMIENTO POR PERÍODO', ESTILO.SUBT); g.merge('A'+b+':'+ULT+b);
     g.set('A'+(b+1),'PERÍODO',H);       g.merge('A'+(b+1)+':D'+(b+1));
     g.set('E'+(b+1),'GOLES '+((m.equipo||'LOCAL').toUpperCase()),H); g.merge('E'+(b+1)+':H'+(b+1));
     g.set('I'+(b+1),'GOLES '+((m.rival||'RIVAL').toUpperCase()),H);  g.merge('I'+(b+1)+':L'+(b+1));
@@ -1523,16 +1821,16 @@ function hojaEquipo(m, eq, esLocal){
 }
 
 function hojaComparativo(m, refL, refR, filaTotL, filaTotR){
-  const g = new Rejilla(24,4);
+  const g = new Rejilla(COMPARATIVO.length+9,4);
   g.set('A1','📊 ANÁLISIS COMPARATIVO — '+(m.equipo||'Local')+' vs '+(m.rival||'Rival'), ESTILO.TITULO); g.merge('A1:D1');
   g.set('A2','ESTADÍSTICA',ESTILO.HEAD); g.set('B2',(m.equipo||'LOCAL'),ESTILO.HEAD);
   g.set('C2',(m.rival||'RIVAL'),ESTILO.HEADR); g.set('D2','VENTAJA',ESTILO.HEAD);
   /* Letra de columna de cada métrica en las hojas de equipo */
-  const letra = {}; COLS.forEach((c,i)=>letra[c.k]=colLetra(3+i));
+  const LE = letrasDe(3);
   COMPARATIVO.forEach((f,i)=>{
     const r=3+i;
     const esPct = !!f.pct;
-    const L = esPct ? (f.k==='ef'?'E':f.k==='pen'?'J':'Q') : letra[f.k];
+    const L = esPct ? LE.c[f.k] : LE.k[f.k];
     g.set('A'+r, f.t + (f.mejor==='bajo'?' (mejor menos)':''), ESTILO.TXT);
     g.set('B'+r, null, esPct?ESTILO.PCT:ESTILO.NUM, "'"+refL+"'!"+L+filaTotL);
     g.set('C'+r, null, esPct?ESTILO.PCT:ESTILO.NUM, "'"+refR+"'!"+L+filaTotR);
@@ -1543,12 +1841,37 @@ function hojaComparativo(m, refL, refR, filaTotL, filaTotR){
   });
   const gl = m.golesPeriodo.local.reduce((a,b)=>a+(+b||0),0);
   const gr = m.golesPeriodo.rival.reduce((a,b)=>a+(+b||0),0);
-  g.set('A19','🏆 RESUMEN DE PARTIDO',ESTILO.SUBT); g.merge('A19:D19');
-  g.set('A20','Goles '+(m.equipo||'Local'),ESTILO.BOLDL); g.set('B20',gl,ESTILO.TOT);
-  g.set('C20','Goles '+(m.rival||'Rival'),ESTILO.BOLDL);  g.set('D20',gr,ESTILO.TOT);
-  g.set('A21','Parciales por período',ESTILO.BOLDL);
-  g.set('B21', m.golesPeriodo.local.map((v,i)=>v+'-'+m.golesPeriodo.rival[i]).join('  /  '), ESTILO.TXT); g.merge('B21:D21');
-  g.set('A22', gl>gr?'🏆 ¡VICTORIA!':(gr>gl?'🚨 Derrota':'🤝 Empate'), ESTILO.TITULO); g.merge('A22:D22');
+  const rS = 3+COMPARATIVO.length+1;          /* fila donde arranca el resumen */
+  g.set('A'+rS,'🏆 RESUMEN DE PARTIDO',ESTILO.SUBT); g.merge('A'+rS+':D'+rS);
+  g.set('A'+(rS+1),'Goles '+(m.equipo||'Local'),ESTILO.BOLDL); g.set('B'+(rS+1),gl,ESTILO.TOT);
+  g.set('C'+(rS+1),'Goles '+(m.rival||'Rival'),ESTILO.BOLDL);  g.set('D'+(rS+1),gr,ESTILO.TOT);
+  g.set('A'+(rS+2),'Parciales por período',ESTILO.BOLDL);
+  g.set('B'+(rS+2), m.golesPeriodo.local.map((v,i)=>v+'-'+m.golesPeriodo.rival[i]).join('  /  '), ESTILO.TXT); g.merge('B'+(rS+2)+':D'+(rS+2));
+  g.set('A'+(rS+3), gl>gr?'🏆 ¡VICTORIA!':(gr>gl?'🚨 Derrota':'🤝 Empate'), ESTILO.TITULO); g.merge('A'+(rS+3)+':D'+(rS+3));
+  return g;
+}
+
+/* ---------- Hoja con todas las acciones en orden ------------------------- */
+function hojaCrono(m){
+  const evs = m.eventos||[];
+  const g = new Rejilla(evs.length+4, 7);
+  g.set('A1','🕒 CRONOLOGÍA DEL PARTIDO — '+(m.equipo||'Local')+' vs '+(m.rival||'Rival'), ESTILO.TITULO); g.merge('A1:G1');
+  ['PERÍODO','MINUTO','EQUIPO','#','JUGADOR','ACCIÓN','MARCADOR'].forEach((t,i)=>g.set(colLetra(i+1)+'2',t,ESTILO.HEAD));
+  const mk={local:0, rival:0};
+  evs.forEach((ev,i)=>{
+    const a=ACC_POR_ID[ev.acc]; if(!a) return;
+    const js=(ev.eq==='local'? m.local : m.rival_j).jugadores;
+    const j=js[ev.idx];
+    const r=3+i;
+    if(a.d.g) mk[ev.eq]+=a.d.g;
+    g.set('A'+r, ev.per+'°', ESTILO.NUM);
+    g.set('B'+r, ev.t!=null ? mmss(ev.t) : '', ESTILO.NUM);
+    g.set('C'+r, ev.eq==='local' ? (m.equipo||'Local') : (m.rival||'Rival'), ESTILO.TXT);
+    g.set('D'+r, j? j.n : '', ESTILO.NUM);
+    g.set('E'+r, j? (j.nombre||('Jugador '+j.n)) : '', ESTILO.TXT);
+    g.set('F'+r, a.lbl, ESTILO.TXT);
+    g.set('G'+r, a.d.g ? (mk.local+' - '+mk.rival) : '', ESTILO.NUM);
+  });
   return g;
 }
 
@@ -1588,6 +1911,9 @@ function hojaGuia(){
     ['SUP-G = Goles en superioridad', null],
     ['SUP%  = Eficacia en superioridad = SUP-G ÷ SUP-J', null],
     ['MIN   = Minutos jugados', null],
+    ['PAR   = Paradas del arquero', null],
+    ['GR    = Goles recibidos por el arquero', null],
+    ['PAR%  = Eficacia del arquero = PAR ÷ (PAR + GR)', null],
     ['',null],
     ['💡 Este archivo lo generó la app "Waterpolo Stats". La app guarda tu plantel y', ESTILO.SMALL],
     ['deja la planilla en cero, lista para el próximo partido.', ESTILO.SMALL]
@@ -1604,12 +1930,14 @@ function exportarPartido(m){
   const hR = hojaEquipo(m,'rival',false);
   const refL = nomL.slice(0,20)+' - Partido', refR = nomR.slice(0,20)+' - Rival';
   const comp = hojaComparativo(m, refL, refR, hL.filaTotales, hR.filaTotales);
-  const bytes = construirXlsx([
+  const hojas = [
     {nombre:refL, rejilla:hL.rejilla, anchos:ANCHOS_PLANILLA},
     {nombre:refR, rejilla:hR.rejilla, anchos:ANCHOS_PLANILLA},
-    {nombre:'Comparativo', rejilla:comp, anchos:[34,16,16,22]},
-    {nombre:'Guía de Uso', rejilla:hojaGuia(), anchos:[92,10]}
-  ]);
+    {nombre:'Comparativo', rejilla:comp, anchos:[34,16,16,22]}
+  ];
+  if((m.eventos||[]).length) hojas.push({nombre:'Cronología', rejilla:hojaCrono(m), anchos:[10,10,22,6,26,18,12]});
+  hojas.push({nombre:'Guía de Uso', rejilla:hojaGuia(), anchos:[92,10]});
+  const bytes = construirXlsx(hojas);
   bajarArchivo(bytes, 'Waterpolo '+nomL+' vs '+nomR+' '+(m.fecha||'')+'.xlsx',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     function(){ return csvPartido(m); });
@@ -1618,37 +1946,31 @@ function exportarPartido(m){
 function exportarTemporada(){
   const arr = acumuladoTemporada();
   if(!arr.length){ toast('Todavía no hay partidos cerrados'); return; }
-  const g = new Rejilla(arr.length+8, 20);
-  g.set('A1','🏆 ACUMULADO DE TEMPORADA — '+(S.equipo||'Mi equipo'), ESTILO.TITULO); g.merge('A1:T1');
+  const LT = letrasDe(4);
+  const COL_GPJ = colLetra(4+COLS.length);   /* la columna que sigue a la tabla */
+  const g = new Rejilla(arr.length+8, 4+COLS.length);
+  g.set('A1','🏆 ACUMULADO DE TEMPORADA — '+(S.equipo||'Mi equipo'), ESTILO.TITULO); g.merge('A1:'+COL_GPJ+'1');
   g.set('A2','#',ESTILO.HEAD); g.set('B2','JUGADOR',ESTILO.HEAD); g.set('C2','PJ',ESTILO.HEAD);
   COLS.forEach((c,i)=>g.set(colLetra(4+i)+'2', c.t, ESTILO.HEAD));
-  g.set('T2','G/PJ',ESTILO.HEAD);
+  g.set(COL_GPJ+'2','G/PJ',ESTILO.HEAD);
   arr.forEach((a,i)=>{
     const r=3+i;
     g.set('A'+r,a.n,ESTILO.NUM); g.set('B'+r,a.nombre||('Jugador '+a.n),ESTILO.TXT); g.set('C'+r,a.pj,ESTILO.NUM);
     COLS.forEach((c,ci)=>{
       const L=colLetra(4+ci);
-      if(c.calc){
-        const f = c.calc==='ef' ? 'IFERROR(E'+r+'/D'+r+',0)'
-                : c.calc==='pen'? 'IFERROR(J'+r+'/I'+r+',0)'
-                :                 'IFERROR(Q'+r+'/P'+r+',0)';
-        g.set(L+r,null,ESTILO.PCT,f);
-      } else g.set(L+r, a.st[c.k], ESTILO.NUM);
+      if(c.calc) g.set(L+r,null,ESTILO.PCT,FORMULA_CALC[c.calc](LT.k, r));
+      else       g.set(L+r, a.st[c.k], ESTILO.NUM);
     });
-    g.set('T'+r, null, ESTILO.NUM, 'IFERROR(E'+r+'/C'+r+',0)');
+    g.set(COL_GPJ+r, null, ESTILO.NUM, 'IFERROR('+LT.k.g+r+'/C'+r+',0)');
   });
   const rT=3+arr.length;
   g.set('A'+rT,'TOTAL',ESTILO.TOT); g.set('B'+rT,'',ESTILO.TOT); g.set('C'+rT,S.historial.length,ESTILO.TOT);
   COLS.forEach((c,ci)=>{
     const L=colLetra(4+ci);
-    if(c.calc){
-      const f = c.calc==='ef' ? 'IFERROR(E'+rT+'/D'+rT+',0)'
-              : c.calc==='pen'? 'IFERROR(J'+rT+'/I'+rT+',0)'
-              :                 'IFERROR(Q'+rT+'/P'+rT+',0)';
-      g.set(L+rT,null,ESTILO.TOTPCT,f);
-    } else g.set(L+rT,null,ESTILO.TOT,'SUM('+L+'3:'+L+(2+arr.length)+')');
+    if(c.calc) g.set(L+rT,null,ESTILO.TOTPCT,FORMULA_CALC[c.calc](LT.k, rT));
+    else       g.set(L+rT,null,ESTILO.TOT,'SUM('+L+'3:'+L+(2+arr.length)+')');
   });
-  g.set('T'+rT,'',ESTILO.TOT);
+  g.set(COL_GPJ+rT,'',ESTILO.TOT);
 
   const p = new Rejilla(S.historial.length+4, 7);
   p.set('A1','📅 PARTIDOS DE LA TEMPORADA',ESTILO.TITULO); p.merge('A1:G1');
@@ -1680,6 +2002,7 @@ function cerrarPartido(){
   const hayDatos = P().eventos.length>0 || gl>0 || gr>0 ||
                    KEYS.some(k=>totales('local')[k]>0 || totales('rival')[k]>0);
   if(!hayDatos){ toast('Este partido está vacío, no hay nada que archivar'); return; }
+  cronPausar();
   if(!confirm('Se va a archivar el partido en el Historial y la planilla quedará en cero para el próximo.\n\n'+
               (P().equipo||'Local')+' '+gl+' — '+gr+' '+(P().rival||'Rival')+'\n\n¿Confirmás?')) return;
   sincronizarPlantel();
@@ -1704,6 +2027,15 @@ function iniciar(){
   S = cargar();
   /* Migraciones defensivas por si el archivo guardado es viejo o incompleto */
   if(!S.partido.notas) S.partido.notas=['','','',''];
+  /* El reloj es nuevo: los partidos empezados antes no lo tienen. Si la app se
+     cerró con el reloj andando, se suma lo que corrió (con tope) y queda en pausa. */
+  if(!S.partido.cron || !Array.isArray(S.partido.cron.per)) S.partido.cron={per:[0,0,0,0], corriendo:false, desde:null};
+  if(S.partido.cron.corriendo && S.partido.cron.desde){
+    const corrido = Math.floor((Date.now()-S.partido.cron.desde)/1000);
+    const i = (S.partido.periodo||1)-1;
+    S.partido.cron.per[i] = (+S.partido.cron.per[i]||0) + Math.min(Math.max(corrido,0), 1200);
+  }
+  S.partido.cron.corriendo=false; S.partido.cron.desde=null;
   if(!S.partido.golesPeriodo) S.partido.golesPeriodo={local:[0,0,0,0],rival:[0,0,0,0]};
   if(!S.partido.rival_j) S.partido.rival_j={jugadores:plantelVacio(PLANTEL_BASE)};
   if(!Array.isArray(S.historial)) S.historial=[];
@@ -1727,6 +2059,7 @@ function iniciar(){
   document.getElementById('btn-excel').onclick=()=>exportarPartido();
   document.getElementById('btn-excel2').onclick=()=>exportarPartido();
   document.getElementById('btn-excel-temp').onclick=exportarTemporada;
+  document.getElementById('btn-compartir').onclick=compartirResumen;
   document.getElementById('btn-cerrar').onclick=cerrarPartido;
   document.getElementById('overlay').onclick=e=>{ if(e.target.id==='overlay') cerrarPanel(); };
   document.getElementById('notas').oninput=e=>{ P().notas[P().periodo-1]=e.target.value; guardar(); };
@@ -1769,6 +2102,13 @@ function iniciar(){
     if(e.key==='Escape') cerrarPanel();
     if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='z'){ e.preventDefault(); deshacer(); }
   });
+
+  /* El reloj se refresca solo, sin repintar toda la pantalla */
+  setInterval(function(){
+    if(!S.partido.cron || !S.partido.cron.corriendo) return;
+    const el=document.getElementById('reloj-txt');
+    if(el) el.textContent = mmss(cronSeg());
+  }, 1000);
 
   pintarTodo();
   /* Bienvenida sólo si al momento de aparecer el usuario todavía no hizo nada:
