@@ -345,6 +345,11 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
 .jug.arq{border-left-color:var(--ambar)}
 .jug.arq .dor{background:var(--ambar-cl);color:#8a5a0b}
 .acc.arq{border-color:#f3ddb4;background:var(--ambar-cl);color:#8a5a0b}
+.jug .nom .supl{font-weight:600;font-size:10.5px;color:var(--gris);letter-spacing:.2px}
+.en-arco{
+  background:var(--ambar-cl);color:#8a5a0b;border:1px solid #f3ddb4;border-radius:11px;
+  padding:10px;text-align:center;font-weight:800;font-size:13px;
+}
 .icobtn.on{background:var(--verde-cl);border-color:#bfe6d6}
 .icobtn.arq-on{background:var(--ambar-cl);border-color:#f3ddb4}
 .icobtn.off{opacity:.4}
@@ -534,7 +539,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
     <div class="card">
       <h2>🚀 En un minuto</h2>
       <div class="pasos">
-        <div class="paso"><span class="np">1</span><div><b>Cargá tu plantel una sola vez</b><br>En <b>⚙️ Equipo</b>: nombre del club, y el nombre y dorsal de cada jugador. Queda guardado para siempre. Ahí mismo marcás con <b>✅</b> quién juega hoy y con <b>🧤</b> quién va al arco.</div></div>
+        <div class="paso"><span class="np">1</span><div><b>Cargá tu plantel una sola vez</b><br>En <b>⚙️ Equipo</b>: nombre del club, y el nombre y dorsal de cada jugador. Queda guardado para siempre. Ahí mismo marcás con <b>✅</b> quién juega hoy; el <b>1</b> y el <b>15</b> ya vienen como arqueros 🧤.</div></div>
         <div class="paso"><span class="np">2</span><div><b>Durante el partido, dos toques</b><br>En <b>⚡ En vivo</b>: tocás el jugador, tocás la acción. Listo. El marcador y los porcentajes se calculan solos.</div></div>
         <div class="paso"><span class="np">3</span><div><b>Al final, guardás y seguís</b><br><b>📗 Excel</b> baja el partido con el formato de siempre y <b>📲 Resumen para WhatsApp</b> arma el texto para el grupo. <b>✅ Cerrar partido</b> lo archiva y deja la planilla en cero para el próximo.</div></div>
       </div>
@@ -551,7 +556,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <ol>
         <li>Entrá a <b>⚙️ Equipo</b> y cargá el nombre del equipo y el plantel con sus dorsales. Esto se hace <b>una sola vez</b>: queda guardado para todos los partidos.</li>
         <li>En la misma tabla, marcá con <b>✅</b> quiénes juegan hoy. Los que dejás en <b>⚪</b> no aparecen en la pantalla de carga, así los botones quedan más grandes y no te equivocás de jugador.</li>
-        <li>Marcá con <b>🧤</b> al arquero que arranca en el arco. Puede haber uno solo por equipo: si después entra el suplente, tocalo a él y el 🧤 se pasa solo.</li>
+        <li>Los <b>dorsales 1 y 15 ya vienen marcados como arqueros</b> 🧤, que es como se numeran siempre. Juega el 1; si entra el 15, tocalo y usá <b>🧤 Poner en el arco</b>. Si tu equipo usa otros números, marcalos con el 🧤 de la tabla.</li>
         <li>Completá el rival, la fecha, el lugar y el árbitro.</li>
         <li>Si querés seguir también a los jugadores del rival por nombre, cargalos en <b>🚨 Plantel rival</b>. Si no, no hace falta: ya vienen numerados del 1 al 15.</li>
       </ol>
@@ -559,7 +564,8 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <ol start="4">
         <li>Arriba, elegí el <b>período</b> que se está jugando (1° 2° 3° 4°). Todo lo que cargues queda asignado a ese período.</li>
         <li>Si querés saber <b>en qué minuto</b> pasó cada cosa, tocá el <b>▶️</b> del reloj cuando arranca el período y el <b>⏸️</b> cuando para el juego. Cada período tiene su propio reloj y se pone en cero solo al cambiar. Es opcional: si no lo tocás, todo funciona igual.</li>
-        <li>Al arquero tocalo como a cualquier jugador: su panel tiene el botón grande <b>🧤 PARADA</b>. Los <b>goles recibidos</b> se le cargan solos cada vez que anotás un gol del rival.</li>
+        <li>Al arquero tocalo como a cualquier jugador: su panel tiene el botón grande <b>🧤 PARADA</b>. Los <b>goles recibidos</b> se le cargan solos al que está en el arco cada vez que anotás un gol del rival.</li>
+        <li>¿Cambio de arquero? Tocá al que entra y <b>🧤 Poner en el arco</b>. Desde ahí los goles recibidos van a su cuenta. En la lista, el suplente aparece como <b>🧤 supl.</b></li>
         <li>Tocá el jugador y después la acción. El panel <b>queda abierto</b>: si el mismo jugador hace varias cosas seguidas, seguí tocando sin cerrarlo.</li>
         <li>¿Te equivocaste? <b>↩︎ Deshacer</b> arriba a la derecha borra lo último. Si el error fue hace varias jugadas, tocá la <b>✕</b> de esa acción en la lista de <b>🕒 Últimas acciones</b>.</li>
         <li>Con el botón <b>🚨 Rival</b> cargás las estadísticas del equipo contrario igual de rápido. El chip de color en la lista te dice de qué equipo fue cada acción: 🏊 el tuyo, 🚨 el rival.</li>
@@ -626,7 +632,9 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <h3>Quiero imprimir la planilla para el banco</h3>
       <p>En <b>📈 Comparativo</b> está el botón <b>🖨️ Imprimir / PDF</b>. Sale la planilla completa y el comparativo, sin los botones.</p>
       <h3>No me aparece el botón de PARADA</h3>
-      <p>Es porque nadie está marcado en el arco. Tocá al arquero y usá <b>🧤 Poner en el arco</b>, o marcá el 🧤 en <b>⚙️ Equipo</b>. Sólo uno por equipo puede estar en el arco.</p>
+      <p>Ese jugador no está marcado como arquero. Vienen marcados el <b>1</b> y el <b>15</b>; para cualquier otro, tocá el <b>🧤</b> de su fila en <b>⚙️ Equipo</b>.</p>
+      <h3>Los goles recibidos se los carga al arquero equivocado</h3>
+      <p>Van siempre al que está en el arco. Tocá al que corresponde y usá <b>🧤 Poner en el arco</b>; si el titular quedó fuera por 3 exclusiones, la app pasa sola al otro arquero.</p>
       <h3>El arquero tiene goles recibidos de menos</h3>
       <p>Se cargan solos cuando anotás los goles del rival. Si ese día no seguiste al rival jugador por jugador, escribí el número a mano en la columna <b>GR</b> de <b>📋 Planilla</b>.</p>
       <h3>Me olvidé de frenar el reloj</h3>
@@ -758,24 +766,50 @@ function completarPlantel(js, cant, crear){
   }
 }
 function statsVacias(){ const o={}; KEYS.forEach(k=>o[k]=0); return o; }
+/* Los dorsales de arquero de toda la vida: el 1 titular y el 15 suplente.
+   Quien lleve uno de esos números nace marcado como arquero; igual se puede
+   cambiar a mano con el 🧤 de la tabla del plantel. */
+const DORSALES_ARQUERO = [1,15];
+function esDorsalArquero(n){ return DORSALES_ARQUERO.indexOf(+n)>=0; }
+
 function nuevoJugador(n,nombre,arq,conv){
-  return {n:n, nombre:nombre||'', arq:!!arq, conv:conv!==false, st:statsVacias()};
+  return {n:n, nombre:nombre||'', arq: arq===undefined ? esDorsalArquero(n) : !!arq,
+          conv:conv!==false, st:statsVacias()};
 }
 /* Está en la lista de hoy (los partidos viejos no tienen el dato: cuentan todos) */
 function esConv(j){ return !!j && j.conv!==false; }
-/* Índice del arquero que está en el arco, o -1 */
+/* Puede jugar: está en la lista y no cumplió sus 3 exclusiones */
+function arqueroDisponible(j){ return !!j && j.arq && esConv(j) && !estaFuera(j); }
+
+/* Índice del arquero que está en el arco ahora, o -1.
+   Se guarda por dorsal: si el técnico no eligió, va el primer arquero de la lista
+   (el 1), y si ese no está o quedó fuera, entra el que sigue (el 15). */
 function indiceArquero(eq){
-  return equipoObj(eq).jugadores.findIndex(j=>j.arq && esConv(j));
-}
-/* Sólo uno por equipo puede estar en el arco */
-function ponerArquero(eq, idx){
   const js = equipoObj(eq).jugadores;
-  const prende = !js[idx].arq;
-  js.forEach((j,i)=>{ j.arq = prende && i===idx; });
+  const dorsal = P().arco ? P().arco[eq] : null;
+  if(dorsal!=null){
+    const i = js.findIndex(j=>+j.n===+dorsal && arqueroDisponible(j));
+    if(i>=0) return i;
+  }
+  return js.findIndex(arqueroDisponible);
+}
+/* Lo manda al arco. Si no era arquero, lo pasa a serlo. */
+function ponerEnArco(eq, idx){
+  const js = equipoObj(eq).jugadores;
+  js[idx].arq = true;
+  if(!P().arco) P().arco = {local:null, rival:null};
+  P().arco[eq] = js[idx].n;
   if(eq==='local') sincronizarPlantel();
   guardar(); pintarTodo();
-  toast(prende ? '🧤 '+nombreJug(js[idx])+' queda en el arco'
-               : '🧤 '+nombreJug(js[idx])+' ya no está en el arco');
+  toast('🧤 '+nombreJug(js[idx])+' va al arco');
+}
+/* El 🧤 del plantel: marca o desmarca arqueros, sin límite de cantidad */
+function alternarArquero(eq, idx){
+  const js = equipoObj(eq).jugadores;
+  js[idx].arq = !js[idx].arq;
+  if(!js[idx].arq && P().arco && +P().arco[eq]===+js[idx].n) P().arco[eq]=null;
+  if(eq==='local') sincronizarPlantel();
+  guardar(); pintarTodo();
 }
 function plantelVacio(cant){ const a=[]; for(let i=1;i<=cant;i++) a.push(nuevoJugador(i,'')); return a; }
 function hoyISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -789,6 +823,7 @@ function nuevoPartido(plantel, nombreEquipo, cuerpo){
     rival:'', cuerpoRival:'', fecha: hoyISO(), lugar:'', arbitro:'',
     periodo:1,
     cron:{per:[0,0,0,0], corriendo:false, desde:null},
+    arco:{local:null, rival:null},
     notas:['','','',''],
     golesPeriodo:{local:[0,0,0,0], rival:[0,0,0,0]},
     local:{jugadores: plantel.map(j=>nuevoJugador(j.n,j.nombre,j.arq,j.conv))},
@@ -1005,16 +1040,18 @@ function pintarVivo(){
 
   const g=document.getElementById('grilla'); g.innerHTML='';
   const js = equipoObj(equipoActivo).jugadores;
+  const idxArco = indiceArquero(equipoActivo);
   let enLista = 0;
   js.forEach((j,i)=>{
     if(!esConv(j)) return;          /* los que hoy no juegan no ocupan lugar */
     enLista++;
     const b=document.createElement('button');
     const fuera = estaFuera(j);
-    b.className='jug'+(equipoActivo==='rival'?' rival':'')+(fuera?' fuera':'')+(j.arq?' arq':'');
+    const enArco = (i===idxArco);
+    b.className='jug'+(equipoActivo==='rival'?' rival':'')+(fuera?' fuera':'')+(enArco?' arq':'');
     b.innerHTML =
       '<div class="dor">'+j.n+'</div><div class="info">'+
-      '<div class="nom">'+(j.arq?'🧤 ':'')+(esc(j.nombre)||'Jugador '+j.n)+'</div>'+
+      '<div class="nom">'+(j.arq?(enArco?'🧤 ':'🧤 <span class="supl">supl.</span> '):'')+(esc(j.nombre)||'Jugador '+j.n)+'</div>'+
       '<div class="res">'+(fuera
         ? '🚫 FUERA DEL PARTIDO · '+j.st.exc+' EXC'
         : (j.arq
@@ -1061,6 +1098,7 @@ function pintarPanel(){
   const j = equipoObj(eq).jugadores[idx];
   if(!j){ cerrarPanel(); return; }
   const fuera = estaFuera(j);
+  const enArco = (indiceArquero(eq)===idx);
   const h = document.getElementById('hoja');
   h.innerHTML =
     '<div class="hoja-hdr'+(eq==='rival'?' rival':'')+'">'+
@@ -1069,7 +1107,7 @@ function pintarPanel(){
       '<div class="t2">'+esc(nombreEquipo(eq)).toUpperCase()+' · PERÍODO '+P().periodo+'</div></div>'+
       '<button class="cerrar" id="x-panel">✕</button></div>'+
     '<div class="mini">'+
-      (j.arq ? '<span>PAR <b>'+(+j.st.par||0)+'</b></span><span>GR <b>'+(+j.st.gr||0)+'</b></span>'+
+      (j.arq||enArco ? '<span>PAR <b>'+(+j.st.par||0)+'</b></span><span>GR <b>'+(+j.st.gr||0)+'</b></span>'+
                '<span>ATAJ <b>'+pct(derivada(j.st,'par'))+'</b></span>' : '')+
       '<span>G <b>'+j.st.g+'</b></span><span>LT <b>'+j.st.lt+'</b></span>'+
       '<span>EF <b>'+pct(derivada(j.st,'ef'))+'</b></span><span>AST <b>'+j.st.ast+'</b></span>'+
@@ -1077,8 +1115,10 @@ function pintarPanel(){
       '<span>EXC <b>'+j.st.exc+'</b></span><span>EXF <b>'+j.st.exf+'</b></span>'+
     '</div>'+
     (fuera ? '<div class="aviso-fuera">🚫 Cumplió sus '+MAX_EXC+' exclusiones — no puede seguir disputando el partido</div>' : '')+
-    '<div style="padding:12px 16px 0"><button class="btn plano" style="width:100%" id="btn-arq">'+
-      (j.arq ? '🧤 Está en el arco — tocá para sacarlo' : '🧤 Poner en el arco')+'</button></div>'+
+    '<div style="padding:12px 16px 0">'+
+      (enArco ? '<div class="en-arco">🧤 Está en el arco</div>'
+              : '<button class="btn plano" style="width:100%" id="btn-arq">🧤 Poner en el arco</button>')+
+    '</div>'+
     '<div class="acciones" id="acc-grid"></div>'+
     '<div style="padding:2px 16px 0"><button class="btn plano" style="width:100%" id="btn-undo-panel">↩︎ Deshacer última acción</button></div>';
   const grid = h.querySelector('#acc-grid');
@@ -1096,7 +1136,8 @@ function pintarPanel(){
   });
   h.querySelector('#x-panel').onclick=cerrarPanel;
   h.querySelector('#btn-undo-panel').onclick=deshacer;
-  h.querySelector('#btn-arq').onclick=()=>ponerArquero(eq,idx);
+  const bArq = h.querySelector('#btn-arq');
+  if(bArq) bArq.onclick=()=>ponerEnArco(eq,idx);
 }
 /* Muestra el contador más representativo de cada botón */
 function contarAccion(st,a){
@@ -1345,7 +1386,14 @@ function conectarPlantel(cont,eq){
       if(eq==='local') sincronizarPlantel();
       guardar();
     };
-    inp.onblur=()=>pintarTodo();
+    inp.onblur=()=>{
+      /* Al terminar de escribir el dorsal: el 1 y el 15 son arqueros */
+      if(f==='n'){
+        const j=equipoObj(eq).jugadores[i];
+        if(esDorsalArquero(j.n) && !j.arq){ j.arq=true; if(eq==='local') sincronizarPlantel(); guardar(); }
+      }
+      pintarTodo();
+    };
   });
   cont.querySelectorAll('button[data-conv]').forEach(b=>{
     b.onclick=()=>{
@@ -1356,7 +1404,7 @@ function conectarPlantel(cont,eq){
     };
   });
   cont.querySelectorAll('button[data-arq]').forEach(b=>{
-    b.onclick=()=>ponerArquero(eq, +b.dataset.i);
+    b.onclick=()=>alternarArquero(eq, +b.dataset.i);
   });
   cont.querySelectorAll('button[data-del]').forEach(b=>{
     b.onclick=()=>{
@@ -1364,6 +1412,7 @@ function conectarPlantel(cont,eq){
       const j=equipoObj(eq).jugadores[i];
       const usado = KEYS.some(k=>+j.st[k]>0);
       if(usado && !confirm('Ese jugador ya tiene estadísticas cargadas en este partido. ¿Quitarlo igual?')) return;
+      if(P().arco && +P().arco[eq]===+j.n) P().arco[eq]=null;
       equipoObj(eq).jugadores.splice(i,1);
       // Los eventos apuntan a índices: se reindexan los posteriores
       P().eventos = P().eventos.filter(e=>!(e.eq===eq && e.idx===i));
@@ -2045,10 +2094,24 @@ function iniciar(){
   /* El plantel propio pasa de 13 a 15 jugadores, igual que el rival. Se hace
      una sola vez: si después se borra alguno a mano, no vuelve a aparecer.
      Los partidos ya cerrados del historial quedan como estaban. */
+  if(!S.partido.arco) S.partido.arco={local:null, rival:null};
   if(!S.version || S.version < 2){
     completarPlantel(S.plantel, PLANTEL_BASE, n=>({n:n, nombre:''}));
     if(S.partido.local) completarPlantel(S.partido.local.jugadores, PLANTEL_BASE, n=>nuevoJugador(n,''));
-    S.version = 2;
+  }
+  /* Los arqueros por dorsal son nuevos: se marcan una sola vez sobre lo ya
+     guardado (después de completar el plantel, para que el 15 entre marcado).
+     Si más adelante el técnico los cambia a mano, no vuelven a aparecer. */
+  if(!S.version || S.version < 3){
+    const marcar = js => (js||[]).forEach(j=>{
+      if(esDorsalArquero(j.n)) j.arq=true;
+      /* de paso, las columnas nuevas (PAR y GR) arrancan en cero */
+      if(j.st) KEYS.forEach(k=>{ if(typeof j.st[k]!=='number') j.st[k]=+j.st[k]||0; });
+    });
+    marcar(S.plantel);
+    if(S.partido.local) marcar(S.partido.local.jugadores);
+    if(S.partido.rival_j) marcar(S.partido.rival_j.jugadores);
+    S.version = 3;
     guardar();
   }
 
