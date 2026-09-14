@@ -222,6 +222,29 @@ table input:hover{border-color:var(--celeste)}
 table input:focus{border-color:var(--celeste);background:#fff;outline:2px solid var(--celeste-cl)}
 table input.txt{width:100%;min-width:120px;text-align:left;font-weight:700}
 
+/* ---------- Plantel: una ficha por jugador (entra entera en el celular) ---- */
+.plantel{display:flex;flex-direction:column;gap:8px}
+.pj{background:#fbfdff;border:1px solid var(--linea);border-radius:12px;padding:9px 10px}
+.plantel.rival .pj{background:#fffcfc;border-color:#f1dfe3}
+.pj-fila{display:flex;gap:8px;align-items:center}
+.pj input{
+  border:1px solid #e3ebf3;background:#fff;border-radius:9px;padding:8px 9px;
+  font-weight:700;font-variant-numeric:tabular-nums;
+}
+.pj input:focus{outline:none;border-color:var(--celeste);background:#fff}
+.pj .dor-in{width:62px;flex:0 0 62px;text-align:center;font-size:16px}
+.pj .nom-in{flex:1;min-width:0;text-align:left}
+.pj-chips{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.chip{
+  border:1px solid var(--linea);background:#fff;border-radius:9px;padding:6px 10px;
+  font-size:12px;font-weight:700;color:var(--gris);white-space:nowrap;
+}
+.chip:active{transform:scale(.96)}
+.chip.on.hoy{background:var(--verde-cl);border-color:#bfe6d6;color:#0b6b4a}
+.chip.on.arq{background:var(--ambar-cl);border-color:#f3ddb4;color:#8a5a0b}
+.chip.on.cap{background:var(--celeste-cl);border-color:#cfe3f3;color:var(--azul)}
+.chip.borrar{margin-left:auto;border-color:#f6cdd4;color:var(--rojo)}
+
 /* ---------- Formularios ---------- */
 .campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
 label.campo{display:block;font-size:11.5px;font-weight:700;color:var(--gris);letter-spacing:.3px;text-transform:uppercase}
@@ -505,7 +528,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
         <label class="campo">Nombre del equipo<input id="eq-nombre" placeholder="Ej: Club Náutico"></label>
         <label class="campo">Cuerpo técnico<input id="eq-cuerpo" placeholder="Entrenador, ayudante, preparador físico"></label>
       </div>
-      <div class="scroll" style="margin-top:12px" id="tabla-plantel"></div>
+      <div style="margin-top:12px" id="tabla-plantel"></div>
       <div class="fila-btn" style="margin-top:10px">
         <button class="btn plano" id="btn-add-jug">➕ Agregar jugador</button>
       </div>
@@ -524,7 +547,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
         <label class="campo">Nombre del equipo<input id="p-rival" placeholder="Equipo contrario"></label>
         <label class="campo">Cuerpo técnico<input id="p-cuerpo-rival" placeholder="Entrenador, ayudante, preparador físico"></label>
       </div>
-      <div class="scroll" style="margin-top:12px" id="tabla-plantel-rival"></div>
+      <div style="margin-top:12px" id="tabla-plantel-rival"></div>
     </div>
     <div class="card">
       <h2>🛟 Copia de seguridad</h2>
@@ -544,7 +567,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
     <div class="card">
       <h2>🚀 En un minuto</h2>
       <div class="pasos">
-        <div class="paso"><span class="np">1</span><div><b>Cargá tu plantel una sola vez</b><br>En <b>⚙️ Equipo</b>: nombre del club, y el nombre y dorsal de cada jugador. Queda guardado para siempre. Ahí mismo marcás con <b>✅</b> quién juega hoy; el <b>1</b> y el <b>15</b> ya vienen como arqueros 🧤.</div></div>
+        <div class="paso"><span class="np">1</span><div><b>Cargá tu plantel una sola vez</b><br>En <b>⚙️ Equipo</b>: nombre del club, y el número y el nombre de cada jugador. Queda guardado para siempre. En la ficha de cada uno marcás si <b>juega hoy</b>, si es <b>arquero</b> y si es el <b>capitán</b>.</div></div>
         <div class="paso"><span class="np">2</span><div><b>Durante el partido, dos toques</b><br>En <b>⚡ En vivo</b>: tocás el jugador, tocás la acción. Listo. El marcador y los porcentajes se calculan solos.</div></div>
         <div class="paso"><span class="np">3</span><div><b>Al final, guardás y seguís</b><br><b>📗 Excel</b> baja el partido con el formato de siempre y <b>📲 Resumen para WhatsApp</b> arma el texto para el grupo. <b>✅ Cerrar partido</b> lo archiva y deja la planilla en cero para el próximo.</div></div>
       </div>
@@ -559,10 +582,10 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <h2>📖 Paso a paso</h2>
       <h3>🎯 Antes del partido</h3>
       <ol>
-        <li>Entrá a <b>⚙️ Equipo</b> y cargá el nombre del equipo y el plantel con sus dorsales. Esto se hace <b>una sola vez</b>: queda guardado para todos los partidos.</li>
-        <li>En la misma tabla, marcá con <b>✅</b> quiénes juegan hoy. Los que dejás en <b>⚪</b> no aparecen en la pantalla de carga, así los botones quedan más grandes y no te equivocás de jugador.</li>
-        <li>Marcá al <b>capitán</b> con el 🎖️ de su fila. Es uno solo por equipo y queda guardado para todos los partidos; en el Excel sale con una <b>(C)</b> al lado del nombre.</li>
-        <li>Los <b>dorsales 1 y 15 ya vienen marcados como arqueros</b> 🧤, que es como se numeran siempre. Juega el 1; si entra el 15, tocalo y usá <b>🧤 Poner en el arco</b>. Si tu equipo usa otros números, marcalos con el 🧤 de la tabla.</li>
+        <li>Entrá a <b>⚙️ Equipo</b>. Cada jugador tiene su ficha: a la izquierda el <b>número de gorro</b> (tocalo y escribí el que sea) y al lado el nombre. Esto se hace <b>una sola vez</b>: queda guardado para todos los partidos.</li>
+        <li>Abajo de cada ficha hay tres botones. <b>Juega hoy</b>: los que dejás apagados no aparecen en la pantalla de carga, así los botones quedan más grandes y no te equivocás de jugador.</li>
+        <li><b>Arquero</b>: marcalo en el que ataja, sea cual sea su número. Vienen marcados el 1 y el 15 porque es lo más común, pero si tu arquero lleva el 13 lo marcás a él y al otro lo apagás. Podés tener dos arqueros marcados.</li>
+        <li><b>Capitán</b>: uno solo por equipo. En el Excel sale con una <b>(C)</b> al lado del nombre.</li>
         <li>Completá el rival, la fecha, el lugar y el árbitro.</li>
         <li>Si querés seguir también a los jugadores del rival por nombre, cargalos en <b>🚨 Plantel rival</b>. Si no, no hace falta: ya vienen numerados del 1 al 15.</li>
       </ol>
@@ -571,7 +594,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
         <li>Arriba, elegí el <b>período</b> que se está jugando (1° 2° 3° 4°). Todo lo que cargues queda asignado a ese período.</li>
         <li>Si querés saber <b>en qué minuto</b> pasó cada cosa, tocá el <b>▶️</b> del reloj cuando arranca el período y el <b>⏸️</b> cuando para el juego. Cada período tiene su propio reloj y se pone en cero solo al cambiar. Es opcional: si no lo tocás, todo funciona igual.</li>
         <li>Al arquero tocalo como a cualquier jugador: su panel tiene el botón grande <b>🧤 PARADA</b>. Los <b>goles recibidos</b> se le cargan solos al que está en el arco cada vez que anotás un gol del rival.</li>
-        <li>¿Cambio de arquero? Tocá al que entra y <b>🧤 Poner en el arco</b>. Desde ahí los goles recibidos van a su cuenta. En la lista, el suplente aparece como <b>🧤 supl.</b></li>
+        <li>¿Tenés dos arqueros? Ataja el primero de la lista. Cuando entra el otro, tocalo y usá <b>🧤 Poner en el arco</b>: desde ahí los goles recibidos van a su cuenta. En la pantalla de carga, el que está afuera aparece como <b>🧤 supl.</b></li>
         <li>Tocá el jugador y después la acción. El panel <b>queda abierto</b>: si el mismo jugador hace varias cosas seguidas, seguí tocando sin cerrarlo.</li>
         <li>¿Te equivocaste? <b>↩︎ Deshacer</b> arriba a la derecha borra lo último. Si el error fue hace varias jugadas, tocá la <b>✕</b> de esa acción en la lista de <b>🕒 Últimas acciones</b>.</li>
         <li>Con el botón <b>🚨 Rival</b> cargás las estadísticas del equipo contrario igual de rápido. El chip de color en la lista te dice de qué equipo fue cada acción: 🏊 el tuyo, 🚨 el rival.</li>
@@ -639,7 +662,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <h3>Quiero imprimir la planilla para el banco</h3>
       <p>En <b>📈 Comparativo</b> está el botón <b>🖨️ Imprimir / PDF</b>. Sale la planilla completa y el comparativo, sin los botones.</p>
       <h3>No me aparece el botón de PARADA</h3>
-      <p>Ese jugador no está marcado como arquero. Vienen marcados el <b>1</b> y el <b>15</b>; para cualquier otro, tocá el <b>🧤</b> de su fila en <b>⚙️ Equipo</b>.</p>
+      <p>Ese jugador no está marcado como arquero. En <b>⚙️ Equipo</b>, buscá su ficha y tocá el botón <b>Arquero</b>.</p>
       <h3>Los goles recibidos se los carga al arquero equivocado</h3>
       <p>Van siempre al que está en el arco. Tocá al que corresponde y usá <b>🧤 Poner en el arco</b>; si el titular quedó fuera por 3 exclusiones, la app pasa sola al otro arquero.</p>
       <h3>El arquero tiene goles recibidos de menos</h3>
@@ -647,7 +670,7 @@ textarea{resize:vertical;min-height:64px;font-weight:500}
       <h3>Me olvidé de frenar el reloj</h3>
       <p>Frenalo con <b>⏸️</b> y tocá <b>↺</b> para poner en cero el reloj de ese período. Los minutos que ya quedaron anotados en cada acción no se tocan.</p>
       <h3>Faltan jugadores, o me sobran</h3>
-      <p>En <b>⚙️ Equipo</b>: <b>➕ Agregar jugador</b> suma uno al final, y el 🗑️ de cada fila lo quita. Podés tener los que necesites.</p>
+      <p>En <b>⚙️ Equipo</b>: <b>➕ Agregar jugador</b> suma uno al final, y el 🗑️ de cada ficha lo quita. Podés tener los que necesites, con los números que quieras.</p>
       <h3>Cambio de teléfono, o quiero tener todo también en la compu</h3>
       <p>En <b>⚙️ Equipo → ⬇️ Descargar respaldo</b> baja un archivo con todos tus partidos y tu plantel. En el otro dispositivo, <b>⬆️ Restaurar respaldo</b> y lo elegís. Todo se guarda solo en el dispositivo, así que el respaldo es la forma de mudarlo.</p>
       <h3>Apareció un aviso de color arriba de todo</h3>
@@ -1380,21 +1403,31 @@ function pintarEquipo(){
   conectarPlantel(document.getElementById('tabla-plantel'),'local');
   conectarPlantel(document.getElementById('tabla-plantel-rival'),'rival');
 }
+/* Una ficha por jugador: el número se edita a mano y abajo están los tres
+   botones con su nombre escrito, así entran enteros en la pantalla del celular
+   y no hay que correr nada para el costado. */
 function tablaPlantel(eq){
   const js=equipoObj(eq).jugadores;
-  let h='<table'+(eq==='rival'?' class="rival"':'')+'><thead><tr><th style="width:70px">#</th><th class="nom">NOMBRE</th>'+
-        '<th style="width:52px">HOY</th><th style="width:52px">ARCO</th><th style="width:52px">CAP</th>'+
-        '<th style="width:56px"></th></tr></thead><tbody>';
+  let h='<div class="plantel'+(eq==='rival'?' rival':'')+'">';
   js.forEach((j,i)=>{
     const conv = esConv(j);
-    h+='<tr><td><input type="number" min="0" data-p="'+eq+'" data-i="'+i+'" data-f="n" value="'+j.n+'"></td>'+
-       '<td class="nom"><input class="txt" data-p="'+eq+'" data-i="'+i+'" data-f="nombre" value="'+esc(j.nombre)+'" placeholder="Nombre y apellido"></td>'+
-       '<td><button class="icobtn '+(conv?'on':'off')+'" data-conv="'+eq+'" data-i="'+i+'" title="Juega hoy">'+(conv?'✅':'⚪')+'</button></td>'+
-       '<td><button class="icobtn '+(j.arq?'arq-on':'off')+'" data-arq="'+eq+'" data-i="'+i+'" title="Arquero">🧤</button></td>'+
-       '<td><button class="icobtn '+(j.cap?'cap-on':'off')+'" data-cap="'+eq+'" data-i="'+i+'" title="Capitán">🎖️</button></td>'+
-       '<td><button class="icobtn" data-del="'+eq+'" data-i="'+i+'" title="Quitar">🗑️</button></td></tr>';
+    const boton = (attr, activo, cls, txtOn, txtOff) =>
+      '<button class="chip '+cls+(activo?' on':'')+'" data-'+attr+'="'+eq+'" data-i="'+i+'">'+
+      (activo?txtOn:txtOff)+'</button>';
+    h+='<div class="pj">'+
+         '<div class="pj-fila">'+
+           '<input class="dor-in" type="number" min="0" inputmode="numeric" data-p="'+eq+'" data-i="'+i+'" data-f="n" value="'+j.n+'" title="Número de gorro">'+
+           '<input class="nom-in" data-p="'+eq+'" data-i="'+i+'" data-f="nombre" value="'+esc(j.nombre)+'" placeholder="Nombre y apellido">'+
+         '</div>'+
+         '<div class="pj-chips">'+
+           boton('conv', conv,   'hoy', '✅ Juega hoy', 'No juega')+
+           boton('arq',  j.arq,  'arq', '🧤 Arquero',   'Arquero')+
+           boton('cap',  j.cap,  'cap', '🎖️ Capitán',   'Capitán')+
+           '<button class="chip borrar" data-del="'+eq+'" data-i="'+i+'">🗑️</button>'+
+         '</div>'+
+       '</div>';
   });
-  h+='</tbody></table>';
+  h+='</div>';
   return h;
 }
 function conectarPlantel(cont,eq){
@@ -1406,14 +1439,7 @@ function conectarPlantel(cont,eq){
       if(eq==='local') sincronizarPlantel();
       guardar();
     };
-    inp.onblur=()=>{
-      /* Al terminar de escribir el dorsal: el 1 y el 15 son arqueros */
-      if(f==='n'){
-        const j=equipoObj(eq).jugadores[i];
-        if(esDorsalArquero(j.n) && !j.arq){ j.arq=true; if(eq==='local') sincronizarPlantel(); guardar(); }
-      }
-      pintarTodo();
-    };
+    inp.onblur=()=>pintarTodo();
   });
   cont.querySelectorAll('button[data-conv]').forEach(b=>{
     b.onclick=()=>{
@@ -2161,7 +2187,7 @@ function iniciar(){
   document.getElementById('btn-add-jug').onclick=()=>{
     const js=P().local.jugadores;
     const max=js.reduce((a,j)=>Math.max(a,+j.n||0),0);
-    js.push(nuevoJugador(max+1,''));
+    js.push(nuevoJugador(max+1,'',false,true,false));
     sincronizarPlantel(); guardar(); pintarTodo();
   };
   document.getElementById('btn-backup').onclick=descargarRespaldo;
