@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <!-- ==========================================================================
-     DIBUJO DEL ICONO DE LA APP — pelota de waterpolo flotando en el agua
+     DIBUJO DEL ICONO DE LA APP
+     Una Mikasa de waterpolo: amarilla, con los gajos azul y rosa asomando a los
+     costados, el granulado de la superficie y las olitas del agua.
      De acá salen icon-512.png e icon-180.png. Para rehacerlos, abrir este
      archivo en Chrome y sacarle una captura del tamaño que corresponda, o con:
        chrome --headless --hide-scrollbars --window-size=512,512
@@ -19,61 +21,72 @@ svg{display:block}
       <stop offset="0.55" stop-color="#0f7fc0"/>
       <stop offset="1" stop-color="#14a9da"/>
     </linearGradient>
-    <radialGradient id="cuero" cx="0.36" cy="0.30" r="0.78">
-      <stop offset="0" stop-color="#ffe169"/>
-      <stop offset="0.45" stop-color="#fcc321"/>
-      <stop offset="0.82" stop-color="#f0a80c"/>
-      <stop offset="1" stop-color="#cf8505"/>
+    <radialGradient id="cuero" cx="0.36" cy="0.30" r="0.80">
+      <stop offset="0" stop-color="#ffdc5e"/>
+      <stop offset="0.45" stop-color="#f7c422"/>
+      <stop offset="0.85" stop-color="#e8a90d"/>
+      <stop offset="1" stop-color="#c98a06"/>
     </radialGradient>
-    <pattern id="grano" width="17" height="17" patternUnits="userSpaceOnUse">
-      <circle cx="4.5" cy="4.5" r="2.4" fill="#8a5400" fill-opacity="0.13"/>
-      <circle cx="13" cy="13" r="2.4" fill="#8a5400" fill-opacity="0.13"/>
+    <pattern id="grano" width="15" height="15" patternUnits="userSpaceOnUse">
+      <circle cx="4" cy="4" r="2.1" fill="#7a4a00" fill-opacity="0.11"/>
+      <circle cx="11.5" cy="11.5" r="2.1" fill="#7a4a00" fill-opacity="0.11"/>
     </pattern>
-    <radialGradient id="brillo" cx="0.33" cy="0.26" r="0.42">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/>
+    <radialGradient id="brillo" cx="0.34" cy="0.25" r="0.45">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.50"/>
       <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
+    <radialGradient id="volumen" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0.72" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#5a3800" stop-opacity="0.30"/>
+    </radialGradient>
     <clipPath id="bola"><circle cx="256" cy="243" r="175"/></clipPath>
+    <clipPath id="arriba"><path d="M0,0 H512 V196 C 400,246 112,246 0,196 Z"/></clipPath>
+    <clipPath id="abajo"><path d="M0,196 C 112,246 400,246 512,196 V512 H0 Z"/></clipPath>
   </defs>
 
   <rect width="512" height="512" fill="url(#agua)"/>
-
-  <!-- olitas que quedan detrás de la pelota -->
   <path d="M0,392 C 55,368 105,410 165,392 C 225,374 275,414 335,396 C 395,378 450,414 512,394 L512,512 L0,512 Z"
         fill="#0a5e9e" opacity="0.55"/>
 
-  <!-- la pelota, flotando -->
+  <!-- cuerpo amarillo -->
   <circle cx="256" cy="243" r="175" fill="url(#cuero)"/>
-  <circle cx="256" cy="243" r="175" fill="url(#grano)"/>
-  <g clip-path="url(#bola)" fill="none" stroke="#a35f00" stroke-width="10" stroke-linecap="round" opacity="0.92">
-    <g>
-      <path d="M256,68 C 352,140 352,346 256,418"/>
-      <path d="M291,72 C 387,148 387,338 291,414"/>
-    </g>
-    <g transform="rotate(120 256 243)">
-      <path d="M256,68 C 352,140 352,346 256,418"/>
-      <path d="M291,72 C 387,148 387,338 291,414"/>
-    </g>
-    <g transform="rotate(240 256 243)">
-      <path d="M256,68 C 352,140 352,346 256,418"/>
-      <path d="M291,72 C 387,148 387,338 291,414"/>
-    </g>
-  </g>
-  <circle cx="256" cy="243" r="175" fill="url(#brillo)"/>
-  <circle cx="256" cy="243" r="175" fill="none" stroke="#9a5a00" stroke-width="7" opacity="0.55"/>
 
-  <!-- olitas que pasan por delante: la pelota queda metida en el agua -->
+  <!-- gajos de los costados: azul y rosa, como la pelota de verdad -->
+  <g clip-path="url(#bola)">
+    <g clip-path="url(#arriba)">
+      <path d="M256,68 A175,175 0 0,0 256,418 A139,175 0 0,1 256,68 Z" fill="#1a5fa8"/>
+      <path d="M256,68 A175,175 0 0,1 256,418 A139,175 0 0,0 256,68 Z" fill="#e8559a"/>
+    </g>
+    <g clip-path="url(#abajo)">
+      <path d="M256,68 A175,175 0 0,0 256,418 A139,175 0 0,1 256,68 Z" fill="#e8559a"/>
+      <path d="M256,68 A175,175 0 0,1 256,418 A139,175 0 0,0 256,68 Z" fill="#1a5fa8"/>
+    </g>
+    <!-- el amarillo vuelve al frente, dejando los gajos sólo en los bordes -->
+    <ellipse cx="256" cy="243" rx="139" ry="175" fill="url(#cuero)"/>
+    <circle cx="256" cy="243" r="175" fill="url(#grano)"/>
+  </g>
+
+  <!-- costuras de los paneles -->
+  <g clip-path="url(#bola)" fill="none" stroke="#c08c0a" stroke-width="3.5" opacity="0.5">
+    <ellipse cx="256" cy="243" rx="139" ry="175"/>
+    <ellipse cx="256" cy="243" rx="96" ry="175"/>
+    <ellipse cx="256" cy="243" rx="45" ry="175"/>
+    <line x1="256" y1="68" x2="256" y2="418"/>
+  </g>
+
+  <circle cx="256" cy="243" r="175" fill="url(#volumen)"/>
+  <circle cx="256" cy="243" r="175" fill="url(#brillo)"/>
+  <circle cx="256" cy="243" r="175" fill="none" stroke="#a06f04" stroke-width="5" opacity="0.45"/>
+
+  <!-- olitas por delante -->
   <path d="M0,424 C 58,398 112,442 172,424 C 232,406 282,446 342,428 C 402,410 456,444 512,424 L512,512 L0,512 Z"
         fill="#0f86c6"/>
   <path d="M0,424 C 58,398 112,442 172,424 C 232,406 282,446 342,428 C 402,410 456,444 512,424"
         fill="none" stroke="#bfe9ff" stroke-width="9" stroke-linecap="round" opacity="0.75"/>
-
   <path d="M0,466 C 64,444 120,486 184,468 C 248,450 300,488 364,470 C 428,452 470,484 512,468 L512,512 L0,512 Z"
         fill="#17a6d6"/>
   <path d="M0,466 C 64,444 120,486 184,468 C 248,450 300,488 364,470 C 428,452 470,484 512,468"
         fill="none" stroke="#d9f4ff" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
-
-  <!-- espuma suelta a los costados -->
   <path d="M58,392 C 76,384 92,398 110,390" fill="none" stroke="#cfeeff" stroke-width="7" stroke-linecap="round" opacity="0.5"/>
   <path d="M404,398 C 422,390 438,404 456,396" fill="none" stroke="#cfeeff" stroke-width="7" stroke-linecap="round" opacity="0.5"/>
 </svg>
