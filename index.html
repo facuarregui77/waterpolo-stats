@@ -568,6 +568,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
     <div class="der">
       <button class="btn-hdr" id="btn-deshacer" title="Deshacer última acción">↩︎<span class="txt">&nbsp;Deshacer</span></button>
       <button class="btn-hdr" id="btn-excel" title="Guardar el partido en Excel">📗<span class="txt">&nbsp;Excel</span></button>
+      <button class="btn-hdr" id="btn-nuevo" title="Guardar este partido y empezar uno nuevo">➕<span class="txt">&nbsp;Nuevo</span></button>
     </div>
   </div>
   <div class="marcador">
@@ -589,6 +590,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
 
 <main>
   <div id="aviso-version" class="aviso nueva" style="display:none"></div>
+  <div id="aviso-partido" class="aviso" style="display:none"></div>
   <div id="aviso-almacen" class="aviso" style="display:none"></div>
 
   <!-- ============ EN VIVO ============ -->
@@ -764,7 +766,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
         <li>Tocá <b>📲 Resumen para WhatsApp</b> y mandá el resultado, los goleadores y las paradas al grupo del club. Sale escrito, listo para pegar.</li>
         <li>Si llevás el control de los <b>MINUTOS</b>, cargalos en <b>📋 Planilla</b>. Ahí también podés corregir a mano cualquier número.</li>
         <li>Tocá <b>📗 Excel</b> para bajar el partido con el mismo formato de siempre.</li>
-        <li>Tocá <b>✅ Cerrar partido</b>: se archiva en <b>🗂️ Historial</b> y la planilla queda limpia, con tu plantel ya cargado para el próximo.</li>
+        <li>Para empezar el próximo partido tocá <b>➕ Nuevo</b>, arriba a la derecha (o <b>✅ Cerrar partido</b> en Comparativo, que hace lo mismo): el partido se guarda en <b>🗂️ Historial</b> y la planilla queda limpia, con tu plantel ya cargado. Si abrís la app otro día con un partido sin cerrar, te lo ofrece sola con un cartel arriba de todo.</li>
       </ol>
       <h3>🏆 A lo largo de la temporada</h3>
       <p>En <b>🗂️ Historial</b> están todos los partidos cerrados y el <b>acumulado por jugador</b>: partidos jugados, totales de cada estadística, eficacias y goles por partido. Con <b>📗 Exportar temporada a Excel</b> te llevás todo eso en una planilla aparte.</p>
@@ -988,7 +990,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-09-14-1252';
+const VERSION_APP = '2026-09-22-1042';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -2177,6 +2179,7 @@ function pintarTodo(){
   pintarHeader(); pintarVivo(); pintarPlanilla(); pintarComparativo(); pintarCrono(); pintarEquipo(); pintarHistorial();
   if(jugadorAbierto) pintarPanel();
   mostrarAvisoAlmacen();
+  mostrarAvisoPartido();
 }
 function esc(s){
   return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -2733,21 +2736,51 @@ function exportarTemporada(){
 }
 
 /* ========================== Cerrar partido ============================== */
-function cerrarPartido(){
+function partidoConDatos(){
+  return P().eventos.length>0 || marcador('local')>0 || marcador('rival')>0 ||
+         KEYS.some(k=>totales('local')[k]>0 || totales('rival')[k]>0);
+}
+/* Archiva el partido abierto y deja la planilla en cero. Desde el botón Nuevo
+   termina en Equipo, que es donde se carga el rival del partido que empieza. */
+function cerrarPartido(destino){
   const gl=marcador('local'), gr=marcador('rival');
-  const hayDatos = P().eventos.length>0 || gl>0 || gr>0 ||
-                   KEYS.some(k=>totales('local')[k]>0 || totales('rival')[k]>0);
-  if(!hayDatos){ toast('Este partido está vacío, no hay nada que archivar'); return; }
+  if(!partidoConDatos()){
+    if(destino!=='equipo'){ toast('Este partido está vacío, no hay nada que archivar'); return; }
+    S.partido = nuevoPartido(S.plantel, S.equipo, S.cuerpo);
+    equipoActivo='local';
+    guardar(); pintarTodo(); irA('equipo');
+    toast('Planilla lista. Cargá el rival y a jugar');
+    return;
+  }
   cronPausar();
-  if(!confirm('Se va a archivar el partido en el Historial y la planilla quedará en cero para el próximo.\n\n'+
-              (P().equipo||'Local')+' '+gl+' — '+gr+' '+(P().rival||'Rival')+'\n\n¿Confirmás?')) return;
+  if(!confirm('El partido de hoy se guarda en el Historial y la planilla queda en cero para el próximo.\n\n'+
+              (P().equipo||'Local')+' '+gl+' — '+gr+' '+(P().rival||'Rival')+'\n\n¿Seguimos?')) return;
   sincronizarPlantel();
   S.historial.push(JSON.parse(JSON.stringify(P())));
   S.partido = nuevoPartido(S.plantel, S.equipo, S.cuerpo);
   equipoActivo='local';
   guardar(); pintarTodo();
-  irA('historial');
-  toast('✅ Partido archivado. Planilla lista para el próximo.');
+  if(destino==='equipo'){
+    irA('equipo');
+    toast('✅ Partido guardado en el Historial. Cargá el rival del nuevo');
+  } else {
+    irA('historial');
+    toast('✅ Partido archivado. Planilla lista para el próximo.');
+  }
+}
+
+/* Si al abrir la app el partido que quedó abierto es de otro día, se avisa
+   arriba de todo con el botón para empezar uno nuevo. */
+function mostrarAvisoPartido(){
+  const el = document.getElementById('aviso-partido');
+  if(!el) return;
+  const viejo = partidoConDatos() && P().fecha && P().fecha < hoyISO();
+  if(!viejo){ el.style.display='none'; return; }
+  el.style.display='block';
+  el.innerHTML = '📋 <b>Quedó abierto el partido del ' + fechaCorta(P().fecha) +
+    (P().rival ? ' contra ' + esc(P().rival) : '') + '.</b> ¿Empezás uno nuevo? El anterior se guarda en el Historial.' +
+    ' <button class="btn-aviso" id="btn-aviso-nuevo">➕ Empezar partido nuevo</button>';
+  document.getElementById('btn-aviso-nuevo').onclick = ()=>cerrarPartido('equipo');
 }
 
 /* ========================== Navegación ================================= */
@@ -2810,7 +2843,8 @@ function iniciar(){
   document.getElementById('btn-excel2').onclick=()=>exportarPartido();
   document.getElementById('btn-excel-temp').onclick=exportarTemporada;
   document.getElementById('btn-compartir').onclick=compartirResumen;
-  document.getElementById('btn-cerrar').onclick=cerrarPartido;
+  document.getElementById('btn-cerrar').onclick=()=>cerrarPartido();
+  document.getElementById('btn-nuevo').onclick=()=>cerrarPartido('equipo');
   document.getElementById('overlay').onclick=e=>{ if(e.target.id==='overlay') cerrarPanel(); };
   document.getElementById('notas').oninput=e=>{ P().notas[P().periodo-1]=e.target.value; guardar(); };
 
