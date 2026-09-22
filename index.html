@@ -783,7 +783,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
         <li><b>Superioridad jugada</b> es la que se jugó sin convertir.</li>
         <li><b>Penal GOL</b> suma lanzamiento, gol, penal ejecutado y penal convertido.</li>
         <li><b>Penal errado</b> suma lanzamiento y penal ejecutado.</li>
-        <li><b>Asistencia, Robo, Pérdida, Exc. forzada y Exc. cometida</b> suman solo lo suyo.</li>
+        <li><b>Asistencia, Robo, Bloqueo de tiro, Pérdida, Exc. forzada y Exc. cometida</b> suman solo lo suyo. El <b>✋ Bloqueo</b> es para el jugador de campo que le tapa un tiro al rival; las atajadas del arquero van con <b>PARADA</b>.</li>
         <li><b>🟥 ROJA sin cambio</b> y <b>🟧 Expulsión c/cambio</b> sacan al jugador del partido: su tarjeta queda bloqueada, igual que con las 3 exclusiones. Si era el arquero, entra solo el otro que tengas marcado.</li>
         <li><b>🧤 PARADA</b> suma 1 parada al arquero. Sólo aparece en el panel del que está en el arco.</li>
         <li><b>⏸️ Tiempo muerto</b> no suma nada a ningún jugador: sólo queda anotado con su período y su minuto, y descuenta uno de los 2 del equipo.</li>
@@ -802,6 +802,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
         <div><b>PEN%</b> Eficacia penal</div>
         <div><b>EXC</b> Exclusión cometida (20 seg)</div>
         <div><b>EXF</b> Exclusión forzada al rival</div>
+        <div><b>BLQ</b> Bloqueo de tiro</div>
         <div><b>ROJ</b> Roja, sin cambio</div>
         <div><b>EXP</b> Expulsión con cambio</div>
         <div><b>ROB</b> Robo / intercepción</div>
@@ -879,6 +880,7 @@ const COLS = [
   {k:'pen', t:'PEN%',  g:'🥅 PENALES',      calc:'pen'},
   {k:'exc', t:'EXC',   g:'🛡️ DEFENSA'},
   {k:'exf', t:'EXF',   g:'🛡️ DEFENSA'},
+  {k:'blq', t:'BLQ',   g:'🛡️ DEFENSA'},
   {k:'roj', t:'ROJ',   g:'🛡️ DEFENSA'},
   {k:'exp', t:'EXP',   g:'🛡️ DEFENSA'},
   {k:'rob', t:'ROB',   g:'💥 EXTRAS'},
@@ -904,6 +906,7 @@ const ACCIONES = [
   {id:'peng',  lbl:'Penal GOL',     ico:'⚪', tipo:'pos', d:{lt:1,g:1,pe:1,pg:1}},
   {id:'pene',  lbl:'Penal errado',  ico:'🚫', tipo:'neg', d:{lt:1,pe:1}},
   {id:'rob',   lbl:'Robo',          ico:'🛡️', tipo:'pos', d:{rob:1}},
+  {id:'blq',   lbl:'Bloqueo de tiro', ico:'✋', tipo:'pos', d:{blq:1}},
   {id:'pb',    lbl:'Pérdida',       ico:'💧', tipo:'neg', d:{pb:1}},
   {id:'exf',   lbl:'Exc. forzada',  ico:'➕', tipo:'pos', d:{exf:1}},
   {id:'exc',   lbl:'Exc. cometida', ico:'➖', tipo:'neg', d:{exc:1}},
@@ -977,6 +980,7 @@ const COMPARATIVO = [
   {t:'Rojas (sin cambio)',       k:'roj', mejor:'bajo'},
   {t:'Expulsiones con cambio',   k:'exp', mejor:'bajo'},
   {t:'Robos / intercepciones',   k:'rob', mejor:'alto'},
+  {t:'Bloqueos de tiro',         k:'blq', mejor:'alto'},
   {t:'Pérdidas de balón',        k:'pb',  mejor:'bajo'},
   {t:'Paradas del arquero',      k:'par', mejor:'alto'},
   {t:'Eficacia del arquero',     k:'par', mejor:'alto', pct:true}
@@ -990,7 +994,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-09-22-1042';
+const VERSION_APP = '2026-09-22-1129';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -1471,7 +1475,7 @@ function pintarPanel(){
                '<span>ATAJ <b>'+pct(derivada(j.st,'par'))+'</b></span>' : '')+
       '<span>G <b>'+j.st.g+'</b></span><span>LT <b>'+j.st.lt+'</b></span>'+
       '<span>EF <b>'+pct(derivada(j.st,'ef'))+'</b></span><span>AST <b>'+j.st.ast+'</b></span>'+
-      '<span>ROB <b>'+j.st.rob+'</b></span><span>PB <b>'+j.st.pb+'</b></span>'+
+      '<span>ROB <b>'+j.st.rob+'</b></span><span>BLQ <b>'+(+j.st.blq||0)+'</b></span><span>PB <b>'+j.st.pb+'</b></span>'+
       '<span>EXC <b>'+j.st.exc+'</b></span><span>EXF <b>'+j.st.exf+'</b></span>'+
     '</div>'+
     (fuera ? '<div class="aviso-fuera">🚫 '+esc(motivoFuera(j)).toUpperCase()+' — no puede seguir disputando el partido</div>' : '')+
@@ -1501,7 +1505,7 @@ function pintarPanel(){
 }
 /* Muestra el contador más representativo de cada botón */
 function contarAccion(st,a){
-  const orden=['par','pg','pe','cga','supg','supj','ast','rob','pb','exf','exc','roj','exp','g','lt'];
+  const orden=['par','pg','pe','cga','supg','supj','ast','rob','blq','pb','exf','exc','roj','exp','g','lt'];
   for(const k of orden){ if(a.d[k]!==undefined) return st[k]; }
   return null;
 }
@@ -1671,7 +1675,7 @@ function textoResumen(m){
   if(t.supj) fila += ' · Superioridad '+t.supg+'/'+t.supj+' ('+pct(derivada(t,'sup'))+')';
   if(t.pe)   fila += ' · Penales '+t.pg+'/'+t.pe;
   L.push(fila);
-  L.push('🛡️ Robos '+t.rob+' · Pérdidas '+t.pb+' · Exclusiones '+t.exc+' (forzadas al rival '+t.exf+')');
+  L.push('🛡️ Robos '+t.rob+' · Bloqueos '+(+t.blq||0)+' · Pérdidas '+t.pb+' · Exclusiones '+t.exc+' (forzadas al rival '+t.exf+')');
   const notas = m.notas.map((n,i)=>n?((i+1)+'°: '+n):'').filter(Boolean);
   if(notas.length){ L.push(''); L.push('📝 '+notas.join(' | ')); }
   return L.join('\n');
@@ -2455,9 +2459,9 @@ function csvTemporada(){
 /* ---------- Hoja de un equipo con el formato de la planilla original ----- */
 const LEYENDA = '📋 LEYENDA: LT=Lanzamientos Totales | G=Goles | EF%=Eficacia | CGA=Contragol Anotado | AST=Asistencia | '+
   'PEN-E=Penal Ejecutado | PEN-G=Penal Gol | EXC=Exclusión Cometida | EXF=Exclusión Forzada | '+
-  'ROJ=Roja sin cambio | EXP=Expulsión con cambio | ROB=Robo | PB=Pérdida | '+
+  'BLQ=Bloqueo de tiro | ROJ=Roja sin cambio | EXP=Expulsión con cambio | ROB=Robo | PB=Pérdida | '+
   'SUP-J=Superioridad Jugada | SUP-G=Superioridad Gol | MIN=Minutos | PAR=Paradas del arquero | GR=Goles recibidos | PAR%=Eficacia del arquero';
-const ANCHOS_PLANILLA = [5,24,7,7,8,7,7,8,8,8,7,7,7,7,7,7,8,8,8,7,7,7,8];
+const ANCHOS_PLANILLA = [5,24,7,7,8,7,7,8,8,8,7,7,7,7,7,7,7,8,8,8,7,7,7,8];
 
 /* Letra de columna de cada estadística según dónde empieza la tabla.
    Se calcula de COLS, así agregar una columna no rompe ninguna fórmula. */
@@ -2641,6 +2645,7 @@ function hojaGuia(){
     ['PEN%  = Eficacia penal = PEN-G ÷ PEN-E', null],
     ['EXC   = Exclusión cometida (20 seg fuera)', null],
     ['EXF   = Exclusión forzada al rival', null],
+    ['BLQ   = Bloqueo de tiro (le tapó un lanzamiento al rival)', null],
     ['ROJ   = Roja: se va y no entra nadie en su lugar', null],
     ['EXP   = Expulsión con cambio: se va y entra un compañero', null],
     ['ROB   = Robo / intercepción', null],
