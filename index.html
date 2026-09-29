@@ -437,6 +437,22 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
   letter-spacing:.02em;line-height:1.6;
 }
 
+/* ---------- Superioridades e inferioridades ---------- */
+.si{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.si-caja{border:1px solid var(--linea);border-radius:var(--radio-sm);padding:12px 13px;background:#fbfcfe}
+.si-caja.mas{border-left:3px solid var(--verde)}
+.si-caja.menos{border-left:3px solid var(--rojo)}
+.si-tit{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tinta-2);margin-bottom:9px}
+.si-gordo{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
+.si-gordo b{font-size:30px;font-weight:750;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
+.si-caja.mas .si-gordo b{color:var(--verde)}
+.si-caja.menos .si-gordo b{color:var(--rojo)}
+.si-gordo span{font-size:11.5px;color:var(--tinta-2);font-weight:600}
+.si-fila{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-top:1px solid var(--linea);font-size:12.5px}
+.si-fila span{color:var(--tinta-2)}
+.si-fila b{font-weight:700;font-variant-numeric:tabular-nums}
+.si-vacio{font-size:12.5px;color:var(--tinta-3);line-height:1.6}
+
 /* ---------- Cronología ---------- */
 .crono{list-style:none;margin:0;padding:0;max-height:430px;overflow-y:auto}
 .crono li{display:flex;align-items:center;gap:10px;padding:7px 2px;border-bottom:1px solid var(--linea);font-size:12.5px}
@@ -655,6 +671,10 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
     <div class="card">
       <h2>Análisis comparativo</h2>
       <div class="comp" id="comp"></div>
+    </div>
+    <div class="card">
+      <h2>Hombre de más y hombre de menos <span class="sub" id="sup-sub"></span></h2>
+      <div id="sup-inf"></div>
     </div>
     <div class="card" id="card-crono" style="display:none">
       <h2>Cronología del partido <span class="sub" id="crono-sub"></span></h2>
@@ -1009,7 +1029,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-09-29-1245';
+const VERSION_APP = '2026-09-29-1252';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -1643,6 +1663,41 @@ function pintarComparativo(){
   });
 }
 
+/* ================ Render: hombre de más y hombre de menos ===============
+   El hombre de más sale de las superioridades propias. El hombre de menos es
+   el espejo: cada superioridad que juega el rival es una inferioridad nuestra,
+   así que sale de lo cargado en el equipo contrario. */
+function pintarSupInf(){
+  const mias = totales('local'), suyas = totales('rival');
+  const cont = document.getElementById('sup-inf');
+  if(!cont) return;
+  /* etPct dice qué porcentaje se muestra: el de los goles o el de las otras */
+  const caja = (cls, titulo, jugadas, goles, etGol, etNoGol, etPct, pctDeGoles) => {
+    const otros = Math.max(0, jugadas - goles);
+    const arriba = pctDeGoles ? goles : otros;
+    const p = jugadas>0 ? Math.round(arriba/jugadas*100)+'%' : '—';
+    return '<div class="si-caja '+cls+'">'+
+      '<div class="si-tit">'+titulo+'</div>'+
+      '<div class="si-gordo"><b>'+jugadas+'</b><span>'+(jugadas===1?'jugada':'jugadas')+'</span></div>'+
+      '<div class="si-fila"><span>'+etGol+'</span><b>'+goles+'</b></div>'+
+      '<div class="si-fila"><span>'+etNoGol+'</span><b>'+otros+'</b></div>'+
+      '<div class="si-fila"><span>'+etPct+'</span><b>'+p+'</b></div>'+
+    '</div>';
+  };
+  let h = '<div class="si">'+
+    caja('mas','⚡ Hombre de más', mias.supj, mias.supg,
+         'Terminaron en gol', 'Se erraron', 'Eficacia', true)+
+    caja('menos','🛡️ Hombre de menos', suyas.supj, suyas.supg,
+         'Nos hicieron gol', 'Las defendimos', 'Bien defendidas', false)+
+  '</div>';
+  if(!suyas.supj){
+    h += '<p class="hint">El hombre de menos se llena solo cuando cargás las superioridades del rival: con el 🚨 '+
+         esc(nombreEquipo('rival'))+' seleccionado, <b>Superior. jugada</b> si la defendieron bien y <b>Gol superior.</b> si terminó en gol.</p>';
+  }
+  cont.innerHTML = h;
+  document.getElementById('sup-sub').textContent = mias.supj + ' a favor · ' + suyas.supj + ' en contra';
+}
+
 /* ========================== Render: cronología ==========================
    La historia del partido en orden: qué pasó, en qué período y —si se usó el
    reloj— en qué minuto. En los goles se muestra cómo iba el marcador. */
@@ -1695,7 +1750,9 @@ function textoResumen(m){
   });
   L.push('');
   let fila = '📊 Eficacia '+t.g+'/'+t.lt+' ('+pct(derivada(t,'ef'))+')';
-  if(t.supj) fila += ' · Superioridad '+t.supg+'/'+t.supj+' ('+pct(derivada(t,'sup'))+')';
+  if(t.supj) fila += ' · Hombre de más '+t.supg+'/'+t.supj+' ('+pct(derivada(t,'sup'))+')';
+  const tr2 = totalesDe(m.rival_j.jugadores);
+  if(tr2.supj) fila += ' · Hombre de menos: defendimos '+(tr2.supj-tr2.supg)+'/'+tr2.supj;
   if(t.pe)   fila += ' · Penales '+t.pg+'/'+t.pe;
   L.push(fila);
   L.push('🛡️ Robos '+t.rob+' · Bloqueos '+(+t.blq||0)+' · Pérdidas '+t.pb+' · Exclusiones '+t.exc+' (forzadas al rival '+t.exf+')');
@@ -2203,7 +2260,7 @@ function tablaTemporada(){
 /* ========================== Pintar todo ================================= */
 let panelAbiertoAntes=false;
 function pintarTodo(){
-  pintarHeader(); pintarVivo(); pintarPlanilla(); pintarComparativo(); pintarCrono(); pintarEquipo(); pintarHistorial();
+  pintarHeader(); pintarVivo(); pintarPlanilla(); pintarComparativo(); pintarSupInf(); pintarCrono(); pintarEquipo(); pintarHistorial();
   if(jugadorAbierto) pintarPanel();
   mostrarAvisoAlmacen();
   mostrarAvisoPartido();
