@@ -426,15 +426,16 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
 .bar.r .fill{background:var(--rojo)}
 .resultado{
   text-align:center;padding:20px 16px;border-radius:var(--radio);font-weight:700;font-size:22px;
-  background:var(--marino);color:#fff;margin-bottom:14px;letter-spacing:-.02em;
-  font-variant-numeric:tabular-nums;border:1px solid var(--marino);
+  background:var(--verde);color:#fff;margin-bottom:14px;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;border:1px solid var(--verde);
 }
-.resultado.derrota{background:#8e1f33;border-color:#8e1f33}
-.resultado.empate{background:#5a7086;border-color:#5a7086}
+.resultado.derrota{background:var(--rojo);border-color:var(--rojo)}
+.resultado.empate{background:#f0c020;border-color:#e0ae0d;color:#4a3500}
 .resultado small{
-  display:block;font-size:11px;font-weight:500;color:rgba(255,255,255,.66);margin-top:6px;
+  display:block;font-size:11px;font-weight:500;color:rgba(255,255,255,.72);margin-top:6px;
   letter-spacing:.02em;line-height:1.6;
 }
+.resultado.empate small{color:rgba(40,28,0,.66)}
 
 /* ---------- Cronología ---------- */
 .crono{list-style:none;margin:0;padding:0;max-height:430px;overflow-y:auto}
@@ -456,15 +457,20 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
 /* ---------- Historial ---------- */
 .partido{
   display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:var(--radio-sm);
-  background:#fbfcfe;border:1px solid var(--linea);margin-bottom:8px;transition:.15s;
+  background:#fbfcfe;border:1px solid var(--linea);border-left:3px solid var(--linea-2);
+  margin-bottom:8px;transition:.15s;
 }
+.partido.g{border-left-color:var(--verde);background:var(--verde-cl)}
+.partido.p{border-left-color:var(--rojo);background:var(--rojo-cl)}
+.partido.e{border-left-color:#e0ae0d;background:#fdf6de}
 .partido:hover{border-color:var(--linea-2)}
 .partido .mk{
   flex:0 0 auto;font-weight:700;font-size:14px;padding:7px 10px;border-radius:7px;
   background:#eef2f7;color:var(--tinta-2);font-variant-numeric:tabular-nums;letter-spacing:-.01em;
 }
-.partido .mk.g{background:var(--verde-cl);color:var(--verde)}
-.partido .mk.p{background:var(--rojo-cl);color:var(--rojo)}
+.partido .mk.g{background:var(--verde);color:#fff}
+.partido .mk.p{background:var(--rojo);color:#fff}
+.partido .mk.e{background:#f0c020;color:#4a3500}
 .partido .d{flex:1;min-width:0}
 .partido .d b{display:block;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.008em}
 .partido .d span{font-size:11px;color:var(--tinta-3)}
@@ -1002,7 +1008,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-09-29-1217';
+const VERSION_APP = '2026-09-29-1222';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -2135,8 +2141,8 @@ function pintarHistorial(){
   S.historial.slice().reverse().forEach(m=>{
     const gl=m.golesPeriodo.local.reduce((a,b)=>a+(+b||0),0);
     const gr=m.golesPeriodo.rival.reduce((a,b)=>a+(+b||0),0);
-    const cls = gl>gr?'g':(gr>gl?'p':'');
-    const d=document.createElement('div'); d.className='partido';
+    const cls = gl>gr?'g':(gr>gl?'p':'e');
+    const d=document.createElement('div'); d.className='partido '+cls;
     d.innerHTML='<div class="mk '+cls+'">'+gl+'-'+gr+'</div>'+
       '<div class="d"><b>'+esc(m.equipo)+' vs '+(esc(m.rival)||'Rival')+'</b>'+
       '<span>'+fechaCorta(m.fecha)+(m.lugar?' · '+esc(m.lugar):'')+'</span></div>';
