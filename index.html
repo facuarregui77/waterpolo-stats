@@ -764,8 +764,9 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
       <h3>⏱️ Durante el partido</h3>
       <ol start="4">
         <li>Arriba, elegí el <b>período</b> que se está jugando (1° 2° 3° 4°). Todo lo que cargues queda asignado a ese período.</li>
-        <li>Si querés saber <b>en qué minuto</b> pasó cada cosa, tocá el <b>▶️</b> del reloj cuando arranca el período y el <b>⏸️</b> cuando para el juego. Cada período tiene su propio reloj y se pone en cero solo al cambiar. Es opcional: si no lo tocás, todo funciona igual.</li>
-        <li>El reloj <b>se frena solo a los 8 minutos</b> y te ofrece pasar al período siguiente. También <b>se frena solo cuando pedís un tiempo muerto</b>, que es cuando se para el juego.</li>
+        <li>Si querés saber <b>en qué minuto</b> pasó cada cosa, tocá el <b>▶️</b> del reloj cuando arranca el período y el <b>⏸️</b> cuando para el juego. Va <b>para atrás desde 8:00</b>, como el de la mesa, y cada período arranca de nuevo en 8:00. Es opcional: si no lo tocás, todo funciona igual.</li>
+        <li>El minuto que queda anotado en cada gol y en cada acción es el <b>del partido</b>, no el del cuarto: un gol a los 2:30 del 3° período figura como <b>18'30</b>.</li>
+        <li>El reloj <b>se frena solo al llegar a 0:00</b> y te ofrece pasar al período siguiente. También <b>se frena solo cuando pedís un tiempo muerto</b>, que es cuando se para el juego.</li>
         <li>Al arquero tocalo como a cualquier jugador: su panel tiene el botón grande <b>🧤 PARADA</b>. Los <b>goles recibidos</b> se le cargan solos al que está en el arco cada vez que anotás un gol del rival.</li>
         <li>¿Tenés dos arqueros? Ataja el primero de la lista. Cuando entra el otro, tocalo y usá <b>🧤 Poner en el arco</b>: desde ahí los goles recibidos van a su cuenta. En la pantalla de carga, el que está afuera aparece como <b>🧤 supl.</b></li>
         <li>Tocá el jugador y después la acción. El panel <b>queda abierto</b>: si el mismo jugador hace varias cosas seguidas, seguí tocando sin cerrarlo.</li>
@@ -855,7 +856,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
       <h3>El arquero tiene goles recibidos de menos</h3>
       <p>Se cargan solos cuando anotás los goles del rival. Si ese día no seguiste al rival jugador por jugador, escribí el número a mano en la columna <b>GR</b> de <b>📋 Planilla</b>.</p>
       <h3>Me olvidé de frenar el reloj</h3>
-      <p>Frenalo con <b>⏸️</b> y tocá <b>↺</b> para poner en cero el reloj de ese período. Los minutos que ya quedaron anotados en cada acción no se tocan. Cuando el período llega a 8:00 el reloj muestra 🏁 y no arranca más: pasá al siguiente período, que tiene el suyo en cero.</p>
+      <p>Frenalo con <b>⏸️</b> y tocá <b>↺</b> para volver el reloj de ese período a 8:00. Los minutos que ya quedaron anotados en cada acción no se tocan. Cuando el período llega a 0:00 el reloj muestra 🏁 y no arranca más: pasá al siguiente, que arranca otra vez en 8:00.</p>
       <h3>Marqué mal una roja</h3>
       <p>Con <b>↩︎ Deshacer</b>, o con la <b>✕</b> de esa acción en <b>🕒 Últimas acciones</b>. El jugador vuelve a quedar habilitado al instante.</p>
       <h3>Faltan jugadores, o me sobran</h3>
@@ -1008,7 +1009,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-09-29-1234';
+const VERSION_APP = '2026-09-29-1245';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -1242,11 +1243,19 @@ function cronPausar(){
   c.corriendo=false; c.desde=null;
 }
 function cronCompleto(){ return cronSeg() >= DURACION_PERIODO; }
+/* Lo que queda del período: el reloj va para atrás, como el de la mesa */
+function cronResta(){ return Math.max(0, DURACION_PERIODO - cronSeg()); }
+/* Minuto del partido, contando los períodos anteriores: un gol a los 2:30 del
+   3er período es el minuto 18:30 del partido. */
+function minutoPartido(ev){
+  if(ev.t == null) return null;
+  return (ev.per-1)*DURACION_PERIODO + ev.t;
+}
 function cronTocar(){
   const c=cronOk();
   if(c.corriendo){ cronPausar(); }
   else if(cronCompleto()){
-    toast('⏱️ El '+P().periodo+'° período ya llegó a los 8 minutos. Pasá al siguiente o tocá ↺');
+    toast('⏱️ El '+P().periodo+'° período ya se jugó entero. Pasá al siguiente o tocá ↺');
     return;
   }
   else { c.corriendo=true; c.desde=Date.now(); }
@@ -1364,8 +1373,8 @@ function pintarHeader(){
   const r=document.createElement('button');
   r.className='per reloj'+(c.corriendo?' andando':'');
   const listo = cronCompleto();
-  r.title = c.corriendo ? 'Frenar el reloj' : (listo?'Este período llegó a los 8 minutos':'Arrancar el reloj del período');
-  r.innerHTML = (listo?'🏁':(c.corriendo?'⏸️':'▶️'))+' <b id="reloj-txt">'+mmss(cronSeg())+'</b>';
+  r.title = c.corriendo ? 'Frenar el reloj' : (listo?'Este período ya se jugó entero':'Arrancar el reloj del período');
+  r.innerHTML = (listo?'🏁':(c.corriendo?'⏸️':'▶️'))+' <b id="reloj-txt">'+mmss(cronResta())+'</b>';
   r.onclick=cronTocar;
   cont.appendChild(r);
   if(!c.corriendo && cronSeg()>0){
@@ -1452,7 +1461,7 @@ function pintarVivo(){
     const quien = a.equipo ? esc(nombreEquipo(ev.eq)) : (esc(j?j.nombre:'')||('#'+(j?j.n:'?')));
     li.innerHTML='<span class="tag'+(ev.eq==='rival'?' rival':'')+'">'+ev.per+'°</span>'+
       '<span class="txt">'+a.ico+' <b>'+esc(a.lbl)+'</b> — '+quien+
-      (ev.t!=null?' <i>'+mmss(ev.t)+'</i>':'')+'</span>';
+      (ev.t!=null?' <i>'+mmss(minutoPartido(ev))+'</i>':'')+'</span>';
     const x=document.createElement('button'); x.className='quitar'; x.textContent='✕';
     x.onclick=()=>quitarEvento(ev.id);
     li.appendChild(x); f.appendChild(li);
@@ -1652,7 +1661,7 @@ function pintarCrono(){
     const gol=!!a.d.g;
     if(gol){ mk[ev.eq]+=a.d.g; }
     h+='<li class="'+(gol?'gol ':'')+(ev.eq==='rival'?'rival':'')+'">'+
-       '<span class="min">'+ev.per+'° '+(ev.t!=null?mmss(ev.t):'')+'</span>'+
+       '<span class="min">'+ev.per+'° '+(ev.t!=null?mmss(minutoPartido(ev)):'')+'</span>'+
        '<span class="txt">'+(ev.eq==='rival'?'🚨':'🏊')+' '+a.ico+' '+esc(a.lbl)+' — '+
          (a.equipo ? esc(nombreEquipo(ev.eq)) : (esc(j?j.nombre:'')||('#'+(j?j.n:'?'))))+'</span>'+
        (gol?'<span class="mk">'+mk.local+'-'+mk.rival+'</span>':'')+'</li>';
@@ -2431,13 +2440,13 @@ function csvPartido(m){
   for(let i=0;i<4;i++) f.push([(i+1)+'° Período', m.golesPeriodo.local[i], m.golesPeriodo.rival[i], m.notas[i]||'']);
   if((m.eventos||[]).length){
     f.push([]); f.push(['CRONOLOGÍA']);
-    f.push(['PERÍODO','MINUTO','EQUIPO','#','JUGADOR','ACCIÓN','MARCADOR']);
+    f.push(['PERÍODO','MIN. PARTIDO','EQUIPO','#','JUGADOR','ACCIÓN','MARCADOR']);
     const mk={local:0, rival:0};
     m.eventos.forEach(ev=>{
       const a=ACC_POR_ID[ev.acc]; if(!a) return;
       const j=(ev.eq==='local'? m.local : m.rival_j).jugadores[ev.idx];
       if(a.d.g) mk[ev.eq]+=a.d.g;
-      f.push([ev.per+'°', ev.t!=null?mmss(ev.t):'', ev.eq==='local'?nl:nr,
+      f.push([ev.per+'°', ev.t!=null?mmss(minutoPartido(ev)):'', ev.eq==='local'?nl:nr,
               (a.equipo||!j)?'':j.n, a.equipo?'(todo el equipo)':(j?(j.nombre||('Jugador '+j.n)):''),
               a.lbl, a.d.g?(mk.local+' - '+mk.rival):'']);
     });
@@ -2610,7 +2619,7 @@ function hojaCrono(m){
   const evs = m.eventos||[];
   const g = new Rejilla(evs.length+4, 7);
   g.set('A1','🕒 CRONOLOGÍA DEL PARTIDO — '+(m.equipo||'Local')+' vs '+(m.rival||'Rival'), ESTILO.TITULO); g.merge('A1:G1');
-  ['PERÍODO','MINUTO','EQUIPO','#','JUGADOR','ACCIÓN','MARCADOR'].forEach((t,i)=>g.set(colLetra(i+1)+'2',t,ESTILO.HEAD));
+  ['PERÍODO','MIN. PARTIDO','EQUIPO','#','JUGADOR','ACCIÓN','MARCADOR'].forEach((t,i)=>g.set(colLetra(i+1)+'2',t,ESTILO.HEAD));
   const mk={local:0, rival:0};
   evs.forEach((ev,i)=>{
     const a=ACC_POR_ID[ev.acc]; if(!a) return;
@@ -2619,7 +2628,7 @@ function hojaCrono(m){
     const r=3+i;
     if(a.d.g) mk[ev.eq]+=a.d.g;
     g.set('A'+r, ev.per+'°', ESTILO.NUM);
-    g.set('B'+r, ev.t!=null ? mmss(ev.t) : '', ESTILO.NUM);
+    g.set('B'+r, ev.t!=null ? mmss(minutoPartido(ev)) : '', ESTILO.NUM);
     g.set('C'+r, ev.eq==='local' ? (m.equipo||'Local') : (m.rival||'Rival'), ESTILO.TXT);
     g.set('D'+r, j? j.n : '', ESTILO.NUM);
     g.set('E'+r, a.equipo ? '(todo el equipo)' : (j? (j.nombre||('Jugador '+j.n)) : ''), ESTILO.TXT);
@@ -2924,7 +2933,7 @@ function iniciar(){
     if(!S.partido.cron || !S.partido.cron.corriendo) return;
     if(cronCompleto()){ finDePeriodo(); return; }
     const el=document.getElementById('reloj-txt');
-    if(el) el.textContent = mmss(cronSeg());
+    if(el) el.textContent = mmss(cronResta());
   }, 1000);
 
   pintarTodo();
