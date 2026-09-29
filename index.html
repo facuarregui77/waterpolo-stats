@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#084c8d">
+<meta name="theme-color" content="#1574c0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Waterpolo">
@@ -30,7 +30,7 @@
 :root{
   /* tintas */
   --tinta:#0c1b2a; --tinta-2:#56687e; --tinta-3:#8b9aad;
-  --marino:#0a2540; --marino-2:#123a5e;
+  --marino:#1574c0; --marino-2:#1160a3;
   /* superficies */
   --fondo:#f4f6f9; --card:#fff; --linea:#e5eaf1; --linea-2:#d3dce7;
   /* acentos */
@@ -42,6 +42,7 @@
   --azul-osc:var(--marino); --celeste:#1e88c7; --celeste-cl:var(--azul-cl);
   --gris:var(--tinta-2); --texto:var(--tinta);
   --sombra:0 1px 2px rgba(12,27,42,.04), 0 2px 8px rgba(12,27,42,.05);
+  --marino-sombra:rgba(21,116,192,.26);
   --sombra-2:0 6px 24px rgba(12,27,42,.12);
   --radio:12px; --radio-sm:9px;
 }
@@ -66,7 +67,7 @@ header{
   position:sticky; top:0; z-index:40;
   background:var(--marino);
   color:#fff; padding-top:env(safe-area-inset-top);
-  box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 2px 14px rgba(10,37,64,.22);
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 2px 14px var(--marino-sombra);
 }
 .barra-sup{display:flex;align-items:center;gap:10px;padding:10px 14px 2px}
 .logo{
@@ -229,7 +230,7 @@ main{max-width:1180px;margin:0 auto;padding:16px 14px 96px}
 }
 
 /* ---------- Panel de acciones ---------- */
-.overlay{position:fixed;inset:0;background:rgba(10,37,64,.5);z-index:60;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.overlay{position:fixed;inset:0;background:rgba(10,45,75,.45);z-index:60;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
 .overlay.on{display:flex}
 .hoja{
   background:var(--fondo);width:100%;max-width:620px;border-radius:16px 16px 0 0;
@@ -315,7 +316,7 @@ thead th{
   background:var(--marino);color:#fff;font-size:10px;font-weight:600;letter-spacing:.07em;
   position:sticky;top:0;text-transform:uppercase;padding:8px;
 }
-thead tr.grupo th{background:#061a2e;font-size:9.5px;letter-spacing:.1em;color:rgba(255,255,255,.72)}
+thead tr.grupo th{background:#115f9f;font-size:9.5px;letter-spacing:.1em;color:rgba(255,255,255,.72)}
 table.rival thead th{background:#8e1f33}
 table.rival thead tr.grupo th{background:#6d1526}
 td.nom,th.nom{text-align:left;position:sticky;left:0;background:var(--card);z-index:1;min-width:132px}
@@ -423,7 +424,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
   font-variant-numeric:tabular-nums;border:1px solid var(--marino);
 }
 .resultado.derrota{background:#8e1f33;border-color:#8e1f33}
-.resultado.empate{background:#40536b;border-color:#40536b}
+.resultado.empate{background:#5a7086;border-color:#5a7086}
 .resultado small{
   display:block;font-size:11px;font-weight:500;color:rgba(255,255,255,.66);margin-top:6px;
   letter-spacing:.02em;line-height:1.6;
@@ -551,7 +552,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
   .card h2{border-bottom:1px solid #ccc}
   .scroll{overflow:visible;border:none}
   table{font-size:9px}
-  thead th{background:#0a2540!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  thead th{background:#1574c0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   table input{border:none;width:auto}
   .resultado{background:#fff!important;color:#000!important;border:1px solid #000}
   .resultado small{color:#333}
@@ -994,7 +995,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-09-22-1129';
+const VERSION_APP = '2026-09-29-1212';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
