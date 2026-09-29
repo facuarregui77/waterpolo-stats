@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1574c0">
+<meta name="theme-color" content="#115f9e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Waterpolo">
@@ -30,7 +30,7 @@
 :root{
   /* tintas */
   --tinta:#0c1b2a; --tinta-2:#56687e; --tinta-3:#8b9aad;
-  --marino:#1574c0; --marino-2:#1160a3;
+  --marino:#115f9e; --marino-2:#0e4f85;
   /* superficies */
   --fondo:#f4f6f9; --card:#fff; --linea:#e5eaf1; --linea-2:#d3dce7;
   /* acentos */
@@ -42,7 +42,7 @@
   --azul-osc:var(--marino); --celeste:#1e88c7; --celeste-cl:var(--azul-cl);
   --gris:var(--tinta-2); --texto:var(--tinta);
   --sombra:0 1px 2px rgba(12,27,42,.04), 0 2px 8px rgba(12,27,42,.05);
-  --marino-sombra:rgba(21,116,192,.26);
+  --marino-sombra:rgba(17,95,158,.28);
   --sombra-2:0 6px 24px rgba(12,27,42,.12);
   --radio:12px; --radio-sm:9px;
 }
@@ -322,7 +322,7 @@ thead th{
   background:var(--marino);color:#fff;font-size:10px;font-weight:600;letter-spacing:.07em;
   position:sticky;top:0;text-transform:uppercase;padding:8px;
 }
-thead tr.grupo th{background:#115f9f;font-size:9.5px;letter-spacing:.1em;color:rgba(255,255,255,.72)}
+thead tr.grupo th{background:#0d4c7f;font-size:9.5px;letter-spacing:.1em;color:rgba(255,255,255,.72)}
 table.rival thead th{background:#8e1f33}
 table.rival thead tr.grupo th{background:#6d1526}
 td.nom,th.nom{text-align:left;position:sticky;left:0;background:var(--card);z-index:1;min-width:132px}
@@ -561,7 +561,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
   .card h2{border-bottom:1px solid #ccc}
   .scroll{overflow:visible;border:none}
   table{font-size:9px}
-  thead th{background:#1574c0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  thead th{background:#115f9e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   table input{border:none;width:auto}
   .resultado{background:#fff!important;color:#000!important;border:1px solid #000}
   .resultado small{color:#333}
@@ -1005,7 +1005,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-09-29-1227';
+const VERSION_APP = '2026-09-29-1231';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
