@@ -197,6 +197,9 @@ main{max-width:1180px;margin:0 auto;padding:16px 14px 96px}
 .tm .pt.usado{background:var(--marino)}
 .tm .cuenta{font-size:11px;color:var(--tinta-3);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.03em}
 .tm:active{transform:scale(.99)}
+.tm.rival{border-left-color:var(--rojo)}
+.tm.rival:hover{border-left-color:var(--rojo)}
+.tm.rival .pt.usado{background:var(--rojo)}
 .tm.sin{border-left-color:var(--linea-2);background:#fafbfd;color:var(--tinta-3)}
 
 /* ---------- Grilla de jugadores ---------- */
@@ -1005,7 +1008,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-09-29-1231';
+const VERSION_APP = '2026-09-29-1234';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -1401,7 +1404,7 @@ function pintarVivo(){
   const tm = document.getElementById('tm-fila');
   tm.innerHTML='';
   const btm = document.createElement('button');
-  btm.className = 'tm'+(quedan<=0?' sin':'');
+  btm.className = 'tm'+(equipoActivo==='rival'?' rival':'')+(quedan<=0?' sin':'');
   btm.innerHTML = '<span class="ico">⏸️</span>'+
     '<span>'+(quedan>0 ? 'Pedí tiempo muerto de '+esc(nombreEquipo(equipoActivo))
                        : esc(nombreEquipo(equipoActivo))+' ya usó los dos')+'</span>'+
