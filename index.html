@@ -186,15 +186,15 @@ main{max-width:1180px;margin:0 auto;padding:16px 14px 96px}
 /* ---------- Tiempo muerto ---------- */
 .tm{
   display:flex;align-items:center;gap:10px;width:100%;margin-bottom:11px;padding:11px 13px;
-  background:var(--card);border:1px solid var(--linea);border-left:3px solid var(--ambar);
+  background:var(--card);border:1px solid var(--linea);border-left:3px solid var(--marino);
   border-radius:var(--radio-sm);font-weight:600;font-size:13px;text-align:left;box-shadow:var(--sombra);
   transition:.15s;
 }
-.tm:hover{border-color:var(--linea-2);border-left-color:var(--ambar)}
+.tm:hover{border-color:var(--linea-2);border-left-color:var(--marino)}
 .tm .ico{font-size:16px;line-height:1}
 .tm .marcas{margin-left:auto;display:flex;gap:5px;align-items:center}
 .tm .pt{width:9px;height:9px;border-radius:50%;background:var(--linea-2)}
-.tm .pt.usado{background:var(--ambar)}
+.tm .pt.usado{background:var(--marino)}
 .tm .cuenta{font-size:11px;color:var(--tinta-3);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:.03em}
 .tm:active{transform:scale(.99)}
 .tm.sin{border-left-color:var(--linea-2);background:#fafbfd;color:var(--tinta-3)}
@@ -426,16 +426,13 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
 .bar.r .fill{background:var(--rojo)}
 .resultado{
   text-align:center;padding:20px 16px;border-radius:var(--radio);font-weight:700;font-size:22px;
-  background:var(--verde);color:#fff;margin-bottom:14px;letter-spacing:-.02em;
-  font-variant-numeric:tabular-nums;border:1px solid var(--verde);
+  background:var(--marino);color:#fff;margin-bottom:14px;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;border:1px solid var(--marino);
 }
-.resultado.derrota{background:var(--rojo);border-color:var(--rojo)}
-.resultado.empate{background:#f0c020;border-color:#e0ae0d;color:#4a3500}
 .resultado small{
   display:block;font-size:11px;font-weight:500;color:rgba(255,255,255,.72);margin-top:6px;
   letter-spacing:.02em;line-height:1.6;
 }
-.resultado.empate small{color:rgba(40,28,0,.66)}
 
 /* ---------- Cronología ---------- */
 .crono{list-style:none;margin:0;padding:0;max-height:430px;overflow-y:auto}
@@ -1008,7 +1005,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-09-29-1222';
+const VERSION_APP = '2026-09-29-1227';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -1423,7 +1420,7 @@ function pintarVivo(){
     const b=document.createElement('button');
     const fuera = estaFuera(j);
     const enArco = (i===idxArco);
-    b.className='jug'+(equipoActivo==='rival'?' rival':'')+(fuera?' fuera':'')+(enArco?' arq':'');
+    b.className='jug'+(equipoActivo==='rival'?' rival':'')+(fuera?' fuera':'')+(j.arq?' arq':'');
     b.innerHTML =
       '<div class="dor">'+j.n+'</div><div class="info">'+
       '<div class="nom">'+(j.arq?'🧤 ':'')+(esc(j.nombre)||'Jugador '+j.n)+
