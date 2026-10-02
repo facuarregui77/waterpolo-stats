@@ -685,7 +685,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
       <div class="fila-btn">
         <button class="btn pri" id="btn-excel2">📗 Guardar partido en Excel</button>
         <button class="btn plano" id="btn-compartir">📲 Resumen para WhatsApp</button>
-        <button class="btn plano" onclick="window.print()">🖨️ Imprimir / PDF</button>
+        <button class="btn plano" onclick="imprimir()">🖨️ Imprimir / PDF</button>
         <button class="btn ok" id="btn-cerrar">✅ Cerrar partido y empezar otro</button>
       </div>
       <p class="hint">Al cerrar el partido queda archivado en el Historial y la planilla vuelve a quedar en cero, con tu plantel ya cargado para el próximo.</p>
@@ -1029,7 +1029,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-09-29-1252';
+const VERSION_APP = '2026-10-02-0947';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -2257,10 +2257,32 @@ function tablaTemporada(){
   return h;
 }
 
-/* ========================== Pintar todo ================================= */
-let panelAbiertoAntes=false;
+/* ========================== Pintar todo =================================
+   Se dibuja sólo la solapa que se está mirando; las otras quedan anotadas y se
+   dibujan recién cuando se entra. Con la planilla y el comparativo armados en
+   cada toque, cargar una acción costaba unas veinte veces más trabajo. */
+const PINTORES = {
+  vivo:        pintarVivo,
+  planilla:    pintarPlanilla,
+  comparativo: function(){ pintarComparativo(); pintarSupInf(); pintarCrono(); },
+  historial:   pintarHistorial,
+  equipo:      pintarEquipo,
+  guia:        function(){}
+};
+let solapaActual = 'vivo';
+const pendientes = {};
+function pintarSolapa(p){
+  const f = PINTORES[p];
+  if(f){ f(); pendientes[p] = false; }
+}
+/* Dibuja lo que haya quedado pendiente: antes de imprimir, que salen todas */
+function pintarPendientes(){
+  for(const p in PINTORES) if(pendientes[p]) pintarSolapa(p);
+}
 function pintarTodo(){
-  pintarHeader(); pintarVivo(); pintarPlanilla(); pintarComparativo(); pintarSupInf(); pintarCrono(); pintarEquipo(); pintarHistorial();
+  pintarHeader();
+  for(const p in PINTORES) pendientes[p] = true;
+  pintarSolapa(solapaActual);
   if(jugadorAbierto) pintarPanel();
   mostrarAvisoAlmacen();
   mostrarAvisoPartido();
@@ -2868,8 +2890,14 @@ function mostrarAvisoPartido(){
   document.getElementById('btn-aviso-nuevo').onclick = ()=>cerrarPartido('equipo');
 }
 
+/* Al imprimir salen todas las solapas, así que primero se dibujan las que
+   estén pendientes. Vale igual si se imprime con Ctrl+P. */
+function imprimir(){ pintarPendientes(); window.print(); }
+
 /* ========================== Navegación ================================= */
 function irA(p){
+  solapaActual = p;
+  if(pendientes[p]) pintarSolapa(p);
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on', b.dataset.p===p));
   document.querySelectorAll('.pane').forEach(s=>s.classList.toggle('on', s.dataset.p===p));
   window.scrollTo({top:0,behavior:'smooth'});
@@ -2978,6 +3006,8 @@ function iniciar(){
     if(e.key==='Escape') cerrarPanel();
     if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='z'){ e.preventDefault(); deshacer(); }
   });
+
+  window.addEventListener('beforeprint', pintarPendientes);
 
   /* Se controla si hay versión nueva al abrir y cada vez que se vuelve a la app */
   setTimeout(()=>controlarVersion(true), 3000);
