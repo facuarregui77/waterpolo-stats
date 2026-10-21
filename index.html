@@ -513,6 +513,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
 .imp-fila{padding:8px 11px;border-bottom:1px solid var(--linea);font-size:13px}
 .imp-fila:last-child{border-bottom:none}
 .imp-fila b{display:inline-block;min-width:26px;color:var(--azul);font-variant-numeric:tabular-nums;font-weight:700}
+.imp-et{display:inline-block;min-width:108px;color:var(--tinta-3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
 .imp-mk{font-size:10px;font-weight:700;border-radius:4px;padding:1px 5px;letter-spacing:.04em}
 .imp-mk.arq{background:var(--ambar-cl);color:#8a5a0b}
 .imp-mk.cap{background:var(--verde);color:#fff}
@@ -864,7 +865,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
       <h3>Quiero imprimir la planilla para el banco</h3>
       <p>En <b>📈 Comparativo</b> está el botón <b>🖨️ Imprimir / PDF</b>. Sale la planilla completa y el comparativo, sin los botones.</p>
       <h3>Tengo el plantel en un Excel, o en un papel</h3>
-      <p>En <b>⚙️ Equipo → 📥 Importar plantel</b>. Con el Excel, elegís el archivo y listo. Si está en papel, <b>sacale una foto</b>, mantené el dedo apretado sobre el texto de la foto para copiarlo —el celular lo reconoce solo— y pegalo en el casillero. Entiende <i>"7 Pérez Juan"</i>, <i>"Pérez Juan 7"</i> o sólo los nombres, y les pone los números en orden. Si al lado de alguien dice <i>arquero</i> o <i>(C)</i>, lo marca.</p>
+      <p>En <b>⚙️ Equipo → 📥 Importar plantel</b>. Con el Excel, elegís el archivo y listo: además de los jugadores, si la planilla trae el <b>rival, la fecha, el lugar o el árbitro</b>, te los completa también (te los muestra antes de cargar nada). Si está en papel, <b>sacale una foto</b>, mantené el dedo apretado sobre el texto de la foto para copiarlo —el celular lo reconoce solo— y pegalo en el casillero. Entiende <i>"7 Pérez Juan"</i>, <i>"Pérez Juan 7"</i> o sólo los nombres, y les pone los números en orden. Si al lado de alguien dice <i>arquero</i> o <i>(C)</i>, lo marca.</p>
       <h3>Importé y me faltan jugadores</h3>
       <p>Para sacarlos del Excel, cada jugador necesita tener el <b>número al lado del nombre</b>: si la planilla sólo tiene nombres sueltos, copiá esa columna y pegala en el casillero de texto, que ahí los numera solos.</p>
       <h3>Borré al último jugador y era el arquero</h3>
@@ -1029,7 +1030,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-10-02-0947';
+const VERSION_APP = '2026-10-21-1140';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -1839,8 +1840,13 @@ function interpretarLinea(linea){
   t = limpiarBordes(t);
   if(!t) return null;                       /* un número suelto no es un jugador */
   if(RUIDO.test(t)) return null;
-  /* encabezados de varias palabras: "# NOMBRE", "N° JUGADOR", "EQUIPO LOCAL" */
-  if(t.split(/\s+/).every(function(p){ return RUIDO.test(p); })) return null;
+  /* Encabezados y títulos de varias palabras: "# NOMBRE", "N° JUGADOR",
+     "EQUIPO LOCAL", "1° Período". Un número suelto cuenta como palabra de
+     título, así no se cuela la tabla de los cuartos como si fuera gente. */
+  if(t.split(/\s+/).every(function(p){
+       const q = p.replace(/[°º.]+$/,'');
+       return /^\d+$/.test(q) || RUIDO.test(q);
+     })) return null;
   if(t.length > 40) return null;            /* leyendas y textos largos */
   if(!/[a-záéíóúüñ]{2}/i.test(t)) return null;
   return {n:n, nombre:t, arq:arq, cap:cap};
@@ -1882,13 +1888,92 @@ function parsearFilas(filas){
   return salida;
 }
 
-function parsearCsv(txt){
-  const filas = String(txt==null?'':txt).split(/\r?\n/).filter(l=>l.trim()!=='')
+function filasDeCsv(txt){
+  return String(txt==null?'':txt).split(/\r?\n/).filter(l=>l.trim()!=='')
     .map(l=>l.split(/[;,\t]/).map(c=>c.replace(/^"/,'').replace(/"$/,'')));
-  const porFilas = parsearFilas(filas);
+}
+function parsearCsv(txt){
+  const porFilas = parsearFilas(filasDeCsv(txt));
   /* Si el CSV no trae columna de números, se lee como lista suelta */
   return porFilas.length ? porFilas : parsearTexto(txt);
 }
+
+/* ---------- Datos del partido que trae el archivo -----------------------
+   Se buscan las etiquetas sueltas por la planilla (RIVAL:, FECHA:, LUGAR:…)
+   y se toma lo que haya en la celda de al lado. Así entra tanto la planilla
+   que genera la propia app como una hecha a mano. */
+const ETIQUETAS_PARTIDO = [
+  {k:'rival',   re:/^(rival|equipo rival|contrario|adversario)$/i},
+  {k:'fecha',   re:/^(fecha|dia|día)$/i},
+  {k:'lugar',   re:/^(lugar|sede|natatorio|pileta|cancha|estadio)$/i},
+  {k:'arbitro', re:/^(arbitro|árbitro|juez|referi|réferi)$/i},
+  {k:'cuerpo',  re:/^(cuerpo tecnico|cuerpo técnico|entrenador|entrenadora|tecnico|técnico|dt)$/i},
+  {k:'equipo',  re:/^(equipo|club|mi equipo|equipo local|local)$/i}
+];
+function esEtiqueta(t){
+  const s = String(t==null?'':t).replace(/[:：]\s*$/,'').trim();
+  for(let i=0;i<ETIQUETAS_PARTIDO.length;i++)
+    if(ETIQUETAS_PARTIDO[i].re.test(s)) return ETIQUETAS_PARTIDO[i].k;
+  return null;
+}
+function dosDigitos(n){ return String(n).length<2 ? '0'+n : String(n); }
+/* Una fecha puede venir escrita de varias formas, o como el número con el que
+   Excel guarda las fechas por dentro. */
+function fechaImportada(v){
+  const t = String(v==null?'':v).trim();
+  if(!t) return null;
+  if(/^\d{4}-\d{1,2}-\d{1,2}$/.test(t)){
+    const p = t.split('-');
+    return p[0]+'-'+dosDigitos(+p[1])+'-'+dosDigitos(+p[2]);
+  }
+  let m = /^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/.exec(t);
+  if(m){
+    let a = +m[3];
+    if(a < 100) a += 2000;
+    return a+'-'+dosDigitos(+m[2])+'-'+dosDigitos(+m[1]);
+  }
+  if(/^\d{5}(\.\d+)?$/.test(t)){                 /* el número interno de Excel */
+    const d = new Date(Math.round((parseFloat(t) - 25569) * 86400000));
+    if(!isNaN(d.getTime())) return d.toISOString().slice(0,10);
+  }
+  return null;
+}
+function datosPartidoDeFilas(filas){
+  const datos = {};
+  (filas||[]).forEach(function(f){
+    if(!f) return;
+    const celdas = [];
+    for(let i=0;i<f.length;i++){
+      const c = String(f[i]==null?'':f[i]).trim();
+      if(c !== '') celdas.push(c);
+    }
+    for(let i=0;i<celdas.length-1;i++){
+      const k = esEtiqueta(celdas[i]);
+      if(!k || datos[k]) continue;
+      const v = celdas[i+1];
+      if(esEtiqueta(v)) continue;                /* dos etiquetas seguidas */
+      if(k === 'fecha'){
+        const fe = fechaImportada(v);
+        if(fe) datos.fecha = fe;
+      } else if(v.length <= 60 && /[a-záéíóúüñ0-9]/i.test(v)){
+        datos[k] = limpiarBordes(v);
+      }
+    }
+    /* El título de la planilla de la app: "Club Náutico — Planilla de partido" */
+    if(!datos.equipo && celdas.length === 1){
+      const t = limpiarBordes(celdas[0]);
+      const m = /^(.{2,40}?)\s*[—–-]\s*planilla de partido$/i.exec(t);
+      if(m) datos.equipo = limpiarBordes(m[1]);
+    }
+  });
+  return datos;
+}
+function hayDatosPartido(d){
+  if(!d) return false;
+  for(const k in d) if(d[k]) return true;
+  return false;
+}
+
 
 /* ---------- Lector de .xlsx: ZIP + XML, con el descompresor del navegador -- */
 function leerZip(buf){
@@ -1985,10 +2070,15 @@ function xlsxAFilas(buf){
 /* Un archivo cualquiera → lista de jugadores */
 function leerArchivoPlantel(f){
   const nombre = (f.name || '').toLowerCase();
-  if(/\.xlsx$/.test(nombre)) return f.arrayBuffer().then(xlsxAFilas).then(parsearFilas);
+  if(/\.xlsx$/.test(nombre))
+    return f.arrayBuffer().then(xlsxAFilas).then(function(filas){
+      return {jugadores: parsearFilas(filas), datos: datosPartidoDeFilas(filas)};
+    });
   if(/\.xls$/.test(nombre))
     return Promise.reject(new Error('Ese Excel es de un formato viejo (.xls). Abrilo y guardalo como .xlsx o como CSV.'));
-  return f.text().then(parsearCsv);
+  return f.text().then(function(txt){
+    return {jugadores: parsearCsv(txt), datos: datosPartidoDeFilas(filasDeCsv(txt))};
+  });
 }
 
 /* Los números que falten se completan con el primero libre, y si el archivo no
@@ -2015,10 +2105,12 @@ function acomodarImportados(lista){
 /* ---------- Pantalla de importar ---------------------------------------- */
 let importEq = 'local';
 let importLista = [];
+let importDatos = null;
 
 function abrirImportar(eq){
   importEq = eq;
   importLista = [];
+  importDatos = null;
   jugadorAbierto = null;
   const h = document.getElementById('hoja');
   h.innerHTML =
@@ -2037,7 +2129,7 @@ function abrirImportar(eq){
     '</div>';
   h.querySelector('#x-panel').onclick = cerrarPanel;
   h.querySelector('#imp-archivo').onclick = function(){ document.getElementById('file-plantel').click(); };
-  h.querySelector('#imp-texto').oninput = function(){ verPrevio(parsearTexto(this.value)); };
+  h.querySelector('#imp-texto').oninput = function(){ importDatos = null; verPrevio(parsearTexto(this.value)); };
   h.querySelector('#imp-usar').onclick = usarImportacion;
   verPrevio([]);
   document.getElementById('overlay').classList.add('on');
@@ -2062,6 +2154,20 @@ function verPrevio(lista){
          (j.cap ? ' <span class="imp-mk cap">C</span>' : '') + '</div>';
   });
   h += '</div>';
+  /* Los datos del partido sólo se toman cuando se importa el plantel propio:
+     en la hoja del rival el "RIVAL:" es al revés y quedaría todo cambiado. */
+  if(importEq === 'local' && hayDatosPartido(importDatos)){
+    const et = [['equipo','Mi equipo'],['rival','Rival'],['fecha','Fecha'],
+                ['lugar','Lugar'],['arbitro','Árbitro'],['cuerpo','Cuerpo técnico']];
+    h += '<div class="imp-tit">Y los datos del partido:</div><div class="imp-lista">';
+    et.forEach(function(p){
+      const v = importDatos[p[0]];
+      if(!v) return;
+      h += '<div class="imp-fila"><span class="imp-et">'+p[1]+'</span> '+
+           esc(p[0]==='fecha' ? fechaCorta(v) : v)+'</div>';
+    });
+    h += '</div>';
+  }
   cont.innerHTML = h;
 }
 
@@ -2078,21 +2184,35 @@ function usarImportacion(){
     return nuevoJugador(j.n, j.nombre, j.arq, true, j.cap);
   });
   if(P().arco) P().arco[eq] = null;
+
+  let cuantos = 0;
+  if(eq === 'local' && hayDatosPartido(importDatos)){
+    ['rival','fecha','lugar','arbitro'].forEach(function(k){
+      if(importDatos[k]){ P()[k] = importDatos[k]; cuantos++; }
+    });
+    if(importDatos.equipo){ P().equipo = importDatos.equipo; S.equipo = importDatos.equipo; cuantos++; }
+    if(importDatos.cuerpo){ P().cuerpo = importDatos.cuerpo; S.cuerpo = importDatos.cuerpo; cuantos++; }
+  }
+
   if(eq === 'local') sincronizarPlantel();
   guardar(); pintarTodo(); cerrarPanel();
-  toast('✅ Cargados ' + importLista.length + ' jugadores en ' + nombreEquipo(eq));
+  toast('✅ Cargados ' + importLista.length + ' jugadores' +
+        (cuantos ? ' y los datos del partido' : '') + ' en ' + nombreEquipo(eq));
 }
 
 function elegirArchivoPlantel(f){
   if(!f) return;
-  leerArchivoPlantel(f).then(function(lista){
+  leerArchivoPlantel(f).then(function(res){
+    const lista = res.jugadores || [];
+    importDatos = res.datos || null;
     if(!lista.length){
       verPrevio([]);
       toast('No encontré jugadores en ese archivo. Fijate que tenga el número y el nombre de cada uno.');
       return;
     }
     verPrevio(lista);
-    toast('📗 Leí ' + lista.length + ' jugadores de ' + f.name);
+    toast('📗 Leí ' + lista.length + ' jugadores' +
+          (importEq==='local' && hayDatosPartido(importDatos) ? ' y los datos del partido' : '') + ' de ' + f.name);
   }).catch(function(err){
     toast('⚠️ ' + (err && err.message ? err.message : 'No pude leer ese archivo'));
   });
