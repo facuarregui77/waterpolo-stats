@@ -719,7 +719,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
       <div style="margin-top:12px" id="tabla-plantel"></div>
       <div class="fila-btn" style="margin-top:10px">
         <button class="btn plano" id="btn-add-jug">➕ Agregar jugador</button>
-        <button class="btn plano" id="btn-importar">📥 Importar plantel</button>
+        <button class="btn plano" id="btn-importar">📥 Importar de un Excel</button>
       </div>
     </div>
     <div class="card">
@@ -759,7 +759,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
     <div class="card">
       <h2>🚀 En un minuto</h2>
       <div class="pasos">
-        <div class="paso"><span class="np">1</span><div><b>Cargá tu plantel una sola vez</b><br>En <b>⚙️ Equipo</b>: nombre del club, y el número y el nombre de cada jugador — a mano, o de una con <b>📥 Importar plantel</b> desde un Excel o pegando la lista. Queda guardado para siempre. En la ficha de cada uno marcás si <b>juega hoy</b>, si es <b>arquero</b> y si es el <b>capitán</b>.</div></div>
+        <div class="paso"><span class="np">1</span><div><b>Cargá tu plantel una sola vez</b><br>En <b>⚙️ Equipo</b>: nombre del club, y el número y el nombre de cada jugador — a mano, o de una con <b>📥 Importar de un Excel</b> o pegando la lista. Queda guardado para siempre. En la ficha de cada uno marcás si <b>juega hoy</b>, si es <b>arquero</b> y si es el <b>capitán</b>.</div></div>
         <div class="paso"><span class="np">2</span><div><b>Durante el partido, dos toques</b><br>En <b>⚡ En vivo</b>: tocás el jugador, tocás la acción. Listo. El marcador y los porcentajes se calculan solos.</div></div>
         <div class="paso"><span class="np">3</span><div><b>Al final, guardás y seguís</b><br><b>📗 Excel</b> baja el partido con el formato de siempre y <b>📲 Resumen para WhatsApp</b> arma el texto para el grupo. <b>✅ Cerrar partido</b> lo archiva y deja la planilla en cero para el próximo.</div></div>
       </div>
@@ -775,7 +775,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
       <h3>🎯 Antes del partido</h3>
       <ol>
         <li>Entrá a <b>⚙️ Equipo</b>. Cada jugador tiene su ficha: a la izquierda el <b>número de gorro</b> (tocalo y escribí el que sea) y al lado el nombre. Esto se hace <b>una sola vez</b>: queda guardado para todos los partidos.</li>
-        <li>Si ya tenés la lista en otro lado, no la escribas de nuevo: tocá <b>📥 Importar plantel</b>. Podés elegir un <b>Excel o un CSV</b>, o pegar la lista escrita. Te muestra lo que entendió antes de cargar nada.</li>
+        <li>Si ya tenés la lista en otro lado, no la escribas de nuevo: tocá <b>📥 Importar de un Excel</b>. Podés elegir un <b>Excel o un CSV</b>, o pegar la lista escrita. Te muestra lo que entendió antes de cargar nada.</li>
         <li>Abajo de cada ficha hay tres botones. <b>Juega hoy</b>: los que dejás apagados no aparecen en la pantalla de carga, así los botones quedan más grandes y no te equivocás de jugador.</li>
         <li><b>Arquero</b>: marcalo en el que ataja, sea cual sea su número. Vienen marcados el 1 y el 15 porque es lo más común, pero si tu arquero lleva el 13 lo marcás a él y al otro lo apagás. Podés tener dos arqueros marcados.</li>
         <li><b>Capitán</b>: uno solo por equipo. En el Excel sale con una <b>(C)</b> al lado del nombre.</li>
@@ -865,7 +865,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
       <h3>Quiero imprimir la planilla para el banco</h3>
       <p>En <b>📈 Comparativo</b> está el botón <b>🖨️ Imprimir / PDF</b>. Sale la planilla completa y el comparativo, sin los botones.</p>
       <h3>Tengo el plantel en un Excel, o en un papel</h3>
-      <p>En <b>⚙️ Equipo → 📥 Importar plantel</b>. Con el Excel, elegís el archivo y listo: además de los jugadores, si la planilla trae el <b>rival, la fecha, el lugar o el árbitro</b>, te los completa también (te los muestra antes de cargar nada). Si está en papel, <b>sacale una foto</b>, mantené el dedo apretado sobre el texto de la foto para copiarlo —el celular lo reconoce solo— y pegalo en el casillero. Entiende <i>"7 Pérez Juan"</i>, <i>"Pérez Juan 7"</i> o sólo los nombres, y les pone los números en orden. Si al lado de alguien dice <i>arquero</i> o <i>(C)</i>, lo marca.</p>
+      <p>En <b>⚙️ Equipo → 📥 Importar de un Excel</b>. Si el archivo es una <b>planilla completa</b> —por ejemplo un Excel bajado de la app— vuelve <b>todo el partido</b>: los dos planteles con sus estadísticas, los goles de cada período, las notas, la cronología y los datos del partido. Si es sólo una lista de nombres, carga el plantel. Si está en papel, <b>sacale una foto</b>, mantené el dedo apretado sobre el texto de la foto para copiarlo —el celular lo reconoce solo— y pegalo en el casillero. Entiende <i>"7 Pérez Juan"</i>, <i>"Pérez Juan 7"</i> o sólo los nombres, y les pone los números en orden. Si al lado de alguien dice <i>arquero</i> o <i>(C)</i>, lo marca.</p>
       <h3>Importé y me faltan jugadores</h3>
       <p>Para sacarlos del Excel, cada jugador necesita tener el <b>número al lado del nombre</b>: si la planilla sólo tiene nombres sueltos, copiá esa columna y pegala en el casillero de texto, que ahí los numera solos.</p>
       <h3>Borré al último jugador y era el arquero</h3>
@@ -1030,7 +1030,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-10-21-1140';
+const VERSION_APP = '2026-10-22-1107';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -1817,7 +1817,7 @@ function limpiarBordes(t){
 }
 
 /* Una línea de texto → {n, nombre, arq, cap}. Devuelve null si no es un jugador */
-function interpretarLinea(linea){
+function interpretarLinea(linea, suave){
   let t = String(linea==null?'':linea).replace(/[\t;|]+/g,' ').replace(/\s{2,}/g,' ').trim();
   t = t.replace(/^#+\s*/,'');
   if(!t) return null;
@@ -1839,14 +1839,20 @@ function interpretarLinea(linea){
   while(/\s\d+$/.test(t)) t = t.replace(/\s\d+$/,'');
   t = limpiarBordes(t);
   if(!t) return null;                       /* un número suelto no es un jugador */
-  if(RUIDO.test(t)) return null;
-  /* Encabezados y títulos de varias palabras: "# NOMBRE", "N° JUGADOR",
-     "EQUIPO LOCAL", "1° Período". Un número suelto cuenta como palabra de
-     título, así no se cuela la tabla de los cuartos como si fuera gente. */
-  if(t.split(/\s+/).every(function(p){
-       const q = p.replace(/[°º.]+$/,'');
-       return /^\d+$/.test(q) || RUIDO.test(q);
-     })) return null;
+  if(suave){
+    /* Viene de la columna NOMBRE de una tabla: lo único que hay que sacar son
+       las filas de totales. Un jugador puede llamarse "Rival 7" sin problema. */
+    if(/^(total|totales|promedio|suma|equipo)\b/i.test(t)) return null;
+  } else {
+    if(RUIDO.test(t)) return null;
+    /* Encabezados y títulos de varias palabras: "# NOMBRE", "N° JUGADOR",
+       "EQUIPO LOCAL", "1° Período". Un número suelto cuenta como palabra de
+       título, así no se cuela la tabla de los cuartos como si fuera gente. */
+    if(t.split(/\s+/).every(function(p){
+         const q = p.replace(/[°º.]+$/,'');
+         return /^\d+$/.test(q) || RUIDO.test(q);
+       })) return null;
+  }
   if(t.length > 40) return null;            /* leyendas y textos largos */
   if(!/[a-záéíóúüñ]{2}/i.test(t)) return null;
   return {n:n, nombre:t, arq:arq, cap:cap};
@@ -2025,20 +2031,43 @@ function letrasACol(ref){
   }
   return col;
 }
-function xlsxAFilas(buf){
+/* Las hojas vienen como sheet1, sheet2… y hay que ordenarlas por número, que
+   sheet10 va después de sheet9 y no entre sheet1 y sheet2. */
+function numeroDeHoja(nombre){
+  const m = /sheet(\d+)\.xml$/.exec(nombre);
+  return m ? +m[1] : 999;
+}
+function xlsxAHojas(buf){
   const z = leerZip(buf);
-  const hojas = z.entradas.filter(e => /^xl\/worksheets\/.*\.xml$/.test(e.nombre))
-                          .sort((a,b) => a.nombre.localeCompare(b.nombre));
+  const hojas = z.entradas.filter(e => /^xl\/worksheets\/sheet\d+\.xml$/.test(e.nombre))
+                          .sort((a,b) => numeroDeHoja(a.nombre) - numeroDeHoja(b.nombre));
   if(!hojas.length) return Promise.reject(new Error('El Excel no tiene ninguna hoja'));
   const comp = z.entradas.filter(e => e.nombre === 'xl/sharedStrings.xml')[0];
+  return Promise.all([
+    Promise.all(hojas.map(function(h){ return contenidoZip(z, h); })),
+    comp ? contenidoZip(z, comp) : null
+  ]).then(function(partes){
+    const textos = textosCompartidos(partes[1]);
+    return partes[0].map(function(bytes){ return filasDeHoja(bytes, textos); });
+  });
+}
+/* Se deja el de una sola hoja porque es lo que usa el importador simple */
+function xlsxAFilas(buf){
+  return xlsxAHojas(buf).then(function(hojas){ return hojas[0] || []; });
+}
+function textosCompartidos(bytes){
   const dec = new TextDecoder();
-  return Promise.all([contenidoZip(z, hojas[0]), comp ? contenidoZip(z, comp) : null]).then(function(partes){
-    const textos = [];
-    if(partes[1]){
-      const dss = new DOMParser().parseFromString(dec.decode(partes[1]), 'application/xml');
-      const sis = dss.getElementsByTagName('si');
-      for(let i=0;i<sis.length;i++) textos.push(textoDeNodos(sis[i].getElementsByTagName('t')));
-    }
+  const textos = [];
+  if(bytes){
+    const dss = new DOMParser().parseFromString(dec.decode(bytes), 'application/xml');
+    const sis = dss.getElementsByTagName('si');
+    for(let i=0;i<sis.length;i++) textos.push(textoDeNodos(sis[i].getElementsByTagName('t')));
+  }
+  return textos;
+}
+function filasDeHoja(bytes, textos){
+  const dec = new TextDecoder();
+  return (function(partes){
     const doc = new DOMParser().parseFromString(dec.decode(partes[0]), 'application/xml');
     const rows = doc.getElementsByTagName('row');
     const filas = [];
@@ -2064,21 +2093,33 @@ function xlsxAFilas(buf){
       filas.push(fila);
     }
     return filas;
-  });
+  })([bytes, null]);
 }
 
 /* Un archivo cualquiera → lista de jugadores */
 function leerArchivoPlantel(f){
   const nombre = (f.name || '').toLowerCase();
   if(/\.xlsx$/.test(nombre))
-    return f.arrayBuffer().then(xlsxAFilas).then(function(filas){
-      return {jugadores: parsearFilas(filas), datos: datosPartidoDeFilas(filas)};
-    });
+    return f.arrayBuffer().then(xlsxAHojas).then(armarImportacion);
   if(/\.xls$/.test(nombre))
     return Promise.reject(new Error('Ese Excel es de un formato viejo (.xls). Abrilo y guardalo como .xlsx o como CSV.'));
   return f.text().then(function(txt){
-    return {jugadores: parsearCsv(txt), datos: datosPartidoDeFilas(filasDeCsv(txt))};
+    return armarImportacion([filasDeCsv(txt)]);
   });
+}
+/* Si el archivo es una planilla completa se trae todo; si es una lista pelada
+   de jugadores, se cae al lector simple de siempre. */
+function armarImportacion(hojas){
+  const p = leerPlanilla(hojas);
+  if(p.local.length){
+    /* Si el archivo trae los dos equipos y se está cargando el plantel del
+       rival, el que corresponde es el segundo. */
+    const propios = (importEq === 'rival' && p.rival.length) ? p.rival : p.local;
+    return {jugadores:propios, datos:p.datos, planilla:p};
+  }
+  const todas = [];
+  hojas.forEach(function(h){ h.forEach(function(f){ todas.push(f); }); });
+  return {jugadores: parsearFilas(todas), datos: datosPartidoDeFilas(todas), planilla: null};
 }
 
 /* Los números que falten se completan con el primero libre, y si el archivo no
@@ -2102,25 +2143,190 @@ function acomodarImportados(lista){
   return lista;
 }
 
+/* ==========================================================================
+   LEER UNA PLANILLA ENTERA
+   Además del plantel, de un Excel o un CSV se saca todo lo que tenga: las
+   estadísticas de cada jugador, los parciales, las notas de cada período y la
+   cronología. Así un archivo guardado vuelve a la app tal cual estaba.
+   ========================================================================== */
+
+/* Título de columna → la estadística que guarda la app ("LT" → lt) */
+const COL_POR_TITULO = {};
+COLS.forEach(function(c){ if(!c.calc) COL_POR_TITULO[c.t.toUpperCase()] = c.k; });
+
+/* Una fila es encabezado de tabla si tiene la columna del nombre y varias
+   columnas de estadísticas. Se devuelve en qué posición cae cada una. */
+function mapaDeCabecera(celdas){
+  const cols = {};
+  let idxNombre = -1, idxNum = -1, cuantas = 0;
+  for(let i=0;i<celdas.length;i++){
+    const t = String(celdas[i]||'').trim().toUpperCase().replace(/\.$/,'');
+    if(!t) continue;
+    if(idxNombre < 0 && /^(NOMBRE|JUGADOR|APELLIDO)$/.test(t)){ idxNombre = i; continue; }
+    if(idxNum < 0 && /^(#|N[°ºO]?|NRO|NUMERO|NÚMERO|DORSAL|GORRO)$/.test(t)){ idxNum = i; continue; }
+    if(COL_POR_TITULO[t] !== undefined && cols[i] === undefined){ cols[i] = COL_POR_TITULO[t]; cuantas++; }
+  }
+  if(idxNombre < 0 || cuantas < 3) return null;
+  return {idxNombre:idxNombre, idxNum:idxNum, cols:cols};
+}
+
+/* Corta las filas en bloques: cada encabezado abre uno y una fila vacía lo
+   cierra. En el Excel de la app hay un bloque por hoja; en el CSV, los dos
+   equipos van uno abajo del otro en el mismo archivo. */
+function bloquesDeFilas(filas){
+  const bloques = [];
+  let actual = null;
+  (filas||[]).forEach(function(f){
+    const celdas = (f||[]).map(function(c){ return String(c==null?'':c).trim(); });
+    const mapa = mapaDeCabecera(celdas);
+    if(mapa){ actual = {mapa:mapa, filas:[]}; bloques.push(actual); return; }
+    if(!actual) return;
+    let vacia = true;
+    for(let i=0;i<celdas.length;i++) if(celdas[i] !== ''){ vacia = false; break; }
+    if(vacia){ actual = null; return; }
+    actual.filas.push(celdas);
+  });
+  return bloques;
+}
+
+/* Un bloque → los jugadores con sus números cargados */
+function jugadoresDeBloque(bloque){
+  const salida = [];
+  bloque.filas.forEach(function(celdas){
+    const crudo = celdas[bloque.mapa.idxNombre] || '';
+    const j = interpretarLinea(crudo, true);
+    if(!j) return;                                   /* totales, títulos, vacíos */
+    let n = null;
+    if(bloque.mapa.idxNum >= 0 && esDorsal(celdas[bloque.mapa.idxNum])) n = +celdas[bloque.mapa.idxNum];
+    else if(j.n !== null) n = j.n;
+    if(n === null) return;
+    j.n = n;
+    j.st = statsVacias();
+    let cargado = false;
+    for(const i in bloque.mapa.cols){
+      const v = celdas[i];
+      if(v === '' || v == null) continue;
+      const num = parseFloat(String(v).replace(',', '.'));
+      if(isNaN(num) || num < 0) continue;
+      j.st[bloque.mapa.cols[i]] = Math.round(num);
+      if(num > 0) cargado = true;
+    }
+    j.conEstadisticas = cargado;
+    salida.push(j);
+  });
+  return salida;
+}
+
+/* Los parciales y las notas, de la tabla "Seguimiento por período" */
+function periodosDeFilas(filas){
+  const goles = {local:[0,0,0,0], rival:[0,0,0,0]};
+  const notas = ['','','',''];
+  let encontrado = false;
+  (filas||[]).forEach(function(f){
+    const celdas = [];
+    for(let i=0;i<(f||[]).length;i++){
+      const c = String(f[i]==null?'':f[i]).trim();
+      if(c !== '') celdas.push(c);
+    }
+    if(celdas.length < 2) return;
+    const m = /^(\d)\s*[°ºa-z]*\s*per[ií]odo$/i.exec(celdas[0]);
+    if(!m) return;
+    const p = +m[1];
+    if(p < 1 || p > 4) return;
+    const numeros = [], textos = [];
+    for(let i=1;i<celdas.length;i++){
+      if(/^\d{1,3}$/.test(celdas[i])) numeros.push(+celdas[i]);
+      else textos.push(celdas[i]);
+    }
+    if(numeros.length >= 2){
+      goles.local[p-1] = numeros[0];
+      goles.rival[p-1] = numeros[1];
+      encontrado = true;
+    }
+    if(textos.length) notas[p-1] = textos.join(' ');
+  });
+  return encontrado ? {goles:goles, notas:notas} : null;
+}
+
+/* La cronología: vuelve a armar la lista de acciones con su minuto */
+const ACC_POR_ETIQUETA = {};
+ACCIONES.forEach(function(a){ ACC_POR_ETIQUETA[a.lbl.toUpperCase()] = a.id; });
+
+function segundosDeTexto(t){
+  const m = /^(\d{1,3})[:'´](\d{2})$/.exec(String(t||'').trim());
+  if(!m) return null;
+  return (+m[1])*60 + (+m[2]);
+}
+function cronologiaDeFilas(filas, nombreLocal){
+  const evs = [];
+  (filas||[]).forEach(function(f){
+    const celdas = (f||[]).map(function(c){ return String(c==null?'':c).trim(); });
+    const m = /^(\d)\s*[°º]?$/.exec(celdas[0] || '');
+    if(!m) return;
+    const per = +m[1];
+    if(per < 1 || per > 4) return;
+    let acc = null, eq = null, seg = null, dorsal = null;
+    for(let i=1;i<celdas.length;i++){
+      const c = celdas[i];
+      if(!c) continue;
+      if(seg === null && segundosDeTexto(c) !== null){ seg = segundosDeTexto(c); continue; }
+      if(acc === null && ACC_POR_ETIQUETA[c.toUpperCase()]){ acc = ACC_POR_ETIQUETA[c.toUpperCase()]; continue; }
+      if(eq === null && nombreLocal && c.toUpperCase() === String(nombreLocal).toUpperCase()){ eq = 'local'; continue; }
+      if(eq === null && /^\d{1,2}$/.test(c) === false && i <= 3 && !ACC_POR_ETIQUETA[c.toUpperCase()]){ eq = 'rival'; continue; }
+      if(dorsal === null && /^\d{1,2}$/.test(c)) dorsal = +c;
+    }
+    if(!acc || !eq) return;
+    const ev = {id:uid(), eq:eq, idx:-1, acc:acc, per:per, dorsal:dorsal};
+    if(seg !== null) ev.t = Math.max(0, seg - (per-1)*DURACION_PERIODO);
+    evs.push(ev);
+  });
+  return evs;
+}
+
+/* Todo junto: lo que se pueda sacar del archivo */
+function leerPlanilla(hojas, textoCrudo){
+  const todas = [];
+  hojas.forEach(function(h){ h.forEach(function(f){ todas.push(f); }); });
+  const bloques = [];
+  hojas.forEach(function(h){ bloquesDeFilas(h).forEach(function(b){ bloques.push(b); }); });
+
+  const datos = datosPartidoDeFilas(todas);
+  const equipos = bloques.map(jugadoresDeBloque).filter(function(l){ return l.length > 0; });
+  const periodos = periodosDeFilas(todas);
+  const crono = cronologiaDeFilas(todas, datos.equipo);
+
+  const conStats = equipos.some(function(l){ return l.some(function(j){ return j.conEstadisticas; }); });
+  return {
+    local: equipos[0] || [],
+    rival: equipos.length > 1 ? equipos[1] : [],
+    datos: datos,
+    periodos: periodos,
+    crono: crono,
+    completa: conStats || !!periodos || equipos.length > 1
+  };
+}
+
 /* ---------- Pantalla de importar ---------------------------------------- */
 let importEq = 'local';
 let importLista = [];
 let importDatos = null;
+let importPlanilla = null;
 
 function abrirImportar(eq){
   importEq = eq;
   importLista = [];
   importDatos = null;
+  importPlanilla = null;
   jugadorAbierto = null;
   const h = document.getElementById('hoja');
   h.innerHTML =
     '<div class="hoja-hdr' + (eq==='rival' ? ' rival' : '') + '">' +
-      '<div><div class="t1">📥 Importar plantel</div>' +
+      '<div><div class="t1">📥 Importar de un archivo</div>' +
       '<div class="t2">' + esc(nombreEquipo(eq)).toUpperCase() + '</div></div>' +
       '<button class="cerrar" id="x-panel">✕</button></div>' +
     '<div class="importar">' +
       '<button class="btn pri" style="width:100%" id="imp-archivo">📗 Elegir un Excel o un CSV</button>' +
-      '<p class="hint">Sirve la planilla de siempre, o cualquier lista que tenga el número y el nombre de cada jugador.</p>' +
+      '<p class="hint">Si el archivo es una planilla completa se carga el partido entero: jugadores, estadísticas, parciales y notas. Si es sólo una lista de nombres, se carga el plantel.</p>' +
       '<div class="imp-o">o pegá la lista acá</div>' +
       '<textarea id="imp-texto" placeholder="7 Pérez Juan&#10;9 López Martín&#10;1 Gómez Ana (arquera)"></textarea>' +
       '<p class="hint">📷 <b>¿La tenés en papel?</b> Sacale una foto, mantené el dedo sobre el texto de la foto para copiarlo y pegalo acá.</p>' +
@@ -2129,7 +2335,9 @@ function abrirImportar(eq){
     '</div>';
   h.querySelector('#x-panel').onclick = cerrarPanel;
   h.querySelector('#imp-archivo').onclick = function(){ document.getElementById('file-plantel').click(); };
-  h.querySelector('#imp-texto').oninput = function(){ importDatos = null; verPrevio(parsearTexto(this.value)); };
+  h.querySelector('#imp-texto').oninput = function(){
+    importDatos = null; importPlanilla = null; verPrevio(parsearTexto(this.value));
+  };
   h.querySelector('#imp-usar').onclick = usarImportacion;
   verPrevio([]);
   document.getElementById('overlay').classList.add('on');
@@ -2168,12 +2376,87 @@ function verPrevio(lista){
     });
     h += '</div>';
   }
+  if(importPlanilla){
+    const p = importPlanilla;
+    const conStats = p.local.filter(function(j){ return j.conEstadisticas; }).length;
+    const lineas = [];
+    if(conStats) lineas.push('Estadísticas cargadas de ' + conStats + (conStats===1?' jugador':' jugadores'));
+    if(p.rival.length) lineas.push('El plantel del rival: ' + p.rival.length +
+      (p.rival.some(function(j){ return j.conEstadisticas; }) ? ' con sus estadísticas' : ''));
+    if(p.periodos) lineas.push('Los parciales: ' +
+      p.periodos.goles.local.map(function(v,i){ return v+'-'+p.periodos.goles.rival[i]; }).join(' / '));
+    if(p.periodos && p.periodos.notas.some(Boolean)) lineas.push('Las notas tácticas');
+    if(p.crono.length) lineas.push('La cronología: ' + p.crono.length + ' acciones');
+    if(lineas.length){
+      h += '<div class="imp-tit">Y el resto del partido:</div><div class="imp-lista">';
+      lineas.forEach(function(l){ h += '<div class="imp-fila">✅ ' + esc(l) + '</div>'; });
+      h += '</div>';
+    }
+  }
   cont.innerHTML = h;
+  btn.textContent = importPlanilla ? '✅ Cargar este partido' : '✅ Usar esta lista';
+}
+
+/* Carga una lista de jugadores en un equipo, con sus estadísticas si las trae */
+function ponerJugadores(eq, lista){
+  equipoObj(eq).jugadores = lista.map(function(j){
+    const nuevo = nuevoJugador(j.n, j.nombre, j.arq, true, j.cap);
+    if(j.st) KEYS.forEach(function(k){ nuevo.st[k] = +j.st[k] || 0; });
+    return nuevo;
+  });
+  if(P().arco) P().arco[eq] = null;
+}
+
+/* Los eventos vienen con el número de gorro: hay que pasarlos a la posición
+   que ocupa cada jugador en la lista. Los que no se encuentran se descartan. */
+function acomodarCronologia(evs){
+  const porDorsal = {local:{}, rival:{}};
+  ['local','rival'].forEach(function(eq){
+    equipoObj(eq).jugadores.forEach(function(j,i){ porDorsal[eq][j.n] = i; });
+  });
+  const salida = [];
+  (evs||[]).forEach(function(ev){
+    if(ACC_POR_ID[ev.acc] && ACC_POR_ID[ev.acc].equipo){
+      salida.push({id:ev.id, eq:ev.eq, idx:-1, acc:ev.acc, per:ev.per, t:ev.t});
+      return;
+    }
+    const i = porDorsal[ev.eq][ev.dorsal];
+    if(i === undefined) return;
+    salida.push({id:ev.id, eq:ev.eq, idx:i, acc:ev.acc, per:ev.per, t:ev.t});
+  });
+  return salida;
 }
 
 function usarImportacion(){
   if(!importLista.length){ toast('No hay ninguna lista para importar'); return; }
   const eq = importEq;
+
+  /* Planilla completa: se reemplaza el partido abierto por el del archivo */
+  if(importPlanilla){
+    const p = importPlanilla;
+    if(partidoConDatos() && !confirm('El archivo trae un partido entero.\n\n' +
+        'Se va a reemplazar lo que tengas cargado ahora. Los partidos del historial no se tocan.\n\n¿Seguir?')) return;
+    cronPausar();
+    ponerJugadores('local', p.local);
+    if(p.rival.length) ponerJugadores('rival', p.rival);
+    if(p.periodos){
+      P().golesPeriodo = {local: p.periodos.goles.local.slice(), rival: p.periodos.goles.rival.slice()};
+      P().notas = p.periodos.notas.slice();
+    }
+    P().eventos = acomodarCronologia(p.crono);
+    if(hayDatosPartido(importDatos)){
+      ['rival','fecha','lugar','arbitro'].forEach(function(k){ if(importDatos[k]) P()[k] = importDatos[k]; });
+      if(importDatos.equipo){ P().equipo = importDatos.equipo; S.equipo = importDatos.equipo; }
+      if(importDatos.cuerpo){ P().cuerpo = importDatos.cuerpo; S.cuerpo = importDatos.cuerpo; }
+    }
+    P().periodo = 1;
+    sincronizarPlantel();
+    guardar(); pintarTodo(); cerrarPanel();
+    toast('✅ Partido cargado: ' + p.local.length + ' jugadores' +
+          (p.rival.length ? ', el rival' : '') + (p.periodos ? ' y los parciales' : ''));
+    return;
+  }
+
   const hayCargado = P().eventos.some(function(e){ return e.eq === eq; }) ||
                      KEYS.some(function(k){ return totales(eq)[k] > 0; });
   if(hayCargado && !confirm('Este partido ya tiene estadísticas cargadas de ' + nombreEquipo(eq) +
@@ -2205,14 +2488,14 @@ function elegirArchivoPlantel(f){
   leerArchivoPlantel(f).then(function(res){
     const lista = res.jugadores || [];
     importDatos = res.datos || null;
+    importPlanilla = (importEq === 'local' && res.planilla && res.planilla.completa) ? res.planilla : null;
     if(!lista.length){
       verPrevio([]);
       toast('No encontré jugadores en ese archivo. Fijate que tenga el número y el nombre de cada uno.');
       return;
     }
     verPrevio(lista);
-    toast('📗 Leí ' + lista.length + ' jugadores' +
-          (importEq==='local' && hayDatosPartido(importDatos) ? ' y los datos del partido' : '') + ' de ' + f.name);
+    toast('📗 Leí ' + (importPlanilla ? 'el partido entero' : lista.length + ' jugadores') + ' de ' + f.name);
   }).catch(function(err){
     toast('⚠️ ' + (err && err.message ? err.message : 'No pude leer ese archivo'));
   });
