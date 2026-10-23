@@ -1,0 +1,17 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>esperando</title></head><body>
+<pre id="salida">...</pre>
+<script src="ocr/tesseract.min.js"></script>
+<script>
+(async function(){
+  try{
+    const t0 = Date.now();
+    const w = await Tesseract.createWorker('spa', 1, {
+      workerPath:'ocr/worker.min.js', corePath:'ocr/', langPath:'ocr/'
+    });
+    const r = await w.recognize('prueba-foto.png');
+    await w.terminate();
+    document.getElementById('salida').textContent = r.data.text;
+    document.title = 'LISTO ' + Math.round((Date.now()-t0)/1000) + 's conf=' + Math.round(r.data.confidence);
+  }catch(e){ document.title = 'ERROR ' + (e && e.message || e); document.getElementById('salida').textContent = String(e && e.stack || e); }
+})();
+</script></body></html>

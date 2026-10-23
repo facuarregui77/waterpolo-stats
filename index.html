@@ -504,6 +504,10 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
 /* ---------- Importar ---------- */
 .importar{padding:15px 16px}
 .importar textarea{min-height:130px;font-size:13.5px;font-family:inherit}
+.imp-leyendo{
+  margin-top:10px;background:var(--azul-cl);border:1px solid var(--azul-bd);color:var(--azul);
+  border-radius:var(--radio-sm);padding:9px 11px;font-size:12.5px;font-weight:600;text-align:center;
+}
 .imp-o{
   text-align:center;font-size:10.5px;color:var(--tinta-3);font-weight:600;margin:14px 0 8px;
   letter-spacing:.09em;text-transform:uppercase;
@@ -895,6 +899,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
 </main>
 
 <input type="file" id="file-plantel" accept=".xlsx,.csv,.txt,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none">
+<input type="file" id="file-foto" accept="image/*" style="display:none">
 <div class="overlay" id="overlay"><div class="hoja" id="hoja"></div></div>
 <div id="toast"><span id="toast-txt"></span><button id="toast-btn" style="display:none"></button></div>
 
@@ -1031,7 +1036,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-10-23-1045';
+const VERSION_APP = '2026-10-23-1057';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -2307,6 +2312,86 @@ function leerPlanilla(hojas, textoCrudo){
   };
 }
 
+/* ---------- Leer una foto de la planilla -------------------------------
+   El lector de texto pesa varios megas, así que no viene dentro de la app:
+   se baja la primera vez que se usa y después queda guardado en el teléfono,
+   con lo cual funciona también sin internet. Lo que lee va a parar al
+   casillero de texto, para poder corregir lo que haya salido torcido antes
+   de cargarlo. */
+let ocrCargando = null;
+function cargarLector(){
+  if(window.Tesseract) return Promise.resolve(window.Tesseract);
+  if(ocrCargando) return ocrCargando;
+  ocrCargando = new Promise(function(listo, falla){
+    if(location.protocol.indexOf('http') !== 0){
+      ocrCargando = null;
+      falla(new Error('Para leer fotos hay que abrir la app desde su link, no desde el archivo suelto.'));
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = 'ocr/tesseract.min.js';
+    s.onload = function(){ listo(window.Tesseract); };
+    s.onerror = function(){
+      ocrCargando = null;
+      falla(new Error('No pude bajar el lector de fotos. La primera vez hace falta internet.'));
+    };
+    document.head.appendChild(s);
+  });
+  return ocrCargando;
+}
+
+function avisarFoto(txt){
+  const el = document.getElementById('imp-leyendo');
+  if(!el) return;
+  if(!txt){ el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.textContent = txt;
+}
+
+function leerFoto(archivo){
+  if(!archivo) return;
+  const boton = document.getElementById('imp-foto');
+  if(boton) boton.disabled = true;
+  avisarFoto('Preparando el lector… la primera vez tarda un poco');
+  let obrero = null;
+  cargarLector().then(function(T){
+    avisarFoto('Leyendo la foto…');
+    return T.createWorker('spa', 1, {
+      workerPath: 'ocr/worker.min.js',
+      corePath: 'ocr/',
+      langPath: 'ocr/',
+      logger: function(m){
+        if(m.status === 'recognizing text') avisarFoto('Leyendo la foto… ' + Math.round(m.progress * 100) + '%');
+        else if(m.status && m.status.indexOf('load') === 0) avisarFoto('Preparando el lector…');
+      }
+    });
+  }).then(function(w){
+    obrero = w;
+    return w.recognize(archivo);
+  }).then(function(r){
+    const texto = (r && r.data && r.data.text || '').trim();
+    if(obrero) obrero.terminate();
+    if(boton) boton.disabled = false;
+    if(!texto){
+      avisarFoto('');
+      toast('No pude leer nada en esa foto. Probá con más luz o más de cerca.');
+      return;
+    }
+    const caja = document.getElementById('imp-texto');
+    if(caja){ caja.value = texto; }
+    importDatos = datosPartidoDeFilas(texto.split(/\r?\n/).map(function(l){ return l.split(/\s{2,}|\t|:/); }));
+    importPlanilla = null;
+    verPrevio(parsearTexto(texto));
+    avisarFoto('✅ Listo. Revisá lo que leyó y corregí lo que haga falta antes de cargarlo.');
+    toast('📷 Foto leída — revisá los nombres antes de cargar');
+  }).catch(function(e){
+    if(obrero) try{ obrero.terminate(); }catch(x){}
+    if(boton) boton.disabled = false;
+    avisarFoto('');
+    toast('⚠️ ' + (e && e.message ? e.message : 'No pude leer la foto'));
+  });
+}
+
 /* ---------- Pantalla de importar ---------------------------------------- */
 let importEq = 'local';
 let importLista = [];
@@ -2327,15 +2412,18 @@ function abrirImportar(eq){
       '<button class="cerrar" id="x-panel">✕</button></div>' +
     '<div class="importar">' +
       '<button class="btn pri" style="width:100%" id="imp-archivo">📗 Elegir un Excel o un CSV</button>' +
+      '<button class="btn plano" style="width:100%;margin-top:8px" id="imp-foto">📷 Leer una foto de la planilla</button>' +
+      '<div id="imp-leyendo" class="imp-leyendo" style="display:none"></div>' +
       '<p class="hint">Si el archivo es una planilla completa se carga el partido entero: jugadores, estadísticas, parciales y notas. Si es sólo una lista de nombres, se carga el plantel.</p>' +
       '<div class="imp-o">o pegá la lista acá</div>' +
       '<textarea id="imp-texto" placeholder="7 Pérez Juan&#10;9 López Martín&#10;1 Gómez Ana (arquera)"></textarea>' +
-      '<p class="hint">📷 <b>¿La tenés en papel?</b> Sacale una foto, mantené el dedo sobre el texto de la foto para copiarlo y pegalo acá.</p>' +
+      '<p class="hint">La foto se lee acá mismo: conviene que esté derecha, con buena luz y de cerca. Después se puede corregir el texto antes de cargarlo.</p>' +
       '<div id="imp-previo"></div>' +
       '<button class="btn ok" style="width:100%;margin-top:10px" id="imp-usar">✅ Usar esta lista</button>' +
     '</div>';
   h.querySelector('#x-panel').onclick = cerrarPanel;
   h.querySelector('#imp-archivo').onclick = function(){ document.getElementById('file-plantel').click(); };
+  h.querySelector('#imp-foto').onclick = function(){ document.getElementById('file-foto').click(); };
   h.querySelector('#imp-texto').oninput = function(){
     importDatos = null; importPlanilla = null; verPrevio(parsearTexto(this.value));
   };
@@ -3385,6 +3473,11 @@ function iniciar(){
     const f=e.target.files[0];
     e.target.value='';
     elegirArchivoPlantel(f);
+  };
+  document.getElementById('file-foto').onchange=e=>{
+    const f=e.target.files[0];
+    e.target.value='';
+    leerFoto(f);
   };
   document.getElementById('btn-backup').onclick=descargarRespaldo;
   document.getElementById('btn-restore').onclick=()=>document.getElementById('file-restore').click();
