@@ -1038,7 +1038,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-10-23-1105';
+const VERSION_APP = '2026-10-23-1109';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -1973,6 +1973,21 @@ function datosPartidoDeFilas(filas){
         datos[k] = limpiarBordes(v);
       }
     }
+    /* Varias etiquetas en un mismo renglón: "Rival: X   Fecha: Y   Lugar: Z".
+       Pasa en las fotos y en los encabezados sueltos. El valor de cada una
+       termina donde empieza la siguiente. */
+    const linea = celdas.join(' ');
+    if(linea.indexOf(':') > 0){
+      const re = /([A-Za-zÁÉÍÓÚÜÑáéíóúüñ. ]{3,22}?)\s*:\s*([^:]*?)(?=\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ. ]{3,22}\s*:|$)/g;
+      let m;
+      while((m = re.exec(linea)) !== null){
+        const k = esEtiqueta(m[1]);
+        const v = limpiarBordes(m[2]);
+        if(!k || !v || datos[k]) continue;
+        if(k === 'fecha'){ const fe = fechaImportada(v); if(fe) datos.fecha = fe; }
+        else if(v.length <= 60) datos[k] = v;
+      }
+    }
     /* El título de la planilla de la app: "Club Náutico — Planilla de partido" */
     if(!datos.equipo && celdas.length === 1){
       const t = limpiarBordes(celdas[0]);
@@ -2342,6 +2357,23 @@ function cargarLector(){
   return ocrCargando;
 }
 
+/* Lo que sale de una foto viene con dos vicios: el título del club queda como
+   si fuera un jugador, y donde el número no se entendió queda una letra suelta
+   (la "1" sale como "A" o como "+"). Se limpian las dos cosas. */
+function limpiarTextoDeFoto(texto, datos){
+  const fuera = [];
+  ['equipo','rival','lugar','arbitro','cuerpo'].forEach(function(k){
+    if(datos && datos[k]) fuera.push(String(datos[k]).trim().toLowerCase());
+  });
+  return String(texto||'').split(/\r?\n/).map(function(l){
+    const limpio = l.trim();
+    if(!limpio) return '';
+    if(fuera.indexOf(limpio.toLowerCase()) >= 0) return '';      /* el titulo del club */
+    /* una letra sola al principio es un número que no se entendió */
+    return limpio.replace(/^[^0-9a-záéíóúüñ]*([a-z+*\-])\s+(?=[a-záéíóúüñ])/i, '');
+  }).filter(Boolean).join('\n');
+}
+
 function avisarFoto(txt){
   const el = document.getElementById('imp-leyendo');
   if(!el) return;
@@ -2379,11 +2411,13 @@ function leerFoto(archivo){
       toast('No pude leer nada en esa foto. Probá con más luz o más de cerca.');
       return;
     }
+    const datos = datosPartidoDeFilas(texto.split(/\r?\n/).map(function(l){ return [l]; }));
+    const limpio = limpiarTextoDeFoto(texto, datos);
     const caja = document.getElementById('imp-texto');
-    if(caja){ caja.value = texto; }
-    importDatos = datosPartidoDeFilas(texto.split(/\r?\n/).map(function(l){ return l.split(/\s{2,}|\t|:/); }));
+    if(caja){ caja.value = limpio; }
+    importDatos = datos;
     importPlanilla = null;
-    verPrevio(parsearTexto(texto));
+    verPrevio(parsearTexto(limpio));
     avisarFoto('✅ Leída. Revisá sobre todo los números y corregí lo que haga falta.');
     toast('📷 Foto leída — revisá los nombres antes de cargar');
   }).catch(function(e){
