@@ -1038,7 +1038,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-10-23-1131';
+const VERSION_APP = '2026-10-23-1135';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -2178,6 +2178,30 @@ function acomodarImportados(lista){
 const COL_POR_TITULO = {};
 COLS.forEach(function(c){ if(!c.calc) COL_POR_TITULO[c.t.toUpperCase()] = c.k; });
 
+/* En una foto el lector confunde letras con números: la "G" de goles sale como
+   "6", la "O" como "0". En el encabezado sabemos que son letras. */
+const NUMERO_POR_LETRA = {'0':'O','1':'I','2':'Z','4':'A','5':'S','6':'G','8':'B','9':'G'};
+function tituloNormalizado(t){
+  let r = '';
+  const s = String(t||'').toUpperCase();
+  for(let i=0;i<s.length;i++) r += (NUMERO_POR_LETRA[s[i]] || s[i]);
+  return r;
+}
+/* Dos títulos se parecen si cambia una sola letra ("BLA" por "BLQ") */
+function seParecen(a, b){
+  if(a === b) return true;
+  if(Math.abs(a.length - b.length) > 1 || a.length < 2 || b.length < 2) return false;
+  if(a.length === b.length){
+    let dif = 0;
+    for(let i=0;i<a.length;i++) if(a[i] !== b[i]) dif++;
+    return dif === 1;
+  }
+  const corto = a.length < b.length ? a : b, largo = a.length < b.length ? b : a;
+  for(let i=0;i<largo.length;i++)
+    if(largo.slice(0,i) + largo.slice(i+1) === corto) return true;
+  return false;
+}
+
 /* Una fila es encabezado de tabla si tiene la columna del nombre y varias
    columnas de estadísticas. Se devuelve en qué posición cae cada una. */
 function mapaDeCabecera(celdas){
@@ -2193,6 +2217,19 @@ function mapaDeCabecera(celdas){
     if(COL_POR_TITULO[t] !== undefined && cols[i] === undefined){ cols[i] = COL_POR_TITULO[t]; cuantas++; }
   }
   if(idxNombre < 0 || cuantas < 3) return null;
+  /* Ya sabemos que esta fila es el encabezado: a las celdas que quedaron
+     sueltas se les busca el título que más se les parece. */
+  const yaUsados = {};
+  for(const k in cols) yaUsados[cols[k]] = true;
+  for(let i=0;i<celdas.length;i++){
+    if(cols[i] !== undefined || i === idxNombre || i === idxNum) continue;
+    const t = tituloNormalizado(String(celdas[i]||'').trim().replace(/\.$/,''));
+    if(!t) continue;
+    for(const titulo in COL_POR_TITULO){
+      if(yaUsados[COL_POR_TITULO[titulo]]) continue;
+      if(seParecen(t, titulo)){ cols[i] = COL_POR_TITULO[titulo]; yaUsados[cols[i]] = true; break; }
+    }
+  }
   return {idxNombre:idxNombre, idxNum:idxNum, cols:cols};
 }
 
