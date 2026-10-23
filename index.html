@@ -1038,7 +1038,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-10-23-1109';
+const VERSION_APP = '2026-10-23-1114';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -2365,12 +2365,17 @@ function limpiarTextoDeFoto(texto, datos){
   ['equipo','rival','lugar','arbitro','cuerpo'].forEach(function(k){
     if(datos && datos[k]) fuera.push(String(datos[k]).trim().toLowerCase());
   });
-  return String(texto||'').split(/\r?\n/).map(function(l){
-    const limpio = l.trim();
-    if(!limpio) return '';
-    if(fuera.indexOf(limpio.toLowerCase()) >= 0) return '';      /* el titulo del club */
+  const lineas = String(texto||'').split(/\r?\n/).map(function(l){ return l.trim(); });
+  /* Arriba de la lista suele estar el nombre del club: renglones sin ningún
+     número, antes del primero que sí lo tiene. Esos son título, no jugadores. */
+  let primeroConNumero = -1;
+  for(let i=0;i<lineas.length;i++){ if(/\d/.test(lineas[i])){ primeroConNumero = i; break; } }
+  return lineas.map(function(l, i){
+    if(!l) return '';
+    if(fuera.indexOf(l.toLowerCase()) >= 0) return '';
+    if(primeroConNumero > 0 && i < primeroConNumero && !/\d/.test(l)) return '';
     /* una letra sola al principio es un número que no se entendió */
-    return limpio.replace(/^[^0-9a-záéíóúüñ]*([a-z+*\-])\s+(?=[a-záéíóúüñ])/i, '');
+    return l.replace(/^[^0-9a-záéíóúüñ]*([a-z+*\-])\s+(?=[a-záéíóúüñ])/i, '');
   }).filter(Boolean).join('\n');
 }
 
