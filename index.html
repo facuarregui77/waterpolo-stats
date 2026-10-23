@@ -1038,7 +1038,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-10-23-1114';
+const VERSION_APP = '2026-10-23-1131';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -1850,7 +1850,8 @@ function interpretarLinea(linea, suave){
   if(suave){
     /* Viene de la columna NOMBRE de una tabla: lo único que hay que sacar son
        las filas de totales. Un jugador puede llamarse "Rival 7" sin problema. */
-    if(/^(total|totales|promedio|suma|equipo)\b/i.test(t)) return null;
+    const pegado = t.replace(/\s+/g,'');
+    if(/^(total|totales|promedio|suma|equipo|per[ií]odo|cuarto|parcial)/i.test(pegado)) return null;
   } else {
     if(RUIDO.test(t)) return null;
     /* Encabezados y títulos de varias palabras: "# NOMBRE", "N° JUGADOR",
@@ -2185,8 +2186,10 @@ function mapaDeCabecera(celdas){
   for(let i=0;i<celdas.length;i++){
     const t = String(celdas[i]||'').trim().toUpperCase().replace(/\.$/,'');
     if(!t) continue;
-    if(idxNombre < 0 && /^(NOMBRE|JUGADOR|APELLIDO)$/.test(t)){ idxNombre = i; continue; }
-    if(idxNum < 0 && /^(#|N[°ºO]?|NRO|NUMERO|NÚMERO|DORSAL|GORRO)$/.test(t)){ idxNum = i; continue; }
+    /* En una foto el "#" suele quedar pegado al NOMBRE en la misma celda, y a
+       veces se lee como "*". Alcanza con que la celda contenga la palabra. */
+    if(idxNombre < 0 && /(^|[^A-Z])(NOMBRE|JUGADOR|APELLIDO)([^A-Z]|$)/.test(' '+t+' ')){ idxNombre = i; continue; }
+    if(idxNum < 0 && /^(#|\*|N[°ºO]?|NRO|NUMERO|NÚMERO|DORSAL|GORRO)$/.test(t)){ idxNum = i; continue; }
     if(COL_POR_TITULO[t] !== undefined && cols[i] === undefined){ cols[i] = COL_POR_TITULO[t]; cuantas++; }
   }
   if(idxNombre < 0 || cuantas < 3) return null;
@@ -2252,7 +2255,7 @@ function periodosDeFilas(filas){
       if(c !== '') celdas.push(c);
     }
     if(celdas.length < 2) return;
-    const m = /^(\d)\s*[°ºa-z]*\s*per[ií]odo$/i.exec(celdas[0]);
+    const m = /^(\d)[°º]?\s*(?:per[ií]odo|cuarto|tiempo)$/i.exec(celdas[0].replace(/\s+/g,''));
     if(!m) return;
     const p = +m[1];
     if(p < 1 || p > 4) return;
@@ -2327,6 +2330,133 @@ function leerPlanilla(hojas, textoCrudo){
     crono: crono,
     completa: conStats || !!periodos || equipos.length > 1
   };
+}
+
+/* ---------- De la foto a filas con columnas ----------------------------
+   El lector devuelve la posición de cada letra. Para que una planilla
+   fotografiada se entienda como tabla hay que volver a armar las columnas:
+   se buscan los pasillos verticales por donde no pasa ninguna letra y cada
+   letra cae en la columna que le corresponde. Se trabaja letra por letra y no
+   palabra por palabra porque el lector suele pegar dos celdas vecinas en una
+   sola palabra ("3" y "1" terminan como "31"). */
+function medianaDe(nums){
+  if(!nums.length) return 0;
+  const o = nums.slice().sort(function(a,b){ return a-b; });
+  return o[Math.floor(o.length/2)];
+}
+/* Cada renglón, como lista de letras sueltas con su posición */
+function letrasPorRenglon(data){
+  const renglones = [];
+  (data && data.lines || []).forEach(function(l){
+    const letras = [];
+    (l.words || []).forEach(function(w){
+      const ss = w.symbols && w.symbols.length ? w.symbols : null;
+      if(ss) ss.forEach(function(s){
+        if(s.text && s.text.trim()) letras.push({t:s.text, x0:s.bbox.x0, x1:s.bbox.x1, y0:s.bbox.y0, y1:s.bbox.y1});
+      });
+      else if(w.text && w.text.trim())
+        letras.push({t:w.text.trim(), x0:w.bbox.x0, x1:w.bbox.x1, y0:w.bbox.y0, y1:w.bbox.y1});
+    });
+    if(letras.length) renglones.push(letras);
+  });
+  return renglones;
+}
+function filasDeOCR(data){
+  const renglones = letrasPorRenglon(data);
+  if(!renglones.length) return [];
+  const todas = [];
+  renglones.forEach(function(r){ r.forEach(function(l){ todas.push(l); }); });
+
+  let minX = Infinity, maxX = -Infinity;
+  todas.forEach(function(l){
+    if(l.x0 < minX) minX = l.x0;
+    if(l.x1 > maxX) maxX = l.x1;
+  });
+  const ancho = Math.max(1, maxX - minX);
+  const paso = Math.max(1, Math.round(ancho / 600));
+  const cubierto = new Array(Math.ceil(ancho / paso) + 2).fill(0);
+  todas.forEach(function(l){
+    const a = Math.max(0, Math.floor((l.x0 - minX) / paso));
+    const b = Math.min(cubierto.length - 1, Math.ceil((l.x1 - minX) / paso));
+    for(let i = a; i <= b; i++) cubierto[i]++;
+  });
+
+  /* Un pasillo entre columnas es más ancho que el espacio entre dos palabras */
+  const alto = medianaDe(todas.map(function(l){ return l.y1 - l.y0; }));
+  const minHueco = Math.max(2, Math.round(alto * 0.25 / paso));
+  const cortes = [];
+  let i = 0;
+  while(i < cubierto.length){
+    if(cubierto[i] === 0){
+      let j = i;
+      while(j < cubierto.length && cubierto[j] === 0) j++;
+      if(j - i >= minHueco && i > 0 && j < cubierto.length) cortes.push(minX + ((i + j) / 2) * paso);
+      i = j;
+    } else i++;
+  }
+  if(cortes.length > 30) return [];          /* no parece una tabla */
+
+  return renglones.map(function(r){
+    const fila = [];
+    let ultima = null, ultimaCol = -1;
+    r.forEach(function(l){
+      const centro = (l.x0 + l.x1) / 2;
+      let col = 0;
+      while(col < cortes.length && centro > cortes[col]) col++;
+      if(fila[col] === undefined) fila[col] = '';
+      /* dentro de la misma columna, se separan las palabras por el hueco */
+      const separa = (ultimaCol === col && ultima && (l.x0 - ultima.x1) > alto * 0.35) ? ' ' : '';
+      fila[col] += separa + l.t;
+      ultima = l; ultimaCol = col;
+    });
+    for(let k = 0; k < fila.length; k++) if(fila[k] === undefined) fila[k] = '';
+    return fila.map(function(c){ return c.trim(); });
+  });
+}
+
+/* En una columna de números, lo único que puede haber son dígitos: se arreglan
+   las confusiones típicas del lector ("o" por 0, "l" por 1). Sólo se hace en
+   las columnas que el encabezado dice que son de estadísticas. */
+const LETRAS_POR_NUMERO = {'o':'0','O':'0','D':'0','Q':'0','U':'0','u':'0','c':'0','C':'0',
+  'l':'1','I':'1','i':'1','|':'1','L':'1','t':'1','T':'7','+':'1','/':'1',
+  'z':'2','Z':'2','e':'3','E':'3','A':'4','h':'4','s':'5','S':'5','b':'6','G':'6','B':'8','g':'9','q':'9','y':'0','Y':'0'};
+function numeroDeCelda(txt){
+  let t = String(txt == null ? '' : txt).trim();
+  if(t === '') return '';
+  if(/^\d+$/.test(t)) return t;
+  let salida = '';
+  for(let i = 0; i < t.length; i++){
+    const c = t[i];
+    if(/\d/.test(c)) salida += c;
+    else if(LETRAS_POR_NUMERO[c] !== undefined) salida += LETRAS_POR_NUMERO[c];
+    else if(/[.,'"()\[\]\-_ ]/.test(c)) continue;
+    else return '';                          /* algo que no es un número */
+  }
+  return salida.length && salida.length <= 3 ? String(+salida) : '';
+}
+/* Con el encabezado a la vista, se corrigen las celdas de las columnas de números */
+function arreglarNumerosDeTabla(filas){
+  let mapa = null;
+  return (filas || []).map(function(f){
+    const m = mapaDeCabecera(f);
+    if(m){ mapa = m; return f; }
+    if(!mapa) return f;
+    /* Si la fila no es la de un jugador (la tabla de períodos, una nota, un
+       total), se deja como está: si no, se borrarían los textos. */
+    const nombre = f[mapa.idxNombre] || '';
+    if(!interpretarLinea(nombre, true)) return f;
+    return f.map(function(celda, i){
+      if(mapa.cols[i] === undefined && i !== mapa.idxNum) return celda;
+      const n = numeroDeCelda(celda);
+      return n === '' ? '' : n;
+    });
+  });
+}
+/* Para mostrarlas en el casillero de texto, donde se pueden corregir */
+function filasATexto(filas){
+  return filas.map(function(f){
+    return f.join('\t').replace(/\t+$/, '');
+  }).join('\n');
 }
 
 /* ---------- Leer una foto de la planilla -------------------------------
@@ -2408,7 +2538,8 @@ function leerFoto(archivo){
     obrero = w;
     return w.recognize(archivo);
   }).then(function(r){
-    const texto = (r && r.data && r.data.text || '').trim();
+    const datos0 = r && r.data;
+    const texto = (datos0 && datos0.text || '').trim();
     if(obrero) obrero.terminate();
     if(boton) boton.disabled = false;
     if(!texto){
@@ -2416,15 +2547,19 @@ function leerFoto(archivo){
       toast('No pude leer nada en esa foto. Probá con más luz o más de cerca.');
       return;
     }
-    const datos = datosPartidoDeFilas(texto.split(/\r?\n/).map(function(l){ return [l]; }));
-    const limpio = limpiarTextoDeFoto(texto, datos);
+    /* Si la foto es una planilla con columnas, se arma la tabla; si es una
+       lista de nombres a secas, queda como renglones sueltos. */
+    const filas = filasDeOCR(datos0);
+    const comoTabla = filas.length ? filasATexto(filas) : texto;
+    const datos = datosPartidoDeFilas(filas.length ? filas : texto.split(/\r?\n/).map(function(l){ return [l]; }));
+    const limpio = limpiarTextoDeFoto(comoTabla, datos);
     const caja = document.getElementById('imp-texto');
     if(caja){ caja.value = limpio; }
-    importDatos = datos;
-    importPlanilla = null;
-    verPrevio(parsearTexto(limpio));
-    avisarFoto('✅ Leída. Revisá sobre todo los números y corregí lo que haga falta.');
-    toast('📷 Foto leída — revisá los nombres antes de cargar');
+    usarTextoImportado(limpio, datos);
+    const p = importPlanilla;
+    avisarFoto(p ? '✅ Leída la planilla entera. Revisá los números y corregí lo que haga falta.'
+                 : '✅ Leída. Revisá sobre todo los números y corregí lo que haga falta.');
+    toast('📷 Foto leída — revisá antes de cargar');
   }).catch(function(e){
     if(obrero) try{ obrero.terminate(); }catch(x){}
     if(boton) boton.disabled = false;
@@ -2465,12 +2600,20 @@ function abrirImportar(eq){
   h.querySelector('#x-panel').onclick = cerrarPanel;
   h.querySelector('#imp-archivo').onclick = function(){ document.getElementById('file-plantel').click(); };
   h.querySelector('#imp-foto').onclick = function(){ document.getElementById('file-foto').click(); };
-  h.querySelector('#imp-texto').oninput = function(){
-    importDatos = null; importPlanilla = null; verPrevio(parsearTexto(this.value));
-  };
+  h.querySelector('#imp-texto').oninput = function(){ usarTextoImportado(this.value, null); };
   h.querySelector('#imp-usar').onclick = usarImportacion;
   verPrevio([]);
   document.getElementById('overlay').classList.add('on');
+}
+
+/* Lo que haya en el casillero —pegado a mano o leído de una foto— se entiende
+   igual que un archivo: si tiene encabezado de tabla, es la planilla entera. */
+function usarTextoImportado(texto, datos){
+  const filas = filasDeCsv(texto);
+  const res = armarImportacion([filas]);
+  importDatos = datos || res.datos || null;
+  importPlanilla = (importEq === 'local' && res.planilla && res.planilla.completa) ? res.planilla : null;
+  verPrevio(res.jugadores);
 }
 
 function verPrevio(lista){
