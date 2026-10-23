@@ -2,30 +2,17 @@
 <pre id="salida">...</pre>
 <script src="ocr/tesseract.min.js"></script>
 <script>
-function lineasDe(data){
-  return (data.lines || []).map(function(l){
-    return { texto: l.text.trim(), y: (l.bbox.y0 + l.bbox.y1) / 2, alto: l.bbox.y1 - l.bbox.y0 };
-  }).filter(function(l){ return l.texto; });
-}
 (async function(){
   const salida = document.getElementById('salida');
   try{
-    const w = await Tesseract.createWorker('spa', 1, {
-      workerPath:'ocr/worker.min.js', corePath:'ocr/', langPath:'ocr/'
+    const t0 = Date.now();
+    const w = await Tesseract.createWorker('spa', 3, {
+      workerPath:'ocr2/worker.min.js', corePath:'ocr2/', langPath:'ocr2/'
     });
-    const letras = (await w.recognize('prueba-foto.png')).data;
-    await w.setParameters({ tessedit_char_whitelist: '0123456789' });
-    const numeros = (await w.recognize('prueba-foto.png')).data;
+    const r = (await w.recognize('prueba-foto.png')).data;
     await w.terminate();
-
-    const ln = lineasDe(numeros);
-    const juntado = lineasDe(letras).map(function(l){
-      const cerca = ln.filter(function(n){ return Math.abs(n.y - l.y) < l.alto * 0.6; });
-      const num = cerca.length ? (cerca[0].texto.match(/\d{1,2}/) || [''])[0] : '';
-      return (num ? num + ' ' : '') + l.texto.replace(/^[^a-zA-ZÁÉÍÓÚÑáéíóúñ]+/, '');
-    });
-    salida.textContent = '=== SOLO NUMEROS ===\n' + numeros.text +
-      '\n=== JUNTADO ===\n' + juntado.join('\n');
+    salida.textContent = '=== MODELO COMPLETO (conf ' + Math.round(r.confidence) + ', ' +
+      Math.round((Date.now()-t0)/1000) + 's) ===\n' + r.text;
     document.title = 'LISTO';
   }catch(e){ document.title = 'ERROR ' + (e && e.message || e); salida.textContent = String(e && e.stack || e); }
 })();
