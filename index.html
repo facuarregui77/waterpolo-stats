@@ -869,6 +869,8 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
       <p>Andá a <b>📋 Planilla → ⏱️ Goles por período</b> y corregí el número a mano. Ahí mandás vos.</p>
       <h3>Quiero imprimir la planilla para el banco</h3>
       <p>En <b>📈 Comparativo</b> está el botón <b>🖨️ Imprimir / PDF</b>. Sale la planilla completa y el comparativo, sin los botones.</p>
+      <h3>Tengo el plantel en una foto</h3>
+      <p>En <b>📥 Importar</b> hay un botón <b>📷 Leer una foto de la planilla</b>. Elegís la foto y la app saca el texto sola. La primera vez tarda un poco porque baja el lector (unos 5 MB); después queda guardado y anda sin internet. Sale mejor si la foto está derecha, con buena luz y de cerca. Los <b>nombres</b> los saca bastante bien; los <b>números</b> se le escapan más seguido, así que revisalos en el casillero antes de cargar: todo lo que leyó queda ahí para corregir.</p>
       <h3>Tengo el plantel en un Excel, o en un papel</h3>
       <p>En <b>⚙️ Equipo → 📥 Importar de un Excel</b>. Si el archivo es una <b>planilla completa</b> —por ejemplo un Excel bajado de la app— vuelve <b>todo el partido</b>: los dos planteles con sus estadísticas, los goles de cada período, las notas, la cronología y los datos del partido. Si es sólo una lista de nombres, carga el plantel. Si está en papel, <b>sacale una foto</b>, mantené el dedo apretado sobre el texto de la foto para copiarlo —el celular lo reconoce solo— y pegalo en el casillero. Entiende <i>"7 Pérez Juan"</i>, <i>"Pérez Juan 7"</i> o sólo los nombres, y les pone los números en orden. Si al lado de alguien dice <i>arquero</i> o <i>(C)</i>, lo marca.</p>
       <h3>Importé y me faltan jugadores</h3>
@@ -1036,7 +1038,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-10-23-1057';
+const VERSION_APP = '2026-10-23-1105';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -2382,7 +2384,7 @@ function leerFoto(archivo){
     importDatos = datosPartidoDeFilas(texto.split(/\r?\n/).map(function(l){ return l.split(/\s{2,}|\t|:/); }));
     importPlanilla = null;
     verPrevio(parsearTexto(texto));
-    avisarFoto('✅ Listo. Revisá lo que leyó y corregí lo que haga falta antes de cargarlo.');
+    avisarFoto('✅ Leída. Revisá sobre todo los números y corregí lo que haga falta.');
     toast('📷 Foto leída — revisá los nombres antes de cargar');
   }).catch(function(e){
     if(obrero) try{ obrero.terminate(); }catch(x){}
@@ -2417,7 +2419,7 @@ function abrirImportar(eq){
       '<p class="hint">Si el archivo es una planilla completa se carga el partido entero: jugadores, estadísticas, parciales y notas. Si es sólo una lista de nombres, se carga el plantel.</p>' +
       '<div class="imp-o">o pegá la lista acá</div>' +
       '<textarea id="imp-texto" placeholder="7 Pérez Juan&#10;9 López Martín&#10;1 Gómez Ana (arquera)"></textarea>' +
-      '<p class="hint">La foto se lee acá mismo: conviene que esté derecha, con buena luz y de cerca. Después se puede corregir el texto antes de cargarlo.</p>' +
+      '<p class="hint">La foto se lee acá mismo. Sale mejor derecha, con buena luz y de cerca. Los nombres los saca bastante bien; <b>los números conviene mirarlos</b>, que es donde más se equivoca. Lo que lea queda en el casillero para corregirlo antes de cargar.</p>' +
       '<div id="imp-previo"></div>' +
       '<button class="btn ok" style="width:100%;margin-top:10px" id="imp-usar">✅ Usar esta lista</button>' +
     '</div>';
