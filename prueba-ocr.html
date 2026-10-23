@@ -2,16 +2,37 @@
 <pre id="salida">...</pre>
 <script src="ocr/tesseract.min.js"></script>
 <script>
+function preparar(img, escala){
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.naturalWidth * escala);
+  c.height = Math.round(img.naturalHeight * escala);
+  const x = c.getContext('2d');
+  x.imageSmoothingQuality = 'high';
+  x.drawImage(img, 0, 0, c.width, c.height);
+  const d = x.getImageData(0, 0, c.width, c.height), p = d.data;
+  for(let i=0;i<p.length;i+=4){
+    let g = (p[i]*0.299 + p[i+1]*0.587 + p[i+2]*0.114);
+    g = (g - 128) * 1.8 + 128;              // mas contraste
+    g = g < 0 ? 0 : (g > 255 ? 255 : g);
+    p[i] = p[i+1] = p[i+2] = g;
+  }
+  x.putImageData(d, 0, 0);
+  return c;
+}
 (async function(){
+  const salida = document.getElementById('salida');
   try{
-    const t0 = Date.now();
+    const img = new Image();
+    await new Promise(function(r,j){ img.onload = r; img.onerror = j; img.src = 'prueba-foto.png'; });
     const w = await Tesseract.createWorker('spa', 1, {
       workerPath:'ocr/worker.min.js', corePath:'ocr/', langPath:'ocr/'
     });
-    const r = await w.recognize('prueba-foto.png');
+    const crudo = (await w.recognize(img)).data;
+    const limpio = (await w.recognize(preparar(img, 2))).data;
     await w.terminate();
-    document.getElementById('salida').textContent = r.data.text;
-    document.title = 'LISTO ' + Math.round((Date.now()-t0)/1000) + 's conf=' + Math.round(r.data.confidence);
-  }catch(e){ document.title = 'ERROR ' + (e && e.message || e); document.getElementById('salida').textContent = String(e && e.stack || e); }
+    salida.textContent = '=== TAL CUAL (conf ' + Math.round(crudo.confidence) + ') ===\n' + crudo.text +
+                         '\n=== PREPARADA (conf ' + Math.round(limpio.confidence) + ') ===\n' + limpio.text;
+    document.title = 'LISTO';
+  }catch(e){ document.title = 'ERROR ' + (e && e.message || e); salida.textContent = String(e && e.stack || e); }
 })();
 </script></body></html>
