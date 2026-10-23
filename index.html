@@ -145,7 +145,7 @@ nav .sm{display:none}
   nav button{padding:11px 8px;font-size:12px}
   nav .lg{display:none}
   nav .sm{display:inline}
-  .btn-hdr{padding:7px 9px;font-size:12px}
+  .btn-hdr{padding:7px 8px;font-size:12px}
   .btn-hdr .txt{display:none}
   .logo .pelota{width:29px;height:29px;flex:0 0 29px}
   .marcador{gap:8px;padding:6px 12px 10px}
@@ -599,6 +599,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
     <div class="der">
       <button class="btn-hdr" id="btn-deshacer" title="Deshacer última acción">↩︎<span class="txt">&nbsp;Deshacer</span></button>
       <button class="btn-hdr" id="btn-excel" title="Guardar el partido en Excel">📗<span class="txt">&nbsp;Excel</span></button>
+      <button class="btn-hdr" id="btn-importar-hdr" title="Importar un Excel o una lista de jugadores">📥<span class="txt">&nbsp;Importar</span></button>
       <button class="btn-hdr" id="btn-nuevo" title="Guardar este partido y empezar uno nuevo">➕<span class="txt">&nbsp;Nuevo</span></button>
     </div>
   </div>
@@ -1030,7 +1031,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-10-22-1107';
+const VERSION_APP = '2026-10-23-1045';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -3378,6 +3379,7 @@ function iniciar(){
     sincronizarPlantel(); guardar(); pintarTodo();
   };
   document.getElementById('btn-importar').onclick=()=>abrirImportar('local');
+  document.getElementById('btn-importar-hdr').onclick=()=>abrirImportar('local');
   document.getElementById('btn-importar-rival').onclick=()=>abrirImportar('rival');
   document.getElementById('file-plantel').onchange=e=>{
     const f=e.target.files[0];
