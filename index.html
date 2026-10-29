@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#115f9e">
+<meta name="color-scheme" content="only light">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Waterpolo">
@@ -28,6 +29,7 @@
 }
 
 :root{
+  color-scheme:only light;   /* los colores son estos en todos lados */
   /* tintas */
   --tinta:#0c1b2a; --tinta-2:#56687e; --tinta-3:#8b9aad;
   --marino:#115f9e; --marino-2:#0e4f85;
@@ -1050,8 +1052,33 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-10-29-1054';
+const VERSION_APP = '2026-10-29-1104';
 let ultimoControl = 0;
+
+/* ¿Se puede actualizar sin molestar? Sólo si no hay nada cargado todavía */
+function nadaEnJuego(){
+  try{
+    if(!S || !P() || P().eventos.length) return false;
+    if((P().notas||[]).some(function(n){ return n && n.trim(); })) return false;
+    const a = document.activeElement;
+    if(a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA')) return false;
+    return true;
+  }catch(e){ return false; }
+}
+/* Una sola actualización automática por pestaña, para no quedar en un bucle
+   si el servidor tarda en dar siempre la misma respuesta. */
+function yaSeActualizoSolo(){
+  try{ return sessionStorage.getItem('wp-version-auto') === '1'; }catch(e){ return true; }
+}
+function aplicarVersionNueva(){
+  try{ sessionStorage.setItem('wp-version-auto','1'); }catch(e){}
+  if('serviceWorker' in navigator && navigator.serviceWorker.controller){
+    /* se tira lo guardado para que baje la versión nueva sí o sí */
+    if(window.caches && caches.keys) caches.keys().then(function(ks){ return Promise.all(ks.map(function(k){ return caches.delete(k); })); })
+      .then(function(){ location.reload(); }).catch(function(){ location.reload(); });
+    else location.reload();
+  } else location.reload();
+}
 
 function controlarVersion(forzado){
   if(location.protocol.indexOf('http')!==0) return;
@@ -1063,7 +1090,9 @@ function controlarVersion(forzado){
     .then(txt=>{
       if(!txt) return;
       const m = /VERSION_APP = '([^']+)'/.exec(txt);
-      if(m && m[1] !== VERSION_APP) mostrarAvisoVersion();
+      if(!m || m[1] === VERSION_APP) return;
+      if(nadaEnJuego() && !yaSeActualizoSolo()) aplicarVersionNueva();
+      else mostrarAvisoVersion();
     })
     .catch(()=>{});
 }
@@ -1075,14 +1104,7 @@ function mostrarAvisoVersion(){
   el.style.display='block';
   el.innerHTML = '<b>Hay una versión nueva de la app.</b> Tus partidos y tu plantel no se tocan.'
     + ' <button class="btn-aviso" id="btn-actualizar">Actualizar ahora</button>';
-  document.getElementById('btn-actualizar').onclick = function(){
-    if('serviceWorker' in navigator && navigator.serviceWorker.controller){
-      /* se tira lo guardado para que baje la versión nueva sí o sí */
-      if(window.caches && caches.keys) caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k))))
-        .then(()=>location.reload()).catch(()=>location.reload());
-      else location.reload();
-    } else location.reload();
-  };
+  document.getElementById('btn-actualizar').onclick = aplicarVersionNueva;
 }
 
 /* ========================== Estado y persistencia ======================== */
