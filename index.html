@@ -145,8 +145,9 @@ nav .sm{display:none}
   nav button{padding:11px 8px;font-size:12px}
   nav .lg{display:none}
   nav .sm{display:inline}
-  .btn-hdr{padding:7px 8px;font-size:12px}
-  .btn-hdr .txt{display:none}
+  .barra-sup{flex-wrap:wrap;padding-bottom:8px}
+  .barra-sup .der{margin-left:0;width:100%;justify-content:space-between;gap:5px}
+  .btn-hdr{flex:1;justify-content:center;padding:8px 6px;font-size:11.5px}
   .logo .pelota{width:29px;height:29px;flex:0 0 29px}
   .marcador{gap:8px;padding:6px 12px 10px}
   .mrc-eq .num{font-size:40px}
@@ -191,7 +192,6 @@ main{max-width:1180px;margin:0 auto;padding:16px 14px 96px}
   transition:.15s;
 }
 .tm:hover{border-color:var(--linea-2);border-left-color:var(--marino)}
-.tm .ico{font-size:16px;line-height:1}
 .tm .marcas{margin-left:auto;display:flex;gap:5px;align-items:center}
 .tm .pt{width:9px;height:9px;border-radius:50%;background:var(--linea-2)}
 .tm .pt.usado{background:var(--marino)}
@@ -224,6 +224,10 @@ main{max-width:1180px;margin:0 auto;padding:16px 14px 96px}
 .jug .info{min-width:0;flex:1}
 .jug .nom{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.008em}
 .jug .nom .supl{font-weight:500;font-size:10px;color:var(--tinta-3);letter-spacing:.02em}
+.jug .nom .arq-mk{
+  display:inline-block;background:var(--ambar-cl);color:#8a5a0b;border:1px solid var(--ambar-bd);
+  border-radius:4px;font-size:9px;font-weight:700;padding:0 4px;letter-spacing:.06em;vertical-align:1px;
+}
 .jug .res{
   font-size:11px;color:var(--tinta-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   font-variant-numeric:tabular-nums;margin-top:1px;
@@ -281,7 +285,7 @@ main{max-width:1180px;margin:0 auto;padding:16px 14px 96px}
   font-weight:600;font-size:11.5px;min-height:76px;justify-content:center;text-align:center;line-height:1.2;
   letter-spacing:-.005em;transition:transform .08s;
 }
-.acc .ico{font-size:19px;line-height:1}
+.acc .lbl{font-size:12.5px;font-weight:650;line-height:1.25}
 .acc .n{font-size:10px;color:var(--tinta-3);font-weight:600;font-variant-numeric:tabular-nums}
 .acc:active{transform:scale(.96)}
 .acc.pos{border-color:var(--verde-bd);background:var(--verde-cl);color:#0a6b49}
@@ -289,7 +293,7 @@ main{max-width:1180px;margin:0 auto;padding:16px 14px 96px}
 .acc.neu{border-color:var(--azul-bd);background:var(--azul-cl);color:var(--azul)}
 .acc.arq{border-color:var(--ambar-bd);background:var(--ambar-cl);color:#8a5a0b}
 .acc.destacada{min-height:88px}
-.acc.destacada .ico{font-size:24px}
+.acc.destacada .lbl{font-size:15.5px;font-weight:700}
 .acc.bloqueada{opacity:.4;background:#f2f5f9;border-color:var(--linea);color:var(--tinta-3)}
 .acc.bloqueada .n{color:var(--tinta-3)}
 .aviso-fuera{
@@ -326,6 +330,8 @@ thead th{
   position:sticky;top:0;text-transform:uppercase;padding:8px;
 }
 thead tr.grupo th{background:#0d4c7f;font-size:9.5px;letter-spacing:.1em;color:rgba(255,255,255,.72)}
+table .mkt{font-style:normal;font-size:8.5px;font-weight:700;color:var(--tinta-3);letter-spacing:.05em}
+table .mkt.fuera{color:var(--rojo)}
 table.rival thead th{background:#8e1f33}
 table.rival thead tr.grupo th{background:#6d1526}
 td.nom,th.nom{text-align:left;position:sticky;left:0;background:var(--card);z-index:1;min-width:132px}
@@ -466,6 +472,11 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
   font-weight:700;font-variant-numeric:tabular-nums;font-size:11px;flex:0 0 auto;
   background:#eef2f7;color:var(--tinta-2);border-radius:5px;padding:2px 7px;letter-spacing:.02em;
 }
+.crono .eqt{
+  font-size:9.5px;font-weight:700;flex:0 0 auto;background:var(--azul-cl);color:var(--azul);
+  border-radius:5px;padding:2px 6px;letter-spacing:.05em;
+}
+.crono .eqt.rival{background:var(--rojo-cl);color:var(--rojo)}
 .crono li.gol{font-weight:600}
 .crono li.gol .mk{background:var(--azul-cl);color:var(--azul)}
 .crono li.gol.rival .mk{background:var(--rojo-cl);color:var(--rojo)}
@@ -500,6 +511,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
 .icobtn.arq-on{background:var(--ambar-cl);border-color:var(--ambar-bd)}
 .icobtn.cap-on{background:var(--azul-cl);border-color:var(--azul-bd)}
 .icobtn.off{opacity:.4}
+.icobtn.texto{width:auto;padding:0 11px;font-size:11.5px;font-weight:600;color:var(--tinta-2)}
 
 /* ---------- Importar ---------- */
 .importar{padding:15px 16px}
@@ -601,10 +613,10 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
       <div>WATERPOLO STATS<small id="hdr-sub">Planilla de partido</small></div>
     </div>
     <div class="der">
-      <button class="btn-hdr" id="btn-deshacer" title="Deshacer última acción">↩︎<span class="txt">&nbsp;Deshacer</span></button>
-      <button class="btn-hdr" id="btn-excel" title="Guardar el partido en Excel">📗<span class="txt">&nbsp;Excel</span></button>
-      <button class="btn-hdr" id="btn-importar-hdr" title="Importar un Excel o una lista de jugadores">📥<span class="txt">&nbsp;Importar</span></button>
-      <button class="btn-hdr" id="btn-nuevo" title="Guardar este partido y empezar uno nuevo">➕<span class="txt">&nbsp;Nuevo</span></button>
+      <button class="btn-hdr" id="btn-deshacer" title="Deshacer la última acción cargada">Deshacer</button>
+      <button class="btn-hdr" id="btn-excel" title="Guardar el partido en Excel">Excel</button>
+      <button class="btn-hdr" id="btn-importar-hdr" title="Importar un Excel, una foto o una lista de jugadores">Importar</button>
+      <button class="btn-hdr" id="btn-nuevo" title="Guardar este partido y empezar uno nuevo">Nuevo</button>
     </div>
   </div>
   <div class="marcador">
@@ -689,10 +701,10 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
     <div class="card no-print">
       <h2>Guardar y seguir</h2>
       <div class="fila-btn">
-        <button class="btn pri" id="btn-excel2">📗 Guardar partido en Excel</button>
-        <button class="btn plano" id="btn-compartir">📲 Resumen para WhatsApp</button>
-        <button class="btn plano" onclick="imprimir()">🖨️ Imprimir / PDF</button>
-        <button class="btn ok" id="btn-cerrar">✅ Cerrar partido y empezar otro</button>
+        <button class="btn pri" id="btn-excel2">Guardar partido en Excel</button>
+        <button class="btn plano" id="btn-compartir">Resumen para WhatsApp</button>
+        <button class="btn plano" onclick="imprimir()">Imprimir / PDF</button>
+        <button class="btn ok" id="btn-cerrar">Cerrar partido y empezar otro</button>
       </div>
       <p class="hint">Al cerrar el partido queda archivado en el Historial y la planilla vuelve a quedar en cero, con tu plantel ya cargado para el próximo.</p>
     </div>
@@ -708,7 +720,7 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
       <h2>Acumulado de temporada</h2>
       <div class="scroll" id="tabla-temporada"></div>
       <div class="fila-btn no-print" style="margin-top:11px">
-        <button class="btn pri" id="btn-excel-temp">📗 Exportar temporada a Excel</button>
+        <button class="btn pri" id="btn-excel-temp">Exportar temporada a Excel</button>
       </div>
     </div>
   </section>
@@ -723,8 +735,8 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
       </div>
       <div style="margin-top:12px" id="tabla-plantel"></div>
       <div class="fila-btn" style="margin-top:10px">
-        <button class="btn plano" id="btn-add-jug">➕ Agregar jugador</button>
-        <button class="btn plano" id="btn-importar">📥 Importar de un Excel</button>
+        <button class="btn plano" id="btn-add-jug">Agregar jugador</button>
+        <button class="btn plano" id="btn-importar">Importar de un Excel</button>
       </div>
     </div>
     <div class="card">
@@ -743,16 +755,16 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
       </div>
       <div style="margin-top:12px" id="tabla-plantel-rival"></div>
       <div class="fila-btn" style="margin-top:10px">
-        <button class="btn plano" id="btn-importar-rival">📥 Importar plantel del rival</button>
+        <button class="btn plano" id="btn-importar-rival">Importar plantel del rival</button>
       </div>
     </div>
     <div class="card">
       <h2>Copia de seguridad</h2>
       <p class="hint" style="margin-bottom:10px">Guardá un archivo de respaldo con todos tus partidos para pasarlos a otro celular o computadora.</p>
       <div class="fila-btn">
-        <button class="btn plano" id="btn-backup">⬇️ Descargar respaldo</button>
-        <button class="btn plano" id="btn-restore">⬆️ Restaurar respaldo</button>
-        <button class="btn peligro" id="btn-reset">🗑️ Borrar todo</button>
+        <button class="btn plano" id="btn-backup">Descargar respaldo</button>
+        <button class="btn plano" id="btn-restore">Restaurar respaldo</button>
+        <button class="btn peligro" id="btn-reset">Borrar todo</button>
       </div>
       <input type="file" id="file-restore" accept=".json,application/json" style="display:none">
     </div>
@@ -762,60 +774,60 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
   <section class="pane guia" data-p="guia">
 
     <div class="card">
-      <h2>🚀 En un minuto</h2>
+      <h2>En un minuto</h2>
       <div class="pasos">
-        <div class="paso"><span class="np">1</span><div><b>Cargá tu plantel una sola vez</b><br>En <b>⚙️ Equipo</b>: nombre del club, y el número y el nombre de cada jugador — a mano, o de una con <b>📥 Importar de un Excel</b> o pegando la lista. Queda guardado para siempre. En la ficha de cada uno marcás si <b>juega hoy</b>, si es <b>arquero</b> y si es el <b>capitán</b>.</div></div>
-        <div class="paso"><span class="np">2</span><div><b>Durante el partido, dos toques</b><br>En <b>⚡ En vivo</b>: tocás el jugador, tocás la acción. Listo. El marcador y los porcentajes se calculan solos.</div></div>
-        <div class="paso"><span class="np">3</span><div><b>Al final, guardás y seguís</b><br><b>📗 Excel</b> baja el partido con el formato de siempre y <b>📲 Resumen para WhatsApp</b> arma el texto para el grupo. <b>✅ Cerrar partido</b> lo archiva y deja la planilla en cero para el próximo.</div></div>
+        <div class="paso"><span class="np">1</span><div><b>Cargá tu plantel una sola vez</b><br>En <b>Equipo</b>: nombre del club, y el número y el nombre de cada jugador — a mano, o de una con <b>Importar de un Excel</b> o pegando la lista. Queda guardado para siempre. En la ficha de cada uno marcás si <b>juega hoy</b>, si es <b>arquero</b> y si es el <b>capitán</b>.</div></div>
+        <div class="paso"><span class="np">2</span><div><b>Durante el partido, dos toques</b><br>En <b>En vivo</b>: tocás el jugador, tocás la acción. Listo. El marcador y los porcentajes se calculan solos.</div></div>
+        <div class="paso"><span class="np">3</span><div><b>Al final, guardás y seguís</b><br><b>Excel</b> baja el partido con el formato de siempre y <b>Resumen para WhatsApp</b> arma el texto para el grupo. <b>Cerrar partido</b> lo archiva y deja la planilla en cero para el próximo.</div></div>
       </div>
       <p class="hint">Eso es todo lo que hace falta saber. El resto de esta guía es para consultar cuando surja la duda.</p>
       <div class="alerta ok">
-        <b>📱 Dejala como app en el celular.</b> Menú del navegador → <b>Agregar a pantalla de inicio</b>
-        (en Safari es el ícono de compartir ⬆️, en Chrome los tres puntos ⋮). Queda con ícono propio y se abre de un toque.
+        <b>Dejala como app en el celular.</b> Menú del navegador → <b>Agregar a pantalla de inicio</b>
+        (en Safari es el ícono de compartir, en Chrome los tres puntos). Queda con ícono propio y se abre de un toque.
       </div>
     </div>
 
     <div class="card">
-      <h2>📖 Paso a paso</h2>
-      <h3>🎯 Antes del partido</h3>
+      <h2>Paso a paso</h2>
+      <h3>Antes del partido</h3>
       <ol>
-        <li>Entrá a <b>⚙️ Equipo</b>. Cada jugador tiene su ficha: a la izquierda el <b>número de gorro</b> (tocalo y escribí el que sea) y al lado el nombre. Esto se hace <b>una sola vez</b>: queda guardado para todos los partidos.</li>
-        <li>Si ya tenés la lista en otro lado, no la escribas de nuevo: tocá <b>📥 Importar de un Excel</b>. Podés elegir un <b>Excel o un CSV</b>, o pegar la lista escrita. Te muestra lo que entendió antes de cargar nada.</li>
+        <li>Entrá a <b>Equipo</b>. Cada jugador tiene su ficha: a la izquierda el <b>número de gorro</b> (tocalo y escribí el que sea) y al lado el nombre. Esto se hace <b>una sola vez</b>: queda guardado para todos los partidos.</li>
+        <li>Si ya tenés la lista en otro lado, no la escribas de nuevo: tocá <b>Importar de un Excel</b>. Podés elegir un <b>Excel o un CSV</b>, o pegar la lista escrita. Te muestra lo que entendió antes de cargar nada.</li>
         <li>Abajo de cada ficha hay tres botones. <b>Juega hoy</b>: los que dejás apagados no aparecen en la pantalla de carga, así los botones quedan más grandes y no te equivocás de jugador.</li>
         <li><b>Arquero</b>: marcalo en el que ataja, sea cual sea su número. Vienen marcados el 1 y el 15 porque es lo más común, pero si tu arquero lleva el 13 lo marcás a él y al otro lo apagás. Podés tener dos arqueros marcados.</li>
         <li><b>Capitán</b>: uno solo por equipo. En el Excel sale con una <b>(C)</b> al lado del nombre.</li>
         <li>Completá el rival, la fecha, el lugar y el árbitro.</li>
-        <li>Si querés seguir también a los jugadores del rival por nombre, cargalos en <b>🚨 Plantel rival</b>. Si no, no hace falta: ya vienen numerados del 1 al 15.</li>
+        <li>Si querés seguir también a los jugadores del rival por nombre, cargalos en <b>Plantel rival</b>. Si no, no hace falta: ya vienen numerados del 1 al 15.</li>
       </ol>
-      <h3>⏱️ Durante el partido</h3>
+      <h3>Durante el partido</h3>
       <ol start="4">
         <li>Arriba, elegí el <b>período</b> que se está jugando (1° 2° 3° 4°). Todo lo que cargues queda asignado a ese período.</li>
-        <li>Si querés saber <b>en qué minuto</b> pasó cada cosa, tocá el <b>▶️</b> del reloj cuando arranca el período y el <b>⏸️</b> cuando para el juego. Va <b>para atrás desde 8:00</b>, como el de la mesa, y cada período arranca de nuevo en 8:00. Es opcional: si no lo tocás, todo funciona igual.</li>
+        <li>Si querés saber <b>en qué minuto</b> pasó cada cosa, tocá <b>Arrancar</b> en el reloj cuando empieza el período y <b>Frenar</b> cuando para el juego. Va <b>para atrás desde 8:00</b>, como el de la mesa, y cada período arranca de nuevo en 8:00. Es opcional: si no lo tocás, todo funciona igual.</li>
         <li>El minuto que queda anotado en cada gol y en cada acción es el <b>del partido</b>, no el del cuarto: un gol a los 2:30 del 3° período figura como <b>18'30</b>.</li>
         <li>El reloj <b>se frena solo al llegar a 0:00</b> y te ofrece pasar al período siguiente. También <b>se frena solo cuando pedís un tiempo muerto</b>, que es cuando se para el juego.</li>
-        <li>Al arquero tocalo como a cualquier jugador: su panel tiene el botón grande <b>🧤 PARADA</b>. Los <b>goles recibidos</b> se le cargan solos al que está en el arco cada vez que anotás un gol del rival.</li>
-        <li>¿Tenés dos arqueros? Ataja el primero de la lista. Cuando entra el otro, tocalo y usá <b>🧤 Poner en el arco</b>: desde ahí los goles recibidos van a su cuenta. En la pantalla de carga, el que está afuera aparece como <b>🧤 supl.</b></li>
+        <li>Al arquero tocalo como a cualquier jugador: su panel tiene el botón grande <b>PARADA</b>. Los <b>goles recibidos</b> se le cargan solos al que está en el arco cada vez que anotás un gol del rival.</li>
+        <li>¿Tenés dos arqueros? Ataja el primero de la lista. Cuando entra el otro, tocalo y usá <b>Poner en el arco</b>: desde ahí los goles recibidos van a su cuenta. En la pantalla de carga, el que está afuera aparece como <b>supl.</b></li>
         <li>Tocá el jugador y después la acción. El panel <b>queda abierto</b>: si el mismo jugador hace varias cosas seguidas, seguí tocando sin cerrarlo.</li>
-        <li>¿Te equivocaste? <b>↩︎ Deshacer</b> arriba a la derecha borra lo último. Si el error fue hace varias jugadas, tocá la <b>✕</b> de esa acción en la lista de <b>🕒 Últimas acciones</b>.</li>
-        <li>Con el botón <b>🚨 Rival</b> cargás las estadísticas del equipo contrario igual de rápido. El chip de color en la lista te dice de qué equipo fue cada acción: 🏊 el tuyo, 🚨 el rival.</li>
+        <li>¿Te equivocaste? <b>Deshacer</b> arriba a la derecha borra lo último. Si el error fue hace varias jugadas, tocá la <b>✕</b> de esa acción en la lista de <b>Últimas acciones</b>.</li>
+        <li>Con el botón <b>Rival</b> cargás las estadísticas del equipo contrario igual de rápido. El chip de color en la lista te dice de qué equipo fue cada acción: azul el tuyo, rojo el rival.</li>
         <li>Cuando pedís <b>tiempo muerto</b>, tocá el botón naranja que está arriba de los jugadores. La app lleva la cuenta: son <b>2 por partido</b> y cuando los usaste el botón se apaga. Con el equipo rival seleccionado anotás los de ellos.</li>
         <li>Escribí las <b>notas tácticas</b> del período mientras están frescas. Cada período tiene su propia nota y todas viajan al Excel.</li>
       </ol>
-      <h3>📊 Después del partido</h3>
+      <h3>Después del partido</h3>
       <ol start="9">
-        <li>Mirá <b>📈 Comparativo</b>: quién ganó cada rubro, las barras enfrentadas y el resultado con los parciales. Más abajo está la <b>🕒 Cronología</b>: todo el partido en orden, con el marcador jugada por jugada.</li>
-        <li>Tocá <b>📲 Resumen para WhatsApp</b> y mandá el resultado, los goleadores y las paradas al grupo del club. Sale escrito, listo para pegar.</li>
-        <li>Si llevás el control de los <b>MINUTOS</b>, cargalos en <b>📋 Planilla</b>. Ahí también podés corregir a mano cualquier número.</li>
-        <li>Tocá <b>📗 Excel</b> para bajar el partido con el mismo formato de siempre.</li>
-        <li>Para empezar el próximo partido tocá <b>➕ Nuevo</b>, arriba a la derecha (o <b>✅ Cerrar partido</b> en Comparativo, que hace lo mismo): el partido se guarda en <b>🗂️ Historial</b> y la planilla queda limpia, con tu plantel ya cargado. Si abrís la app otro día con un partido sin cerrar, te lo ofrece sola con un cartel arriba de todo.</li>
+        <li>Mirá <b>Comparativo</b>: quién ganó cada rubro, las barras enfrentadas y el resultado con los parciales. Más abajo está la <b>Cronología</b>: todo el partido en orden, con el marcador jugada por jugada.</li>
+        <li>Tocá <b>Resumen para WhatsApp</b> y mandá el resultado, los goleadores y las paradas al grupo del club. Sale escrito, listo para pegar.</li>
+        <li>Si llevás el control de los <b>MINUTOS</b>, cargalos en <b>Planilla</b>. Ahí también podés corregir a mano cualquier número.</li>
+        <li>Tocá <b>Excel</b> para bajar el partido con el mismo formato de siempre.</li>
+        <li>Para empezar el próximo partido tocá <b>Nuevo</b>, arriba a la derecha (o <b>Cerrar partido</b> en Comparativo, que hace lo mismo): el partido se guarda en <b>Historial</b> y la planilla queda limpia, con tu plantel ya cargado. Si abrís la app otro día con un partido sin cerrar, te lo ofrece sola con un cartel arriba de todo.</li>
       </ol>
-      <h3>🏆 A lo largo de la temporada</h3>
-      <p>En <b>🗂️ Historial</b> están todos los partidos cerrados y el <b>acumulado por jugador</b>: partidos jugados, totales de cada estadística, eficacias y goles por partido. Con <b>📗 Exportar temporada a Excel</b> te llevás todo eso en una planilla aparte.</p>
-      <p class="hint">Desde el historial también podés volver a bajar el Excel de cualquier partido viejo con el botón 📗 de su fila.</p>
+      <h3>A lo largo de la temporada</h3>
+      <p>En <b>Historial</b> están todos los partidos cerrados y el <b>acumulado por jugador</b>: partidos jugados, totales de cada estadística, eficacias y goles por partido. Con <b>Exportar temporada a Excel</b> te llevás todo eso en una planilla aparte.</p>
+      <p class="hint">Desde el historial también podés volver a bajar el Excel de cualquier partido viejo con el botón <b>Excel</b> de su fila.</p>
     </div>
 
     <div class="card">
-      <h2>🧮 Cómo suma cada botón</h2>
+      <h2>Cómo suma cada botón</h2>
       <ul>
         <li><b>GOL</b> suma 1 lanzamiento y 1 gol.</li>
         <li><b>Tiro errado</b> suma solo 1 lanzamiento (baja la eficacia).</li>
@@ -824,14 +836,14 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
         <li><b>Superioridad jugada</b> es la que se jugó sin convertir.</li>
         <li><b>Penal GOL</b> suma lanzamiento, gol, penal ejecutado y penal convertido.</li>
         <li><b>Penal errado</b> suma lanzamiento y penal ejecutado.</li>
-        <li><b>Asistencia, Robo, Bloqueo de tiro, Pérdida, Exc. forzada y Exc. cometida</b> suman solo lo suyo. El <b>✋ Bloqueo</b> es para el jugador de campo que le tapa un tiro al rival; las atajadas del arquero van con <b>PARADA</b>.</li>
-        <li><b>🟥 ROJA sin cambio</b> y <b>🟧 Expulsión c/cambio</b> sacan al jugador del partido: su tarjeta queda bloqueada, igual que con las 3 exclusiones. Si era el arquero, entra solo el otro que tengas marcado.</li>
-        <li><b>🧤 PARADA</b> suma 1 parada al arquero. Sólo aparece en el panel del que está en el arco.</li>
-        <li><b>⏸️ Tiempo muerto</b> no suma nada a ningún jugador: sólo queda anotado con su período y su minuto, y descuenta uno de los 2 del equipo.</li>
+        <li><b>Asistencia, Robo, Bloqueo de tiro, Pérdida, Exc. forzada y Exc. cometida</b> suman solo lo suyo. El <b>Bloqueo</b> es para el jugador de campo que le tapa un tiro al rival; las atajadas del arquero van con <b>PARADA</b>.</li>
+        <li><b>ROJA sin cambio</b> y <b>Expulsión c/cambio</b> sacan al jugador del partido: su tarjeta queda bloqueada, igual que con las 3 exclusiones. Si era el arquero, entra solo el otro que tengas marcado.</li>
+        <li><b>PARADA</b> suma 1 parada al arquero. Sólo aparece en el panel del que está en el arco.</li>
+        <li><b>Tiempo muerto</b> no suma nada a ningún jugador: sólo queda anotado con su período y su minuto, y descuenta uno de los 2 del equipo.</li>
         <li><b>Gol recibido (GR)</b> no tiene botón: cada gol que le cargás al rival se le suma solo al arquero que está en el arco en ese momento.</li>
       </ul>
       <p class="hint">Los penales cuentan como lanzamiento, igual que en la planilla de siempre: <b>LT = todos los tiros al arco</b>. Por eso la eficacia nunca puede pasar del 100%.</p>
-      <h3>🔑 Leyenda completa</h3>
+      <h3>Leyenda completa</h3>
       <div class="leyenda">
         <div><b>LT</b> Lanzamientos totales</div>
         <div><b>G</b> Goles anotados</div>
@@ -860,41 +872,41 @@ textarea{resize:vertical;min-height:70px;line-height:1.55}
     </div>
 
     <div class="card">
-      <h2>🔧 Si algo no funciona</h2>
+      <h2>Si algo no funciona</h2>
       <h3>Cargué una acción al jugador equivocado</h3>
-      <p>Buscala en <b>🕒 Últimas acciones</b> y tocá la <b>✕</b>. Se descuenta de sus estadísticas y del marcador. Después cargala en el jugador correcto.</p>
+      <p>Buscala en <b>Últimas acciones</b> y tocá la <b>✕</b>. Se descuenta de sus estadísticas y del marcador. Después cargala en el jugador correcto.</p>
       <h3>Anoté un tiempo muerto que no era</h3>
-      <p>Buscalo en <b>🕒 Últimas acciones</b> y tocá la <b>✕</b>, igual que cualquier otra carga. Te queda libre otra vez.</p>
+      <p>Buscalo en <b>Últimas acciones</b> y tocá la <b>✕</b>, igual que cualquier otra carga. Te queda libre otra vez.</p>
       <h3>El marcador no coincide con el de la mesa</h3>
-      <p>Andá a <b>📋 Planilla → ⏱️ Goles por período</b> y corregí el número a mano. Ahí mandás vos.</p>
+      <p>Andá a <b>Planilla → Goles por período</b> y corregí el número a mano. Ahí mandás vos.</p>
       <h3>Quiero imprimir la planilla para el banco</h3>
-      <p>En <b>📈 Comparativo</b> está el botón <b>🖨️ Imprimir / PDF</b>. Sale la planilla completa y el comparativo, sin los botones.</p>
+      <p>En <b>Comparativo</b> está el botón <b>Imprimir / PDF</b>. Sale la planilla completa y el comparativo, sin los botones.</p>
       <h3>Tengo el plantel en una foto</h3>
-      <p>En <b>📥 Importar</b> hay un botón <b>📷 Leer una foto de la planilla</b>. Elegís la foto y la app saca el texto sola. La primera vez tarda un poco porque baja el lector (unos 5 MB); después queda guardado y anda sin internet. Sale mejor si la foto está derecha, con buena luz y de cerca. Los <b>nombres</b> los saca bastante bien; los <b>números</b> se le escapan más seguido, así que revisalos en el casillero antes de cargar: todo lo que leyó queda ahí para corregir.</p>
+      <p>En <b>Importar</b> hay un botón <b>Leer una foto de la planilla</b>. Elegís la foto y la app saca el texto sola. La primera vez tarda un poco porque baja el lector (unos 5 MB); después queda guardado y anda sin internet. Sale mejor si la foto está derecha, con buena luz y de cerca. Los <b>nombres</b> los saca bastante bien; los <b>números</b> se le escapan más seguido, así que revisalos en el casillero antes de cargar: todo lo que leyó queda ahí para corregir.</p>
       <h3>Tengo el plantel en un Excel, o en un papel</h3>
-      <p>En <b>⚙️ Equipo → 📥 Importar de un Excel</b>. Si el archivo es una <b>planilla completa</b> —por ejemplo un Excel bajado de la app— vuelve <b>todo el partido</b>: los dos planteles con sus estadísticas, los goles de cada período, las notas, la cronología y los datos del partido. Si es sólo una lista de nombres, carga el plantel. Si está en papel, <b>sacale una foto</b>, mantené el dedo apretado sobre el texto de la foto para copiarlo —el celular lo reconoce solo— y pegalo en el casillero. Entiende <i>"7 Pérez Juan"</i>, <i>"Pérez Juan 7"</i> o sólo los nombres, y les pone los números en orden. Si al lado de alguien dice <i>arquero</i> o <i>(C)</i>, lo marca.</p>
+      <p>En <b>Equipo → Importar de un Excel</b>. Si el archivo es una <b>planilla completa</b> —por ejemplo un Excel bajado de la app— vuelve <b>todo el partido</b>: los dos planteles con sus estadísticas, los goles de cada período, las notas, la cronología y los datos del partido. Si es sólo una lista de nombres, carga el plantel. Si está en papel, <b>sacale una foto</b>, mantené el dedo apretado sobre el texto de la foto para copiarlo —el celular lo reconoce solo— y pegalo en el casillero. Entiende <i>"7 Pérez Juan"</i>, <i>"Pérez Juan 7"</i> o sólo los nombres, y les pone los números en orden. Si al lado de alguien dice <i>arquero</i> o <i>(C)</i>, lo marca.</p>
       <h3>Importé y me faltan jugadores</h3>
       <p>Para sacarlos del Excel, cada jugador necesita tener el <b>número al lado del nombre</b>: si la planilla sólo tiene nombres sueltos, copiá esa columna y pegala en el casillero de texto, que ahí los numera solos.</p>
       <h3>Borré al último jugador y era el arquero</h3>
       <p>No hay que hacer nada: el guante pasa solo al que queda último de la lista, y la app te avisa quién quedó de arquero.</p>
       <h3>No me aparece el botón de PARADA</h3>
-      <p>Ese jugador no está marcado como arquero. En <b>⚙️ Equipo</b>, buscá su ficha y tocá el botón <b>Arquero</b>.</p>
+      <p>Ese jugador no está marcado como arquero. En <b>Equipo</b>, buscá su ficha y tocá el botón <b>Arquero</b>.</p>
       <h3>Los goles recibidos se los carga al arquero equivocado</h3>
-      <p>Van siempre al que está en el arco. Tocá al que corresponde y usá <b>🧤 Poner en el arco</b>; si el titular quedó fuera por 3 exclusiones, la app pasa sola al otro arquero.</p>
+      <p>Van siempre al que está en el arco. Tocá al que corresponde y usá <b>Poner en el arco</b>; si el titular quedó fuera por 3 exclusiones, la app pasa sola al otro arquero.</p>
       <h3>El arquero tiene goles recibidos de menos</h3>
-      <p>Se cargan solos cuando anotás los goles del rival. Si ese día no seguiste al rival jugador por jugador, escribí el número a mano en la columna <b>GR</b> de <b>📋 Planilla</b>.</p>
+      <p>Se cargan solos cuando anotás los goles del rival. Si ese día no seguiste al rival jugador por jugador, escribí el número a mano en la columna <b>GR</b> de <b>Planilla</b>.</p>
       <h3>Me olvidé de frenar el reloj</h3>
-      <p>Frenalo con <b>⏸️</b> y tocá <b>↺</b> para volver el reloj de ese período a 8:00. Los minutos que ya quedaron anotados en cada acción no se tocan. Cuando el período llega a 0:00 el reloj muestra 🏁 y no arranca más: pasá al siguiente, que arranca otra vez en 8:00.</p>
+      <p>Frenalo con <b>Frenar</b> y tocá <b>Reiniciar</b> para volver el reloj de ese período a 8:00. Los minutos que ya quedaron anotados en cada acción no se tocan. Cuando el período llega a 0:00 el reloj dice <b>Fin</b> y no arranca más: pasá al siguiente, que arranca otra vez en 8:00.</p>
       <h3>Marqué mal una roja</h3>
-      <p>Con <b>↩︎ Deshacer</b>, o con la <b>✕</b> de esa acción en <b>🕒 Últimas acciones</b>. El jugador vuelve a quedar habilitado al instante.</p>
+      <p>Con <b>Deshacer</b>, o con la <b>✕</b> de esa acción en <b>Últimas acciones</b>. El jugador vuelve a quedar habilitado al instante.</p>
       <h3>Faltan jugadores, o me sobran</h3>
-      <p>En <b>⚙️ Equipo</b>: <b>➕ Agregar jugador</b> suma uno al final, y el 🗑️ de cada ficha lo quita. Podés tener los que necesites, con los números que quieras.</p>
+      <p>En <b>Equipo</b>: <b>Agregar jugador</b> suma uno al final, y el <b>Borrar</b> de cada ficha lo quita. Podés tener los que necesites, con los números que quieras.</p>
       <h3>Cambio de teléfono, o quiero tener todo también en la compu</h3>
-      <p>En <b>⚙️ Equipo → ⬇️ Descargar respaldo</b> baja un archivo con todos tus partidos y tu plantel. En el otro dispositivo, <b>⬆️ Restaurar respaldo</b> y lo elegís. Todo se guarda solo en el dispositivo, así que el respaldo es la forma de mudarlo.</p>
+      <p>En <b>Equipo → Descargar respaldo</b> baja un archivo con todos tus partidos y tu plantel. En el otro dispositivo, <b>Restaurar respaldo</b> y lo elegís. Todo se guarda solo en el dispositivo, así que el respaldo es la forma de mudarlo.</p>
       <h3>Apareció un cartel verde de versión nueva</h3>
-      <p>Quiere decir que se publicó una mejora. Tocá <b>🔄 Actualizar ahora</b> y listo: tus partidos, tu plantel y el partido que estés cargando quedan intactos, porque están guardados en el dispositivo.</p>
+      <p>Quiere decir que se publicó una mejora. Tocá <b>Actualizar ahora</b> y listo: tus partidos, tu plantel y el partido que estés cargando quedan intactos, porque están guardados en el dispositivo.</p>
       <h3>Apareció un aviso de color arriba de todo</h3>
-      <p>Significa que este navegador está limitando el guardado. Podés cargar el partido igual, pero antes de cerrar tocá el botón <b>⬇️ Guardar respaldo ahora</b> que trae el propio aviso. Si no aparece ningún aviso, está todo bien.</p>
+      <p>Significa que este navegador está limitando el guardado. Podés cargar el partido igual, pero antes de cerrar tocá el botón <b>Guardar respaldo ahora</b> que trae el propio aviso. Si no aparece ningún aviso, está todo bien.</p>
     </div>
 
   </section>
@@ -941,25 +953,25 @@ const KEYS = COLS.filter(c=>!c.calc).map(c=>c.k);
 
 /* ---------- Acciones del panel en vivo ---------------------------------- */
 const ACCIONES = [
-  {id:'gol',   lbl:'GOL',           ico:'🥅', tipo:'pos', d:{lt:1,g:1}},
-  {id:'tiro',  lbl:'Tiro errado',   ico:'❌', tipo:'neg', d:{lt:1}},
-  {id:'ast',   lbl:'Asistencia',    ico:'🎯', tipo:'pos', d:{ast:1}},
-  {id:'cga',   lbl:'Contragol',     ico:'⚡', tipo:'pos', d:{lt:1,g:1,cga:1}},
-  {id:'supg',  lbl:'Gol superior.', ico:'💪', tipo:'pos', d:{lt:1,g:1,supj:1,supg:1}},
-  {id:'supj',  lbl:'Superior. jugada',ico:'🔷',tipo:'neu',d:{supj:1}},
-  {id:'peng',  lbl:'Penal GOL',     ico:'⚪', tipo:'pos', d:{lt:1,g:1,pe:1,pg:1}},
-  {id:'pene',  lbl:'Penal errado',  ico:'🚫', tipo:'neg', d:{lt:1,pe:1}},
-  {id:'rob',   lbl:'Robo',          ico:'🛡️', tipo:'pos', d:{rob:1}},
-  {id:'blq',   lbl:'Bloqueo de tiro', ico:'✋', tipo:'pos', d:{blq:1}},
-  {id:'pb',    lbl:'Pérdida',       ico:'💧', tipo:'neg', d:{pb:1}},
-  {id:'exf',   lbl:'Exc. forzada',  ico:'➕', tipo:'pos', d:{exf:1}},
-  {id:'exc',   lbl:'Exc. cometida', ico:'➖', tipo:'neg', d:{exc:1}},
-  {id:'roja',  lbl:'ROJA sin cambio', ico:'🟥', tipo:'neg', d:{roj:1}},
-  {id:'expc',  lbl:'Expulsión c/cambio', ico:'🟧', tipo:'neg', d:{exp:1}},
+  {id:'gol',   lbl:'GOL', tipo:'pos', d:{lt:1,g:1}},
+  {id:'tiro',  lbl:'Tiro errado', tipo:'neg', d:{lt:1}},
+  {id:'ast',   lbl:'Asistencia', tipo:'pos', d:{ast:1}},
+  {id:'cga',   lbl:'Contragol', tipo:'pos', d:{lt:1,g:1,cga:1}},
+  {id:'supg',  lbl:'Gol superior.', tipo:'pos', d:{lt:1,g:1,supj:1,supg:1}},
+  {id:'supj',  lbl:'Superior. jugada',tipo:'neu',d:{supj:1}},
+  {id:'peng',  lbl:'Penal GOL', tipo:'pos', d:{lt:1,g:1,pe:1,pg:1}},
+  {id:'pene',  lbl:'Penal errado', tipo:'neg', d:{lt:1,pe:1}},
+  {id:'rob',   lbl:'Robo', tipo:'pos', d:{rob:1}},
+  {id:'blq',   lbl:'Bloqueo de tiro', tipo:'pos', d:{blq:1}},
+  {id:'pb',    lbl:'Pérdida', tipo:'neg', d:{pb:1}},
+  {id:'exf',   lbl:'Exc. forzada', tipo:'pos', d:{exf:1}},
+  {id:'exc',   lbl:'Exc. cometida', tipo:'neg', d:{exc:1}},
+  {id:'roja',  lbl:'ROJA sin cambio', tipo:'neg', d:{roj:1}},
+  {id:'expc',  lbl:'Expulsión c/cambio', tipo:'neg', d:{exp:1}},
   /* Sólo aparece en el panel del jugador marcado como arquero */
-  {id:'par',   lbl:'PARADA',        ico:'🧤', tipo:'arq', d:{par:1}, soloArq:true},
+  {id:'par',   lbl:'PARADA', tipo:'arq', d:{par:1}, soloArq:true},
   /* Del equipo, no de un jugador: no suma estadísticas y se pide desde afuera */
-  {id:'tm',    lbl:'Tiempo muerto', ico:'⏸️', tipo:'neu', d:{}, equipo:true}
+  {id:'tm',    lbl:'Tiempo muerto', tipo:'neu', d:{}, equipo:true}
 ];
 const ACC_POR_ID = {};
 ACCIONES.forEach(a=>ACC_POR_ID[a.id]=a);
@@ -978,7 +990,7 @@ function tiemposUsados(eq){
 function pedirTiempo(eq){
   const usados = tiemposUsados(eq);
   if(usados >= MAX_TM){
-    toast('⏸️ '+nombreEquipo(eq)+' ya usó sus '+MAX_TM+' tiempos muertos');
+    toast(nombreEquipo(eq)+' ya usó sus '+MAX_TM+' tiempos muertos');
     return;
   }
   const ev = {id:uid(), eq:eq, idx:-1, acc:'tm', per:P().periodo};
@@ -987,7 +999,7 @@ function pedirTiempo(eq){
   const andaba = cronOk().corriendo;
   cronPausar();                    /* con el tiempo muerto se para el juego */
   guardar(); pintarTodo();
-  toast('⏸️ Tiempo muerto de '+nombreEquipo(eq)+' ('+(usados+1)+' de '+MAX_TM+')'+
+  toast('Tiempo muerto de '+nombreEquipo(eq)+' ('+(usados+1)+' de '+MAX_TM+')'+
         (andaba?' · reloj frenado':''), 'Deshacer', deshacer);
 }
 /* Queda fuera del partido por tres motivos: las 3 exclusiones de siempre, una
@@ -1004,7 +1016,7 @@ function motivoFuera(j){
 }
 function nombreJug(j){ return j.nombre || ('#'+j.n); }
 function avisoFuera(j){
-  toast('🚫 ' + nombreJug(j) + ' no juega más este partido: ' + motivoFuera(j));
+  toast(nombreJug(j) + ' no juega más este partido: ' + motivoFuera(j));
 }
 
 /* ---------- Filas del comparativo (igual que la solapa del Excel) -------- */
@@ -1038,7 +1050,7 @@ const COMPARATIVO = [
    el botón para actualizar. Con el archivo abierto desde la computadora no
    corre nada de esto.
    ========================================================================== */
-const VERSION_APP = '2026-10-23-1135';
+const VERSION_APP = '2026-10-29-1054';
 let ultimoControl = 0;
 
 function controlarVersion(forzado){
@@ -1061,8 +1073,8 @@ function mostrarAvisoVersion(){
   if(!el || avisoVersionPuesto) return;
   avisoVersionPuesto = true;
   el.style.display='block';
-  el.innerHTML = '✨ <b>Hay una versión nueva de la app.</b> Tus partidos y tu plantel no se tocan.'
-    + ' <button class="btn-aviso" id="btn-actualizar">🔄 Actualizar ahora</button>';
+  el.innerHTML = '<b>Hay una versión nueva de la app.</b> Tus partidos y tu plantel no se tocan.'
+    + ' <button class="btn-aviso" id="btn-actualizar">Actualizar ahora</button>';
   document.getElementById('btn-actualizar').onclick = function(){
     if('serviceWorker' in navigator && navigator.serviceWorker.controller){
       /* se tira lo guardado para que baje la versión nueva sí o sí */
@@ -1106,7 +1118,7 @@ function completarPlantel(js, cant, crear){
 function statsVacias(){ const o={}; KEYS.forEach(k=>o[k]=0); return o; }
 /* Los dorsales de arquero de toda la vida: el 1 titular y el 15 suplente.
    Quien lleve uno de esos números nace marcado como arquero; igual se puede
-   cambiar a mano con el 🧤 de la tabla del plantel. */
+   cambiar a mano con el botón Arquero de cada ficha del plantel. */
 const DORSALES_ARQUERO = [1,15];
 function esDorsalArquero(n){ return DORSALES_ARQUERO.indexOf(+n)>=0; }
 
@@ -1121,7 +1133,7 @@ function ponerCapitan(eq, idx){
   js.forEach((j,i)=>{ j.cap = prende && i===idx; });
   if(eq==='local') sincronizarPlantel();
   guardar(); pintarTodo();
-  toast(prende ? '🎖️ '+nombreJug(js[idx])+' es el capitán' : 'El equipo queda sin capitán');
+  toast(prende ? nombreJug(js[idx])+' es el capitán' : 'El equipo queda sin capitán');
 }
 function capitanDe(eq){ return equipoObj(eq).jugadores.find(j=>j.cap) || null; }
 /* Está en la lista de hoy (los partidos viejos no tienen el dato: cuentan todos) */
@@ -1149,7 +1161,7 @@ function ponerEnArco(eq, idx){
   P().arco[eq] = js[idx].n;
   if(eq==='local') sincronizarPlantel();
   guardar(); pintarTodo();
-  toast('🧤 '+nombreJug(js[idx])+' va al arco');
+  toast(nombreJug(js[idx])+' va al arco');
 }
 /* El arquero suplente va al final de la lista. Si se borra al último y era el
    arquero, el guante pasa solo al que queda último, así el equipo nunca se
@@ -1166,7 +1178,7 @@ function acomodarArqueros(eq, eraArquero, eraElUltimo){
   return null;
 }
 
-/* El 🧤 del plantel: marca o desmarca arqueros, sin límite de cantidad */
+/* El botón Arquero del plantel: marca o desmarca, sin límite de cantidad */
 function alternarArquero(eq, idx){
   const js = equipoObj(eq).jugadores;
   js[idx].arq = !js[idx].arq;
@@ -1222,9 +1234,9 @@ function mostrarAvisoAlmacen(){
   el.style.display='block';
   el.className = 'aviso' + (modoAlmacen==='memoria' ? ' grave' : '');
   el.innerHTML = (modoAlmacen==='pestana'
-      ? '⚠️ <b>Acá los datos se guardan sólo mientras no cierres esta pestaña.</b> Cargá el partido tranquilo — aguanta recargas y bloqueos de pantalla — pero al terminar bajá el respaldo o el Excel.'
-      : '⚠️ <b>Este navegador no está guardando los datos.</b> Podés cargar el partido igual, pero <b>antes de cerrar</b> bajá el respaldo o el Excel, o vas a perderlo.')
-    + ' <button class="btn-aviso" id="btn-aviso-guardar">⬇️ Guardar respaldo ahora</button>';
+      ? '<b>Acá los datos se guardan sólo mientras no cierres esta pestaña.</b> Cargá el partido tranquilo — aguanta recargas y bloqueos de pantalla — pero al terminar bajá el respaldo o el Excel.'
+      : '<b>Este navegador no está guardando los datos.</b> Podés cargar el partido igual, pero <b>antes de cerrar</b> bajá el respaldo o el Excel, o vas a perderlo.')
+    + ' <button class="btn-aviso" id="btn-aviso-guardar">Guardar respaldo ahora</button>';
   const b = document.getElementById('btn-aviso-guardar');
   if(b) b.onclick = descargarRespaldo;
 }
@@ -1284,7 +1296,7 @@ function cronTocar(){
   const c=cronOk();
   if(c.corriendo){ cronPausar(); }
   else if(cronCompleto()){
-    toast('⏱️ El '+P().periodo+'° período ya se jugó entero. Pasá al siguiente o tocá ↺');
+    toast('El '+P().periodo+'° período ya se jugó entero. Pasá al siguiente o tocá Reiniciar');
     return;
   }
   else { c.corriendo=true; c.desde=Date.now(); }
@@ -1297,9 +1309,9 @@ function finDePeriodo(){
   c.corriendo=false; c.desde=null;
   guardar(); pintarTodo();
   const p = P().periodo;
-  if(p < 4) toast('⏱️ Terminó el '+p+'° período', 'Pasar al '+(p+1)+'°',
+  if(p < 4) toast('Terminó el '+p+'° período', 'Pasar al '+(p+1)+'°',
                   ()=>{ P().periodo=p+1; guardar(); pintarTodo(); });
-  else      toast('⏱️ Terminó el 4° período');
+  else      toast('Terminó el 4° período');
 }
 function cronCero(){
   const c=cronOk();
@@ -1336,11 +1348,10 @@ function registrar(eq, idx, accId){
   guardar(); pintarTodo();
   if(estaFuera(j)){
     cerrarPanel();
-    toast('🚫 ' + nombreJug(j) + ' queda fuera del partido — ' + motivoFuera(j), 'Deshacer', deshacer);
+    toast(nombreJug(j) + ' queda fuera del partido — ' + motivoFuera(j), 'Deshacer', deshacer);
     return;
   }
-  const esGol = !!a.d.g;
-  toast((esGol?'⚽ ':'') + a.lbl + ' · ' + nombreJug(j), 'Deshacer', deshacer);
+  toast(a.lbl + ' · ' + nombreJug(j), 'Deshacer', deshacer);
 }
 function quitarEvento(evId){
   const i = P().eventos.findIndex(e=>e.id===evId);
@@ -1403,12 +1414,12 @@ function pintarHeader(){
   r.className='per reloj'+(c.corriendo?' andando':'');
   const listo = cronCompleto();
   r.title = c.corriendo ? 'Frenar el reloj' : (listo?'Este período ya se jugó entero':'Arrancar el reloj del período');
-  r.innerHTML = (listo?'🏁':(c.corriendo?'⏸️':'▶️'))+' <b id="reloj-txt">'+mmss(cronResta())+'</b>';
+  r.innerHTML = '<span>'+(listo?'Fin':(c.corriendo?'Frenar':'Arrancar'))+'</span> <b id="reloj-txt">'+mmss(cronResta())+'</b>';
   r.onclick=cronTocar;
   cont.appendChild(r);
   if(!c.corriendo && cronSeg()>0){
     const z=document.createElement('button');
-    z.className='per mini'; z.textContent='↺'; z.title='Poner el reloj de este período en cero';
+    z.className='per mini'; z.textContent='Reiniciar'; z.title='Volver el reloj de este período a 8:00';
     z.onclick=cronCero;
     cont.appendChild(z);
   }
@@ -1443,7 +1454,7 @@ function pintarVivo(){
   tm.innerHTML='';
   const btm = document.createElement('button');
   btm.className = 'tm'+(equipoActivo==='rival'?' rival':'')+(quedan<=0?' sin':'');
-  btm.innerHTML = '<span class="ico">⏸️</span>'+
+  btm.innerHTML =
     '<span>'+(quedan>0 ? 'Pedí tiempo muerto de '+esc(nombreEquipo(equipoActivo))
                        : esc(nombreEquipo(equipoActivo))+' ya usó los dos')+'</span>'+
     '<span class="marcas"><span class="cuenta">'+usados+'/'+MAX_TM+'</span>'+
@@ -1464,7 +1475,8 @@ function pintarVivo(){
     b.className='jug'+(equipoActivo==='rival'?' rival':'')+(fuera?' fuera':'')+(j.arq?' arq':'');
     b.innerHTML =
       '<div class="dor">'+j.n+'</div><div class="info">'+
-      '<div class="nom">'+(j.arq?'🧤 ':'')+(esc(j.nombre)||'Jugador '+j.n)+
+      '<div class="nom">'+(esc(j.nombre)||'Jugador '+j.n)+
+        (j.arq?' <span class="arq-mk">ARQ</span>':'')+
         (j.cap?' <span class="cap">C</span>':'')+
         (j.arq&&!enArco?' <span class="supl">supl.</span>':'')+'</div>'+
       '<div class="res">'+(fuera
@@ -1476,7 +1488,7 @@ function pintarVivo(){
     g.appendChild(b);
   });
   if(!enLista){
-    g.innerHTML='<div class="vacio">Nadie está marcado para jugar hoy.<br>Marcá la lista en <b>⚙️ Equipo</b> con el botón ✅ de cada jugador.</div>';
+    g.innerHTML='<div class="vacio">Nadie está marcado para jugar hoy.<br>Marcá la lista en <b>Equipo</b> con el botón <b>Juega hoy</b> de cada jugador.</div>';
   }
   document.getElementById('vivo-sub').textContent =
     'Período '+P().periodo+' · '+enLista+' en lista';
@@ -1489,7 +1501,7 @@ function pintarVivo(){
     const li=document.createElement('li');
     const quien = a.equipo ? esc(nombreEquipo(ev.eq)) : (esc(j?j.nombre:'')||('#'+(j?j.n:'?')));
     li.innerHTML='<span class="tag'+(ev.eq==='rival'?' rival':'')+'">'+ev.per+'°</span>'+
-      '<span class="txt">'+a.ico+' <b>'+esc(a.lbl)+'</b> — '+quien+
+      '<span class="txt"><b>'+esc(a.lbl)+'</b> — '+quien+
       (ev.t!=null?' <i>'+mmss(minutoPartido(ev))+'</i>':'')+'</span>';
     const x=document.createElement('button'); x.className='quitar'; x.textContent='✕';
     x.onclick=()=>quitarEvento(ev.id);
@@ -1530,13 +1542,13 @@ function pintarPanel(){
       '<span>ROB <b>'+j.st.rob+'</b></span><span>BLQ <b>'+(+j.st.blq||0)+'</b></span><span>PB <b>'+j.st.pb+'</b></span>'+
       '<span>EXC <b>'+j.st.exc+'</b></span><span>EXF <b>'+j.st.exf+'</b></span>'+
     '</div>'+
-    (fuera ? '<div class="aviso-fuera">🚫 '+esc(motivoFuera(j)).toUpperCase()+' — no puede seguir disputando el partido</div>' : '')+
+    (fuera ? '<div class="aviso-fuera">'+esc(motivoFuera(j)).toUpperCase()+' — no puede seguir disputando el partido</div>' : '')+
     '<div style="padding:12px 16px 0">'+
-      (enArco ? '<div class="en-arco">🧤 Está en el arco</div>'
-              : '<button class="btn plano" style="width:100%" id="btn-arq">🧤 Poner en el arco</button>')+
+      (enArco ? '<div class="en-arco">Está en el arco</div>'
+              : '<button class="btn plano" style="width:100%" id="btn-arq">Poner en el arco</button>')+
     '</div>'+
     '<div class="acciones" id="acc-grid"></div>'+
-    '<div style="padding:2px 16px 0"><button class="btn plano" style="width:100%" id="btn-undo-panel">↩︎ Deshacer última acción</button></div>';
+    '<div style="padding:2px 16px 0"><button class="btn plano" style="width:100%" id="btn-undo-panel">Deshacer última acción</button></div>';
   const grid = h.querySelector('#acc-grid');
   /* El botón de PARADA sólo existe para el que está en el arco, y va primero */
   const lista = ACCIONES.filter(a=>!a.equipo && (!a.soloArq || j.arq));
@@ -1545,7 +1557,7 @@ function pintarPanel(){
     const b=document.createElement('button');
     b.className='acc '+a.tipo+((a.id==='gol'||a.id==='par')?' destacada':'');
     const cuenta = contarAccion(j.st,a);
-    b.innerHTML='<span class="ico">'+a.ico+'</span><span>'+a.lbl+'</span>'+(cuenta!==null?'<span class="n">'+cuenta+'</span>':'');
+    b.innerHTML='<span class="lbl">'+a.lbl+'</span>'+(cuenta!==null?'<span class="n">'+cuenta+'</span>':'');
     if(fuera){ b.className += ' bloqueada'; b.disabled = true; }
     else b.onclick=()=>{ registrar(eq,idx,a.id); };
     grid.appendChild(b);
@@ -1578,14 +1590,14 @@ function tablaEquipo(eq){
   COLS.forEach(c=>h+='<th>'+c.t+'</th>');
   h += '</tr></thead><tbody>';
   js.forEach((j,idx)=>{
-    h += '<tr><td><b>'+j.n+'</b>'+(j.arq?' 🧤':'')+(j.cap?' 🎖️':'')+(estaFuera(j)?' 🚫':'')+'</td><td class="nom"><input class="txt" data-eq="'+eq+'" data-i="'+idx+'" data-f="nombre" value="'+esc(j.nombre)+'" placeholder="Jugador '+j.n+'"></td>';
+    h += '<tr><td><b>'+j.n+'</b>'+(j.arq?' <i class="mkt">ARQ</i>':'')+(j.cap?' <i class="mkt">C</i>':'')+(estaFuera(j)?' <i class="mkt fuera">FUERA</i>':'')+'</td><td class="nom"><input class="txt" data-eq="'+eq+'" data-i="'+idx+'" data-f="nombre" value="'+esc(j.nombre)+'" placeholder="Jugador '+j.n+'"></td>';
     COLS.forEach(c=>{
       if(c.calc) h += '<td class="calc">'+pct(derivada(j.st,c.calc))+'</td>';
       else h += '<td><input type="number" min="0" inputmode="numeric" data-eq="'+eq+'" data-i="'+idx+'" data-f="'+c.k+'" value="'+(+j.st[c.k]||0)+'"></td>';
     });
     h += '</tr>';
   });
-  h += '</tbody><tfoot><tr class="totales"><td colspan="2" class="nom" style="text-align:left">📊 TOTALES</td>';
+  h += '</tbody><tfoot><tr class="totales"><td colspan="2" class="nom" style="text-align:left">TOTALES</td>';
   COLS.forEach(c=>{ h += '<td>'+(c.calc ? pct(derivada(tot,c.calc)) : tot[c.k])+'</td>'; });
   h += '</tr></tfoot></table>';
   return h;
@@ -1694,17 +1706,25 @@ function pintarSupInf(){
     '</div>';
   };
   let h = '<div class="si">'+
-    caja('mas','⚡ Hombre de más', mias.supj, mias.supg,
+    caja('mas','Hombre de más', mias.supj, mias.supg,
          'Terminaron en gol', 'Se erraron', 'Eficacia', true)+
-    caja('menos','🛡️ Hombre de menos', suyas.supj, suyas.supg,
+    caja('menos','Hombre de menos', suyas.supj, suyas.supg,
          'Nos hicieron gol', 'Las defendimos', 'Bien defendidas', false)+
   '</div>';
   if(!suyas.supj){
-    h += '<p class="hint">El hombre de menos se llena solo cuando cargás las superioridades del rival: con el 🚨 '+
+    h += '<p class="hint">El hombre de menos se llena solo cuando cargás las superioridades del rival: con '+
          esc(nombreEquipo('rival'))+' seleccionado, <b>Superior. jugada</b> si la defendieron bien y <b>Gol superior.</b> si terminó en gol.</p>';
   }
   cont.innerHTML = h;
   document.getElementById('sup-sub').textContent = mias.supj + ' a favor · ' + suyas.supj + ' en contra';
+}
+
+/* Dos o tres letras del nombre del equipo, para marcar de quién fue la acción */
+function sigla(nom){
+  const ps = String(nom||'').trim().split(/\s+/).filter(Boolean);
+  if(!ps.length) return '--';
+  if(ps.length > 1) return (ps[0][0]+ps[1][0]).toUpperCase();
+  return ps[0].slice(0,3).toUpperCase();
 }
 
 /* ========================== Render: cronología ==========================
@@ -1726,7 +1746,8 @@ function pintarCrono(){
     if(gol){ mk[ev.eq]+=a.d.g; }
     h+='<li class="'+(gol?'gol ':'')+(ev.eq==='rival'?'rival':'')+'">'+
        '<span class="min">'+ev.per+'° '+(ev.t!=null?mmss(minutoPartido(ev)):'')+'</span>'+
-       '<span class="txt">'+(ev.eq==='rival'?'🚨':'🏊')+' '+a.ico+' '+esc(a.lbl)+' — '+
+       '<span class="eqt'+(ev.eq==='rival'?' rival':'')+'">'+esc(sigla(nombreEquipo(ev.eq)))+'</span>'+
+       '<span class="txt"><b>'+esc(a.lbl)+'</b> — '+
          (a.equipo ? esc(nombreEquipo(ev.eq)) : (esc(j?j.nombre:'')||('#'+(j?j.n:'?'))))+'</span>'+
        (gol?'<span class="mk">'+mk.local+'-'+mk.rival+'</span>':'')+'</li>';
   });
@@ -1777,7 +1798,7 @@ function compartirResumen(){
   }
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(txt)
-      .then(()=>toast('📋 Resumen copiado — pegalo en WhatsApp'))
+      .then(()=>toast('Resumen copiado — pegalo en WhatsApp'))
       .catch(()=>hojaTexto(txt));
     return;
   }
@@ -1788,17 +1809,17 @@ function hojaTexto(txt){
   jugadorAbierto = null;
   const h = document.getElementById('hoja');
   h.innerHTML =
-    '<div class="hoja-hdr"><div><div class="t1">📲 Resumen del partido</div>'+
+    '<div class="hoja-hdr"><div><div class="t1">Resumen del partido</div>'+
     '<div class="t2">COPIALO Y PEGALO DONDE QUIERAS</div></div>'+
     '<button class="cerrar" id="x-panel">✕</button></div>'+
     '<div class="resumen"><textarea id="txt-res" readonly></textarea>'+
-    '<button class="btn pri" style="width:100%;margin-top:10px" id="btn-copiar">📋 Copiar</button></div>';
+    '<button class="btn pri" style="width:100%;margin-top:10px" id="btn-copiar">Copiar</button></div>';
   const ta = h.querySelector('#txt-res');
   ta.value = txt;
   h.querySelector('#x-panel').onclick = cerrarPanel;
   h.querySelector('#btn-copiar').onclick = ()=>{
     ta.select(); ta.setSelectionRange(0, 999999);
-    try{ document.execCommand('copy'); toast('📋 Resumen copiado'); }
+    try{ document.execCommand('copy'); toast('Resumen copiado'); }
     catch(e){ toast('Mantené el dedo apretado sobre el texto para copiarlo'); }
   };
   document.getElementById('overlay').classList.add('on');
@@ -2594,14 +2615,14 @@ function leerFoto(archivo){
     if(caja){ caja.value = limpio; }
     usarTextoImportado(limpio, datos);
     const p = importPlanilla;
-    avisarFoto(p ? '✅ Leída la planilla entera. Revisá los números y corregí lo que haga falta.'
-                 : '✅ Leída. Revisá sobre todo los números y corregí lo que haga falta.');
-    toast('📷 Foto leída — revisá antes de cargar');
+    avisarFoto(p ? 'Leída la planilla entera. Revisá los números y corregí lo que haga falta.'
+                 : 'Leída. Revisá sobre todo los números y corregí lo que haga falta.');
+    toast('Foto leída — revisá antes de cargar');
   }).catch(function(e){
     if(obrero) try{ obrero.terminate(); }catch(x){}
     if(boton) boton.disabled = false;
     avisarFoto('');
-    toast('⚠️ ' + (e && e.message ? e.message : 'No pude leer la foto'));
+    toast('' + (e && e.message ? e.message : 'No pude leer la foto'));
   });
 }
 
@@ -2620,19 +2641,19 @@ function abrirImportar(eq){
   const h = document.getElementById('hoja');
   h.innerHTML =
     '<div class="hoja-hdr' + (eq==='rival' ? ' rival' : '') + '">' +
-      '<div><div class="t1">📥 Importar de un archivo</div>' +
+      '<div><div class="t1">Importar de un archivo</div>' +
       '<div class="t2">' + esc(nombreEquipo(eq)).toUpperCase() + '</div></div>' +
       '<button class="cerrar" id="x-panel">✕</button></div>' +
     '<div class="importar">' +
-      '<button class="btn pri" style="width:100%" id="imp-archivo">📗 Elegir un Excel o un CSV</button>' +
-      '<button class="btn plano" style="width:100%;margin-top:8px" id="imp-foto">📷 Leer una foto de la planilla</button>' +
+      '<button class="btn pri" style="width:100%" id="imp-archivo">Elegir un Excel o un CSV</button>' +
+      '<button class="btn plano" style="width:100%;margin-top:8px" id="imp-foto">Leer una foto de la planilla</button>' +
       '<div id="imp-leyendo" class="imp-leyendo" style="display:none"></div>' +
       '<p class="hint">Si el archivo es una planilla completa se carga el partido entero: jugadores, estadísticas, parciales y notas. Si es sólo una lista de nombres, se carga el plantel.</p>' +
       '<div class="imp-o">o pegá la lista acá</div>' +
       '<textarea id="imp-texto" placeholder="7 Pérez Juan&#10;9 López Martín&#10;1 Gómez Ana (arquera)"></textarea>' +
       '<p class="hint">La foto se lee acá mismo. Sale mejor derecha, con buena luz y de cerca. Los nombres los saca bastante bien; <b>los números conviene mirarlos</b>, que es donde más se equivoca. Lo que lea queda en el casillero para corregirlo antes de cargar.</p>' +
       '<div id="imp-previo"></div>' +
-      '<button class="btn ok" style="width:100%;margin-top:10px" id="imp-usar">✅ Usar esta lista</button>' +
+      '<button class="btn ok" style="width:100%;margin-top:10px" id="imp-usar">Usar esta lista</button>' +
     '</div>';
   h.querySelector('#x-panel').onclick = cerrarPanel;
   h.querySelector('#imp-archivo').onclick = function(){ document.getElementById('file-plantel').click(); };
@@ -2668,7 +2689,7 @@ function verPrevio(lista){
           (importLista.length===1 ? ' jugador:' : ' jugadores:') + '</div><div class="imp-lista">';
   importLista.forEach(function(j){
     h += '<div class="imp-fila"><b>' + j.n + '</b> ' + esc(j.nombre) +
-         (j.arq ? ' <span class="imp-mk arq">🧤</span>' : '') +
+         (j.arq ? ' <span class="imp-mk arq">ARQ</span>' : '') +
          (j.cap ? ' <span class="imp-mk cap">C</span>' : '') + '</div>';
   });
   h += '</div>';
@@ -2699,12 +2720,12 @@ function verPrevio(lista){
     if(p.crono.length) lineas.push('La cronología: ' + p.crono.length + ' acciones');
     if(lineas.length){
       h += '<div class="imp-tit">Y el resto del partido:</div><div class="imp-lista">';
-      lineas.forEach(function(l){ h += '<div class="imp-fila">✅ ' + esc(l) + '</div>'; });
+      lineas.forEach(function(l){ h += '<div class="imp-fila">' + esc(l) + '</div>'; });
       h += '</div>';
     }
   }
   cont.innerHTML = h;
-  btn.textContent = importPlanilla ? '✅ Cargar este partido' : '✅ Usar esta lista';
+  btn.textContent = importPlanilla ? 'Cargar este partido' : 'Usar esta lista';
 }
 
 /* Carga una lista de jugadores en un equipo, con sus estadísticas si las trae */
@@ -2762,7 +2783,7 @@ function usarImportacion(){
     P().periodo = 1;
     sincronizarPlantel();
     guardar(); pintarTodo(); cerrarPanel();
-    toast('✅ Partido cargado: ' + p.local.length + ' jugadores' +
+    toast('Partido cargado: ' + p.local.length + ' jugadores' +
           (p.rival.length ? ', el rival' : '') + (p.periodos ? ' y los parciales' : ''));
     return;
   }
@@ -2789,7 +2810,7 @@ function usarImportacion(){
 
   if(eq === 'local') sincronizarPlantel();
   guardar(); pintarTodo(); cerrarPanel();
-  toast('✅ Cargados ' + importLista.length + ' jugadores' +
+  toast('Cargados ' + importLista.length + ' jugadores' +
         (cuantos ? ' y los datos del partido' : '') + ' en ' + nombreEquipo(eq));
 }
 
@@ -2805,9 +2826,9 @@ function elegirArchivoPlantel(f){
       return;
     }
     verPrevio(lista);
-    toast('📗 Leí ' + (importPlanilla ? 'el partido entero' : lista.length + ' jugadores') + ' de ' + f.name);
+    toast('Leí ' + (importPlanilla ? 'el partido entero' : lista.length + ' jugadores') + ' de ' + f.name);
   }).catch(function(err){
-    toast('⚠️ ' + (err && err.message ? err.message : 'No pude leer ese archivo'));
+    toast('' + (err && err.message ? err.message : 'No pude leer ese archivo'));
   });
 }
 
@@ -2843,10 +2864,10 @@ function tablaPlantel(eq){
            '<input class="nom-in" data-p="'+eq+'" data-i="'+i+'" data-f="nombre" value="'+esc(j.nombre)+'" placeholder="Nombre y apellido">'+
          '</div>'+
          '<div class="pj-chips">'+
-           boton('conv', conv,   'hoy', '✅ Juega hoy', 'No juega')+
-           boton('arq',  j.arq,  'arq', '🧤 Arquero',   'Arquero')+
-           boton('cap',  j.cap,  'cap', '🎖️ Capitán',   'Capitán')+
-           '<button class="chip borrar" data-del="'+eq+'" data-i="'+i+'">🗑️</button>'+
+           boton('conv', conv,   'hoy', 'Juega hoy', 'No juega')+
+           boton('arq',  j.arq,  'arq', 'Arquero',   'Arquero')+
+           boton('cap',  j.cap,  'cap', 'Capitán',   'Capitán')+
+           '<button class="chip borrar" data-del="'+eq+'" data-i="'+i+'">Borrar</button>'+
          '</div>'+
        '</div>';
   });
@@ -2900,7 +2921,7 @@ function conectarPlantel(cont,eq){
       });
       if(eq==='local') sincronizarPlantel();
       guardar(); pintarTodo();
-      if(heredero) toast('🧤 '+nombreJug(heredero)+' pasa a ser el arquero');
+      if(heredero) toast(nombreJug(heredero)+' pasa a ser el arquero');
     };
   });
 }
@@ -2915,7 +2936,7 @@ function pintarHistorial(){
   document.getElementById('hist-sub').textContent = S.historial.length + (S.historial.length===1?' partido':' partidos');
   cont.innerHTML='';
   if(!S.historial.length){
-    cont.innerHTML='<div class="vacio">Todavía no cerraste ningún partido.<br>Cuando termines uno, tocá <b>✅ Cerrar partido</b> en la solapa Comparativo.</div>';
+    cont.innerHTML='<div class="vacio">Todavía no cerraste ningún partido.<br>Cuando termines uno, tocá <b>Cerrar partido</b> en la solapa Comparativo.</div>';
   }
   S.historial.slice().reverse().forEach(m=>{
     const gl=m.golesPeriodo.local.reduce((a,b)=>a+(+b||0),0);
@@ -2926,9 +2947,9 @@ function pintarHistorial(){
       '<div class="d"><b>'+esc(m.equipo)+' vs '+(esc(m.rival)||'Rival')+'</b>'+
       '<span>'+fechaCorta(m.fecha)+(m.lugar?' · '+esc(m.lugar):'')+'</span></div>';
     const acc=document.createElement('div'); acc.className='acc-p';
-    const bx=document.createElement('button'); bx.className='icobtn'; bx.textContent='📗'; bx.title='Exportar a Excel';
+    const bx=document.createElement('button'); bx.className='icobtn texto'; bx.textContent='Excel'; bx.title='Exportar este partido a Excel';
     bx.onclick=()=>exportarPartido(m);
-    const bd=document.createElement('button'); bd.className='icobtn'; bd.textContent='🗑️'; bd.title='Borrar';
+    const bd=document.createElement('button'); bd.className='icobtn texto'; bd.textContent='Borrar'; bd.title='Borrar este partido del historial';
     bd.onclick=()=>{ if(confirm('¿Borrar este partido del historial?')){ S.historial=S.historial.filter(x=>x.id!==m.id); guardar(); pintarTodo(); } };
     acc.appendChild(bx); acc.appendChild(bd); d.appendChild(acc);
     cont.appendChild(d);
@@ -3185,7 +3206,7 @@ function bajarArchivo(bytes, nombre, mime, altCsv){
     const a = document.createElement('a');
     a.href=url; a.download=nombre; document.body.appendChild(a); a.click();
     setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1500);
-    toast('📥 Descargado: '+nombre);
+    toast('Descargado: '+nombre);
   }catch(e){ alert('No se pudo descargar el archivo: '+e.message); }
 }
 function limpiarNombre(s){ return String(s||'').replace(/[\\/:*?"<>|\[\]']/g,'-').replace(/\s+/g,' ').trim(); }
@@ -3582,10 +3603,10 @@ function cerrarPartido(destino){
   guardar(); pintarTodo();
   if(destino==='equipo'){
     irA('equipo');
-    toast('✅ Partido guardado en el Historial. Cargá el rival del nuevo');
+    toast('Partido guardado en el Historial. Cargá el rival del nuevo');
   } else {
     irA('historial');
-    toast('✅ Partido archivado. Planilla lista para el próximo.');
+    toast('Partido archivado. Planilla lista para el próximo.');
   }
 }
 
@@ -3597,9 +3618,9 @@ function mostrarAvisoPartido(){
   const viejo = partidoConDatos() && P().fecha && P().fecha < hoyISO();
   if(!viejo){ el.style.display='none'; return; }
   el.style.display='block';
-  el.innerHTML = '📋 <b>Quedó abierto el partido del ' + fechaCorta(P().fecha) +
+  el.innerHTML = '<b>Quedó abierto el partido del ' + fechaCorta(P().fecha) +
     (P().rival ? ' contra ' + esc(P().rival) : '') + '.</b> ¿Empezás uno nuevo? El anterior se guarda en el Historial.' +
-    ' <button class="btn-aviso" id="btn-aviso-nuevo">➕ Empezar partido nuevo</button>';
+    ' <button class="btn-aviso" id="btn-aviso-nuevo">Empezar partido nuevo</button>';
   document.getElementById('btn-aviso-nuevo').onclick = ()=>cerrarPartido('equipo');
 }
 
@@ -3710,7 +3731,7 @@ function iniciar(){
         const d=JSON.parse(fr.result);
         if(!d || !d.partido) throw new Error('formato');
         if(!confirm('Se van a reemplazar los datos actuales por los del respaldo. ¿Continuar?')) return;
-        S=d; guardar(); pintarTodo(); toast('✅ Respaldo restaurado');
+        S=d; guardar(); pintarTodo(); toast('Respaldo restaurado');
       }catch(err){ alert('El archivo no es un respaldo válido de Waterpolo Stats.'); }
     };
     fr.readAsText(f);
@@ -3748,7 +3769,7 @@ function iniciar(){
   setTimeout(function(){
     if(S.historial.length || P().eventos.length) return;
     if(S.equipo && S.equipo!=='Mi equipo') return;
-    toast('👋 Empezá cargando tu plantel en ⚙️ Equipo', 'Ir', ()=>irA('equipo'));
+    toast('Empezá cargando tu plantel en la solapa Equipo', 'Ir', ()=>irA('equipo'));
   }, 700);
 }
 iniciar();
