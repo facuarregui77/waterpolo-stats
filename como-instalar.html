@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es-AR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poner la app en el celular</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#f4f6f9;color:#0c1b2a;
+       font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+  header{background:#115f9e;color:#fff;padding:22px 20px}
+  header h1{margin:0;font-size:21px;letter-spacing:.02em}
+  header p{margin:6px 0 0;opacity:.75;font-size:14px}
+  main{max-width:820px;margin:0 auto;padding:22px 18px 60px}
+  .caja{background:#fff;border:1px solid #e5eaf1;border-radius:12px;padding:22px;
+        box-shadow:0 1px 2px rgba(12,27,42,.04),0 2px 8px rgba(12,27,42,.05);margin-bottom:16px}
+  .fila{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+  .qr{flex:0 0 auto;text-align:center}
+  .qr img{width:260px;height:260px;display:block;border:1px solid #e5eaf1;border-radius:10px}
+  .qr small{display:block;margin-top:8px;color:#56687e;font-size:12.5px}
+  .pasos{flex:1;min-width:280px;margin:0;padding-left:0;list-style:none;counter-reset:p}
+  .pasos li{counter-increment:p;position:relative;padding-left:40px;margin-bottom:14px;font-size:15.5px}
+  .pasos li::before{content:counter(p);position:absolute;left:0;top:1px;width:27px;height:27px;
+        background:#115f9e;color:#fff;border-radius:50%;display:grid;place-items:center;
+        font-weight:700;font-size:14px}
+  .link{display:block;margin:4px 0 0;padding:13px 15px;background:#eef3fa;border:1px solid #c5daf0;
+        border-radius:9px;font-family:ui-monospace,Consolas,monospace;font-size:15px;
+        color:#0d3f6b;word-break:break-all;text-decoration:none}
+  .link:hover{background:#e3edf8}
+  h2{font-size:16px;margin:0 0 12px}
+  .nota{color:#56687e;font-size:14px}
+  b{font-weight:650}
+</style></head>
+<body>
+<header>
+  <h1>Poner Waterpolo Stats en el celular</h1>
+  <p>No está en la Play Store: se agrega desde el navegador y queda como una app más.</p>
+</header>
+<main>
+  <div class="caja">
+    <div class="fila">
+      <div class="qr">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAApIAAAKSAQMAAABbRqklAAAABlBMVEUNP2v////WEdNWAAAD00lEQVR42u2dS26sQAxFrfQCWBJbZ0ksoKV6EV2Ur10MnhRXJjk1IdDhTJCu/Le18nMYTJgwYcKECRMmTJgwYcJczDzMz/Z5eMrd+/qzv2Kv79/2dj3sl3E+sC+rPzBhwvw7TEuS976U6Ft72n3pSuS6ZJcg9d+uF5LI8Y1gwoRZokvdJvrIjFpP190wm/ZbpVSXDrGz0CWYMGEu0KXhx90+3iu5ekOednQJJkyYv6RLXXTcgRsS1EZgqWEvwYQJ8zfjS92B6/JktxKdfrkfEl+CCRPmIl3y00NJ/3+ZYHwjmDBh/lyX8vGIksS9011I0oXaA74RTJgwi3TpDG7ZKTGk4aRpIk7es6BS6BJMmDCr/LjtNpS8dlKsp24oedXAiJdPD/lGMGHCrNAljxOJ6Ghabr+dO31hb14ZPpJ06BJMmDBr/Li3Ro00ETfEynVJPL6nsm++EUyYMCt06RYk0/qlWBKgNpE3p4wicOoEYMKEWezHxdi2tO/uucN3CNJ21xfsISCFLsGECbNEl8y8MS5aSLFpbr/D3+rOHeTjYMKEuU6X4uiA0IfiKjXkKc9AQZdgwoRZpUujDslFR0wjn3oSQ1BS90R8CSZMmPX20isNfds8SacpO1WpFrp48eNgwoRZq0taJukqFUwjLWOKrSoH8SWYMGEusJf6ydozUm+t+SiUebpAyNzxjWDChPlzXZokaDaiWop0qx+n8+TQJZgwYRbpUuw8SX27uRZchlgSX4IJE+Yye8mC3fPWid4uOvOSlGl0HLoEEybMKntJHLiHXUy55tKLLUM7CroEEybMKl06nmq6s1eng5eOUM3UqF+CCRPmEntJ3DIdARcXNGmxZc7cYS/BhAmz0l4yS3tNtAElRLpT/dIrlIujSzBhwqzUJV1aaWldk5pNdltW0ldH/RJMmDDrdemVxgNIki5uk7M4cRddggkT5hJdmvJx5v1xbV5vOcTKTDN3+HEwYcKstJe0JOAwTa+1Fn/TUBL7UGDChLnUXrKw+Vti23Engca9G/k4mDBhrrOXmk4QeB6ZG8JM055e6iphwoRZbC/FFZaxffedLKupkpK+XZgwYdbbS362J+05LW90ShfycTBhwlzkx+ke8OGdmaU5J1u2kIx8HEyYMOt1SeYoaVVSC7srzcVK9zSZ0R8HEybMpbqUu3hj8YDZQ4cv+1BgwoS52F7yiqV+pLxyGgjXQl8dugQTJswqXcrJthxfOizOZvLXT/btwoQJc4Uu+YnLdMe/xJlxZipdZugSTJgwi3Wp9BwwYcKECRMmTJgwYcKECXMd8x9AIKvEq0EQngAAAABJRU5ErkJggg==" alt="Código para abrir la app">
+        <small>Apuntá la cámara del celular</small>
+      </div>
+      <ol class="pasos">
+        <li>Abrí la <b>cámara</b> del celular y apuntá al cuadrito de al lado. Tocá el cartelito que aparece.<br>
+            <span class="nota">Si la cámara no lo lee, abrí <b>Chrome</b> en el celular y escribí el link de abajo.</span></li>
+        <li>Se abre la app en el navegador. Tocá los <b>tres puntitos</b> de arriba a la derecha.</li>
+        <li>Elegí <b>Agregar a pantalla de inicio</b> (o <b>Instalar aplicación</b>) y aceptá.</li>
+        <li>Listo: queda el ícono de la pelota en el celular y se abre de un toque, <b>también sin internet</b>.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="caja">
+    <h2>El link, por si lo necesitás escribir</h2>
+    <a class="link" href="https://facuarregui77.github.io/waterpolo-stats/">https://facuarregui77.github.io/waterpolo-stats/</a>
+    <p class="nota" style="margin-bottom:0">Es el mismo de siempre. Tus partidos y tu plantel quedan guardados
+    en el celular, así que si la app ya estuvo instalada antes, al volver a entrar está todo como lo dejaste.</p>
+  </div>
+
+  <div class="caja">
+    <h2>Si ya la tenías y querés el ícono nuevo</h2>
+    <p class="nota" style="margin:0">Borrá el acceso de la pantalla de inicio y volvé a agregarlo con los pasos
+    de arriba. El teléfono guarda el ícono viejo hasta que se hace eso.</p>
+  </div>
+</main>
+</body></html>
