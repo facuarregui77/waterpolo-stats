@@ -5,8 +5,8 @@
    para empezar a cargar un partido al borde de la pileta.
    El manifest y los íconos van igual. Si no hay nada guardado todavía (primera
    vez), se espera a internet, que es la única forma de tenerlos. */
-const CACHE = 'waterpolo-stats-v11';
-const ARCHIVOS = ['./', './index.html', './manifest-v4.webmanifest', './icon-180-v4.png', './icon-512-v4.png'];
+const CACHE = 'waterpolo-stats-v12';
+const ARCHIVOS = ['./', './index.html', './manifest-v5.webmanifest', './icon-180-v5.png', './icon-512-v5.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(

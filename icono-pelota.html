@@ -1,111 +1,122 @@
 <!DOCTYPE html>
 <!-- ==========================================================================
      DIBUJO DEL ICONO DE LA APP
-     Una Mikasa de waterpolo: amarilla, con los gajos azul y rosa asomando a los
-     costados, la marca en negro con la estrellita sobre la i, y las olitas.
-     De acá salen icon-512-v4.png e icon-180-v4.png. Para rehacerlos, abrir este
-     archivo en Chrome y sacarle una captura del tamaño que corresponda, o con:
-       chrome --headless --hide-scrollbars --virtual-time-budget=3000
-              --window-size=512,512 --screenshot=icon-512-v4.png icono-pelota.html
+     Una Mikasa de waterpolo, copiada de la foto de una de verdad (W6609W):
+     el gajo amarillo grande en el medio, el azul oscuro pegado a los dos lados
+     y el rosa asomando en los bordes. La marca en negro, con la estrellita
+     arriba de la I, "GAME BALL" encima, y las olitas abajo.
+
+     Colores sacados con cuentagotas de la foto:
+       amarillo #f9b405 · azul #023d78 · rosa #ed5d94
+
+     De acá salen los .png del icono y la pelotita del encabezado:
+       chrome --headless=new --hide-scrollbars --virtual-time-budget=3000
+              --window-size=512,512 --screenshot=icon-512.png icono-pelota.html
+       chrome ... --window-size=320,320 --default-background-color=00000000
+              --screenshot=pelota-sola.png "icono-pelota.html?sola"
      (hace falta el virtual-time-budget: la estrellita la coloca un script que
-     mide dónde cae la I). Para el de 180 se cambian width/height del <svg> y se
-     engordan costuras, espuma y marca.
-     Si se cambia el dibujo hay que cambiarles el NOMBRE a los .png (v5, v6...):
-     el navegador y el telefono guardan el icono por nombre y no lo sueltan.
+     mide dónde cae la I. Con ?sola sale la pelota sola, sin agua, para el
+     encabezado de la app.)
+
+     Si se cambia el dibujo hay que cambiarles el NOMBRE a los .png (v6, v7...):
+     el navegador y el teléfono guardan el icono por nombre y no lo sueltan.
      ========================================================================== -->
 <html><head><meta charset="utf-8"><style>
 html,body{margin:0;padding:0;background:transparent}
 svg{display:block}
 </style></head><body>
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="agua" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#0a4f92"/>
       <stop offset="0.55" stop-color="#0f7fc0"/>
       <stop offset="1" stop-color="#14a9da"/>
     </linearGradient>
-    <radialGradient id="cuero" cx="0.36" cy="0.30" r="0.80">
-      <stop offset="0" stop-color="#ffdc5e"/>
-      <stop offset="0.45" stop-color="#f7c422"/>
-      <stop offset="0.85" stop-color="#e8a90d"/>
-      <stop offset="1" stop-color="#c98a06"/>
+    <!-- el amarillo de la pelota, con la luz entrando de arriba a la izquierda -->
+    <radialGradient id="cuero" cx="0.34" cy="0.26" r="0.92">
+      <stop offset="0"    stop-color="#ffd254"/>
+      <stop offset="0.38" stop-color="#fdbb14"/>
+      <stop offset="0.75" stop-color="#f9b405"/>
+      <stop offset="1"    stop-color="#d8900a"/>
     </radialGradient>
-    <pattern id="grano" width="15" height="15" patternUnits="userSpaceOnUse">
-      <circle cx="4" cy="4" r="2.1" fill="#7a4a00" fill-opacity="0.11"/>
-      <circle cx="11.5" cy="11.5" r="2.1" fill="#7a4a00" fill-opacity="0.11"/>
-    </pattern>
-    <radialGradient id="brillo" cx="0.34" cy="0.25" r="0.45">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.50"/>
+    <radialGradient id="azulg" cx="0.34" cy="0.26" r="0.95">
+      <stop offset="0"    stop-color="#0a5096"/>
+      <stop offset="0.6"  stop-color="#023d78"/>
+      <stop offset="1"    stop-color="#01284f"/>
+    </radialGradient>
+    <radialGradient id="rosag" cx="0.34" cy="0.26" r="0.95">
+      <stop offset="0"    stop-color="#f87ab0"/>
+      <stop offset="0.6"  stop-color="#ed5d94"/>
+      <stop offset="1"    stop-color="#c93c74"/>
+    </radialGradient>
+    <radialGradient id="brillo" cx="0.33" cy="0.24" r="0.42">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.34"/>
       <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
     <radialGradient id="volumen" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0.72" stop-color="#000000" stop-opacity="0"/>
-      <stop offset="1" stop-color="#5a3800" stop-opacity="0.30"/>
+      <stop offset="0.70" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1"    stop-color="#43290a" stop-opacity="0.34"/>
     </radialGradient>
-    <path id="linea-marca" d="M 136,238 Q 256,272 376,238" fill="none"/>
-    <clipPath id="bola"><circle cx="256" cy="243" r="175"/></clipPath>
-    <clipPath id="arriba"><path d="M0,0 H512 V196 C 400,246 112,246 0,196 Z"/></clipPath>
-    <clipPath id="abajo"><path d="M0,196 C 112,246 400,246 512,196 V512 H0 Z"/></clipPath>
+    <clipPath id="bola"><circle cx="256" cy="238" r="176"/></clipPath>
   </defs>
 
-  <rect width="512" height="512" fill="url(#agua)"/>
-  <path d="M0,392 C 55,368 105,410 165,392 C 225,374 275,414 335,396 C 395,378 450,414 512,394 L512,512 L0,512 Z"
-        fill="#0a5e9e" opacity="0.55"/>
-
-  <!-- cuerpo amarillo -->
-  <circle cx="256" cy="243" r="175" fill="url(#cuero)"/>
-
-  <!-- gajos de los costados: azul y rosa, como la pelota de verdad -->
-  <g clip-path="url(#bola)">
-    <g clip-path="url(#arriba)">
-      <path d="M256,68 A175,175 0 0,0 256,418 A139,175 0 0,1 256,68 Z" fill="#1a5fa8"/>
-      <path d="M256,68 A175,175 0 0,1 256,418 A139,175 0 0,0 256,68 Z" fill="#e8559a"/>
-    </g>
-    <g clip-path="url(#abajo)">
-      <path d="M256,68 A175,175 0 0,0 256,418 A139,175 0 0,1 256,68 Z" fill="#e8559a"/>
-      <path d="M256,68 A175,175 0 0,1 256,418 A139,175 0 0,0 256,68 Z" fill="#1a5fa8"/>
-    </g>
-    <!-- el amarillo vuelve al frente, dejando los gajos sólo en los bordes -->
-    <ellipse cx="256" cy="243" rx="139" ry="175" fill="url(#cuero)"/>
-    <circle cx="256" cy="243" r="175" fill="url(#grano)"/>
+  <!-- ===== el agua, detrás de todo ===== -->
+  <g id="fondo">
+    <rect width="512" height="512" fill="url(#agua)"/>
+    <path d="M0,392 C 55,368 105,410 165,392 C 225,374 275,414 335,396 C 395,378 450,414 512,394 L512,512 L0,512 Z"
+          fill="#0a5e9e" opacity="0.55"/>
   </g>
 
-  <!-- costuras de los paneles -->
-  <g clip-path="url(#bola)" fill="none" stroke="#c08c0a" stroke-width="3.5" opacity="0.5">
-    <ellipse cx="256" cy="243" rx="139" ry="175"/>
-    <ellipse cx="256" cy="243" rx="96" ry="175"/>
-    <ellipse cx="256" cy="243" rx="45" ry="175"/>
-    <line x1="256" y1="68" x2="256" y2="418"/>
+  <!-- ===== la pelota ===== -->
+  <g id="pelota">
+    <!-- los gajos: rosa en el borde, azul al lado, y el amarillo grande al medio -->
+    <circle  cx="256" cy="238" r="176"            fill="url(#rosag)"/>
+    <ellipse cx="256" cy="238" rx="158" ry="176"  fill="url(#azulg)"/>
+    <ellipse cx="256" cy="238" rx="130" ry="176"  fill="url(#cuero)"/>
+
+    <!-- las costuras entre gajo y gajo -->
+    <g fill="none" stroke="#3a2600" stroke-opacity="0.38" stroke-width="3">
+      <ellipse cx="256" cy="238" rx="130" ry="176"/>
+      <ellipse cx="256" cy="238" rx="158" ry="176"/>
+    </g>
+    <!-- las dos rayas suaves que cruzan el gajo amarillo, como en la pelota -->
+    <g clip-path="url(#bola)" fill="none" stroke="#9a6a04" stroke-opacity="0.17" stroke-width="2.5">
+      <path d="M 130,148 Q 256,176 382,148"/>
+      <path d="M 130,318 Q 256,348 382,318"/>
+    </g>
+
+    <!-- volumen: sombra en el borde y luz arriba a la izquierda -->
+    <circle cx="256" cy="238" r="176" fill="url(#volumen)"/>
+    <circle cx="256" cy="238" r="176" fill="url(#brillo)"/>
+    <circle cx="256" cy="238" r="176" fill="none" stroke="#000000" stroke-opacity="0.18" stroke-width="3"/>
+
+    <!-- ===== la marca, como en la pelota de verdad ===== -->
+    <text x="256" y="176" font-family="Arial,Helvetica,sans-serif" font-weight="700"
+          font-size="22" letter-spacing="2.5" fill="#14161a" fill-opacity="0.82"
+          text-anchor="middle">GAME BALL</text>
+    <text id="marca" x="256" y="252" font-family="'Arial Black','Arial Bold',Arial,sans-serif"
+          font-weight="900" font-size="41" letter-spacing="0.5" fill="#14161a" fill-opacity="0.92"
+          text-anchor="middle">MIKASA</text>
+    <polygon id="estrella" fill="#14161a" fill-opacity="0.92" points=""/>
   </g>
 
-  <circle cx="256" cy="243" r="175" fill="url(#volumen)"/>
-  <circle cx="256" cy="243" r="175" fill="url(#brillo)"/>
-  <circle cx="256" cy="243" r="175" fill="none" stroke="#a06f04" stroke-width="5" opacity="0.45"/>
-
-
-  <!-- la marca de la pelota, como en la de verdad -->
-  <text id="marca" font-family="'Arial Black','Arial Bold',Arial,sans-serif" font-weight="900"
-        font-size="54" letter-spacing="1" fill="#15171c" opacity="0.88"
-        text-anchor="middle" style="paint-order:stroke">
-    <textPath href="#linea-marca" startOffset="50%">MIKASA</textPath>
-  </text>
-  <polygon id="estrella" fill="#15171c" opacity="0.88" points=""/>
-
-  <!-- olitas por delante -->
-  <path d="M0,424 C 58,398 112,442 172,424 C 232,406 282,446 342,428 C 402,410 456,444 512,424 L512,512 L0,512 Z"
-        fill="#0f86c6"/>
-  <path d="M0,424 C 58,398 112,442 172,424 C 232,406 282,446 342,428 C 402,410 456,444 512,424"
-        fill="none" stroke="#bfe9ff" stroke-width="9" stroke-linecap="round" opacity="0.75"/>
-  <path d="M0,466 C 64,444 120,486 184,468 C 248,450 300,488 364,470 C 428,452 470,484 512,468 L512,512 L0,512 Z"
-        fill="#17a6d6"/>
-  <path d="M0,466 C 64,444 120,486 184,468 C 248,450 300,488 364,470 C 428,452 470,484 512,468"
-        fill="none" stroke="#d9f4ff" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
-  <path d="M58,392 C 76,384 92,398 110,390" fill="none" stroke="#cfeeff" stroke-width="7" stroke-linecap="round" opacity="0.5"/>
-  <path d="M404,398 C 422,390 438,404 456,396" fill="none" stroke="#cfeeff" stroke-width="7" stroke-linecap="round" opacity="0.5"/>
+  <!-- ===== las olitas, por delante de la pelota ===== -->
+  <g id="olas">
+    <path d="M0,424 C 58,398 112,442 172,424 C 232,406 282,446 342,428 C 402,410 456,444 512,424 L512,512 L0,512 Z"
+          fill="#0f86c6"/>
+    <path d="M0,424 C 58,398 112,442 172,424 C 232,406 282,446 342,428 C 402,410 456,444 512,424"
+          fill="none" stroke="#bfe9ff" stroke-width="9" stroke-linecap="round" opacity="0.75"/>
+    <path d="M0,466 C 64,444 120,486 184,468 C 248,450 300,488 364,470 C 428,452 470,484 512,468 L512,512 L0,512 Z"
+          fill="#17a6d6"/>
+    <path d="M0,466 C 64,444 120,486 184,468 C 248,450 300,488 364,470 C 428,452 470,484 512,468"
+          fill="none" stroke="#d9f4ff" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
+    <path d="M58,392 C 76,384 92,398 110,390" fill="none" stroke="#cfeeff" stroke-width="7" stroke-linecap="round" opacity="0.5"/>
+    <path d="M404,398 C 422,390 438,404 456,396" fill="none" stroke="#cfeeff" stroke-width="7" stroke-linecap="round" opacity="0.5"/>
+  </g>
 </svg>
 <script>
-/* El puntito de la i es una estrellita, como en la pelota. Se calcula dónde
-   cae la I en el texto curvo y se dibuja justo encima. */
+/* El puntito de la I es una estrellita, igual que en la pelota: se mide dónde
+   cayó la I dentro de la palabra y se dibuja justo encima. */
 (function(){
   var t = document.getElementById('marca');
   var e = t.getExtentOfChar(1);                    /* la I de MIKASA */
@@ -119,6 +130,16 @@ svg{display:block}
     p.push((cx + rad*Math.cos(ang)).toFixed(2) + ',' + (cy + rad*Math.sin(ang)).toFixed(2));
   }
   document.getElementById('estrella').setAttribute('points', p.join(' '));
+
+  /* Con ?sola queda sólo la pelota, sin agua ni olitas: así sale la pelotita
+     que va al lado del nombre en el encabezado de la app. */
+  if(location.search.indexOf('sola') >= 0){
+    document.getElementById('fondo').remove();
+    document.getElementById('olas').remove();
+    var s = document.getElementById('svg');
+    s.setAttribute('viewBox', '76 58 360 360');
+    s.setAttribute('width', 320); s.setAttribute('height', 320);
+  }
 })();
 </script>
 
